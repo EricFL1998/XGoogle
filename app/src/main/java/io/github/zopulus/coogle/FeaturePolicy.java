@@ -6,7 +6,7 @@ public final class FeaturePolicy {
             GOOGLE_ENTRY="google_entry", SEARCH_BAR="search_bar", HEY_GOOGLE="hey_google", LENS="lens",
             WALLET="wallet", QUICK_ENTRIES="quick_entries", LIVE_TRANSLATE="live_translate";
     public static boolean defaultValue(String key) {
-        return NAVIGATION.equals(key) || LENS.equals(key) || LIVE_TRANSLATE.equals(key);
+        return NAVIGATION.equals(key) || LENS.equals(key) || LIVE_TRANSLATE.equals(key) || GOOGLE_ENTRY.equals(key);
     }
     public static boolean effective(String key, boolean requested, boolean companionReady) {
         return requested && (!HEY_GOOGLE.equals(key) || companionReady);

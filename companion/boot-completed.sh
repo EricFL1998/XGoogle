@@ -15,6 +15,11 @@ if [ -n "$(getprop ro.mi.os.version.name)" ]; then
     fi
     settings put system long_press_power_key launch_google_search
     settings put system long_press_home_key launch_google_search
+    # HyperOS uses Google's software detection, so the DSP enrollment apps are unused. Root
+    # managers hide module files from them, and they crash when started at boot.
+    for package in com.android.hotwordenrollment.xgoogle com.android.hotwordenrollment.okgoogle; do
+        pm list packages -d 2>/dev/null | grep -qx "package:$package" || pm disable-user --user 0 "$package" > /dev/null 2>&1
+    done
 fi
 # Keep the Android Auto allow-list in step with Play Store updates for the next boot.
 if [ -d "$MODDIR/system/product/priv-app/AndroidAuto" ]; then

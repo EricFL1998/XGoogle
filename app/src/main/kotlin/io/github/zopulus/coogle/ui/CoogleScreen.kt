@@ -35,6 +35,7 @@ import androidx.compose.material.icons.rounded.DashboardCustomize
 import androidx.compose.material.icons.rounded.LockOpen
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.RecordVoiceOver
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.TouchApp
 import androidx.compose.material.icons.rounded.CenterFocusStrong
 import androidx.compose.material.icons.rounded.VisibilityOff
@@ -171,14 +172,16 @@ fun CoogleScreen(
                     state.features[FeaturePolicy.LIVE_TRANSLATE] == true, available, { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) })
             }
             Group(t.groupSystem) {
-                ToggleRow(t, 0, 4, Icons.Rounded.TouchApp, t.circle, t.circleSummary,
+                ToggleRow(t, 0, 5, Icons.Rounded.TouchApp, t.circle, t.circleSummary,
                     state.features[FeaturePolicy.NAVIGATION] == true, available, { onSetting(FeaturePolicy.NAVIGATION, it) })
-                ToggleRow(t, 1, 4, Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
+                ToggleRow(t, 1, 5, Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
                     state.features[FeaturePolicy.WALLET] == true, available, { onSetting(FeaturePolicy.WALLET, it) })
-                ToggleRow(t, 2, 4, Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
+                ToggleRow(t, 2, 5, Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
                     state.features[FeaturePolicy.QUICK_ENTRIES] == true, available, { onSetting(FeaturePolicy.QUICK_ENTRIES, it) })
-                ToggleRow(t, 3, 4, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
+                ToggleRow(t, 3, 5, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
                     state.features[FeaturePolicy.GMS] == true, available, { onSetting(FeaturePolicy.GMS, it) })
+                ToggleRow(t, 4, 5, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
+                    state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available, { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) })
             }
             Group(t.groupOther) {
                 ToggleRow(t, 0, 2, Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,

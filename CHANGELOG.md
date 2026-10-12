@@ -4,6 +4,10 @@
 
 - Android Auto: araç projeksiyonu rolü artık veriliyor; Android Auto araca bağlanmak için gereken izinleri alıyor.
   Android Auto: the car projection role is now granted, so Android Auto gets the permissions it needs to connect to the car.
+- Yeni "Ayarlar'da Google" düğmesi: Ayarlar'ın altındaki Google hizmetleri girişini gösterir ya da gizler (varsayılan: açık).
+  New "Google in Settings" switch: shows or hides the Google services entry at the bottom of Settings (on by default).
+- Ek modül 1.2.2: HyperOS'ta kullanılmayan ses modeli kayıt uygulamalarını kapatır; açılıştaki çökmeleri giderildi.
+  Companion module 1.2.2: turns off the hotword enrollment apps HyperOS doesn't use, fixing their crashes at boot.
 - HyperOS'ta LSPosed kaydında ColorOS'a ait Ayarlar hataları artık çıkmıyor.
   No more ColorOS-only Settings errors in the LSPosed log on HyperOS.
 

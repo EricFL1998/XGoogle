@@ -2,6 +2,7 @@ package io.github.zopulus.coogle.migration
 
 import io.github.zopulus.coogle.FeatureConfig
 import io.github.zopulus.coogle.FeaturePolicy
+import io.github.zopulus.coogle.SystemCompatibility
 import io.github.zopulus.coogle.migration.compat.ModernHookRuntime
 import io.github.libxposed.api.XposedModule
 
@@ -21,6 +22,7 @@ object MigrationEntry {
             if (FeatureConfig.enabled(FeaturePolicy.QUICK_ENTRIES)) KeyguardShortcutHooks.install(loader)
             return
         }
+        if (packageName == "com.android.settings" && SystemCompatibility.isHyperOs()) GoogleSettingsEntryHooks.install(loader)
         if (packageName == XiaoAiNavRedirectHooks.XIAOAI_PACKAGE) {
             if (FeatureConfig.enabled(FeaturePolicy.NAVIGATION)) XiaoAiNavRedirectHooks.install(loader)
             return

@@ -19,7 +19,7 @@
 - 🧪 Güç tuşuna çift bas → Google Cüzdan
 - 🌐 Arayüz dilleri: Türkçe, English, Русский, Español, 简体中文
 
-Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir.
+Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir. Ayarlar'ın altındaki Google hizmetleri girişi de isteğe bağlı olarak gösterilip gizlenebilir.
 
 ## Nitelikler
 
@@ -92,7 +92,7 @@ Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorO
 - 🧪 Double-press power → Google Wallet
 - 🌐 UI languages: Türkçe, English, Русский, Español, 简体中文
 
-Every feature can be toggled on its own.
+Every feature can be toggled on its own, including the Google services entry at the bottom of Settings.
 
 ### Specs
 
