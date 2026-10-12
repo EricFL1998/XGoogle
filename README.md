@@ -60,7 +60,8 @@ Ek modül, root yöneticinizde **otomatik güncelleme** destekler.
 
 GPL-3.0. Ayrıntılar için [LICENSE](LICENSE) ve [NOTICE.txt](NOTICE.txt).
 Xiaomi HyperOS uyarlaması: **Leekinn**.
-Telegram: [t.me/xioamifetiscisi](https://t.me/xioamifetiscisi)
+Telegram kanalı: [t.me/xioamifetiscisi](https://t.me/xioamifetiscisi)
+Şikayet, öneri ve tavsiyeler: [@emcleek](https://t.me/emcleek)
 
 Teşekkürler — bu proje onların emeği üzerine kurulu:
 - [@zopulus](https://github.com/zopulus) — ColorOS için [Coogle](https://github.com/zopulus/coogle), XGoogle'ın temeli
@@ -133,6 +134,8 @@ The companion module supports **automatic updates** in your root manager.
 
 GPL-3.0. See [LICENSE](LICENSE) and [NOTICE.txt](NOTICE.txt).
 Xiaomi HyperOS port: **Leekinn**.
+Telegram channel: [t.me/xioamifetiscisi](https://t.me/xioamifetiscisi)
+Feedback and suggestions: [@emcleek](https://t.me/emcleek)
 
 Thanks — this project is built on their work:
 - [@zopulus](https://github.com/zopulus) — [Coogle](https://github.com/zopulus/coogle) for ColorOS, the base of XGoogle
