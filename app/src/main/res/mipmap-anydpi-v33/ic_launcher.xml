@@ -1,0 +1,14 @@
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@android:color/black" />
+    <!-- The letters fill ~60% of the visible shape, as in the source logo. -->
+    <foreground>
+        <inset android:inset="29%">
+            <bitmap android:src="@drawable/xgoogle_foreground" android:gravity="fill" />
+        </inset>
+    </foreground>
+    <monochrome>
+        <inset android:inset="29%">
+            <bitmap android:src="@drawable/xgoogle_monochrome" android:gravity="fill" />
+        </inset>
+    </monochrome>
+</adaptive-icon>

@@ -1,0 +1,24 @@
+XGoogle is distributed under GPL-3.0; see LICENSE.
+XGoogle is a fork of Coogle 1.2 by zopulus (https://github.com/zopulus/coogle),
+modified by Leekinn for Xiaomi HyperOS 4. See CHANGELOG.md for the changes.
+DexKit (https://github.com/LuckyPray/DexKit) is an Apache-2.0 dependency.
+The app icon uses the Xiaomi "mi" logo, a trademark of Xiaomi; XGoogle is not affiliated with Xiaomi or Google.
+
+Notices for the original Coogle follow.
+Coogle is distributed under GPL-3.0; see LICENSE.
+Author of modifications: zopulus.
+Hook migration derives from MiToverG422/ONextBox (GPL-3.0):
+https://github.com/MiToverG422/ONextBox
+Original commit: 1ce6ad3559c9c6ba33f8d8179b1ede55198961e2.
+Material UI conventions derive from tiann/KernelSU (GPL-3.0):
+https://github.com/tiann/KernelSU
+MaterialTheme.kt, ExpressiveDialog.kt, ExpressiveSwitch.kt and SegmentedList.kt informed the implementation.
+AndroidX Compose/Activity/Core and Kotlin runtime are Apache-2.0 dependencies.
+libxposed API, interface and service are Apache-2.0 dependencies.
+Google-color-inspired C icons are custom artwork derived from the user supplied icon reference.
+The companion ZIP combines the requested DSP, enrollment and supplied Google systemizer functionality; its build scripts and payloads are in companion/.
+No private Voice Match model, account data or phone logs are included.
+
+Additional code references: https://github.com/luckyzyx/LuckyTool
+UI reference: https://github.com/LSPosed/LSPosed
+Bundled Google enrollment components remain subject to their original licenses.

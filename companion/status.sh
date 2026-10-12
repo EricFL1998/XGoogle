@@ -1,0 +1,43 @@
+#!/system/bin/sh
+MODDIR=${0%/*}
+google='⚠️Google sistem uygulaması değil'
+enrollment='⚠️Kayıt bileşenleri hazır değil'
+dsp='⚠️DSP çalışmıyor'
+package=$(dumpsys -t 10 package com.google.android.googlequicksearchbox 2>/dev/null | grep -m 1 'flags=\[.*SYSTEM')
+if [ -n "$package" ]; then
+    google='✅Google sistem uygulaması'
+fi
+library=$(pm list libraries 2>/dev/null)
+if pm path com.android.hotwordenrollment.xgoogle 2>/dev/null | grep -q '^package:' &&
+   pm path com.android.hotwordenrollment.okgoogle 2>/dev/null | grep -q '^package:' &&
+   printf '%s\n' "$library" | grep -q 'com.android.hotwordenrollment.common.util'; then
+    enrollment='✅Kayıt bileşenleri yüklü'
+fi
+# BusyBox ships in a different place per root manager (KernelSU, Magisk, APatch).
+for BB in /data/adb/ksu/bin/busybox /data/adb/magisk/busybox /data/adb/ap/bin/busybox; do
+    [ -x "$BB" ] && break
+done
+state=$(dumpsys -t 10 voiceinteraction 2>/dev/null | "$BB" awk -f "$MODDIR/hotword-status.awk")
+# The awk check sees a live, initialized detector session, not confirmed listening.
+case "$state" in
+    dsp) dsp='✅DSP oturumu hazır' ;;
+    software) dsp='ℹ️Yazılım algılama oturumu hazır' ;;
+    unknown) dsp='⏳DSP durumu bilinmiyor' ;;
+esac
+# HyperOS keeps its own audio config elsewhere (and already enables HOTWORD_VOICE_UI),
+# so the ColorOS audio patch is not applicable there; only report it on ColorOS.
+if [ -z "$(getprop ro.mi.os.version.name)" ]; then
+    audio=$(cat "$MODDIR/audio-state" 2>/dev/null)
+    case "$audio" in
+        unsupported|missing) dsp="$dsp; ses yapılandırması desteklenmiyor" ;;
+        inherited-overlay) dsp="$dsp; özgün yapılandırma bağlı, kaplama oluşturulmadı" ;;
+        io-failed) dsp="$dsp; ses yapılandırması yazılamadı" ;;
+        label-failed) dsp="$dsp; ses etiketi ayarlanamadı" ;;
+    esac
+fi
+description="[$google | $enrollment | $dsp]"
+sed '/^description=/d' "$MODDIR/module.prop" > "$MODDIR/module.prop.tmp" || exit 1
+printf 'description=%s\n' "$description" >> "$MODDIR/module.prop.tmp"
+chmod 0644 "$MODDIR/module.prop.tmp"
+mv "$MODDIR/module.prop.tmp" "$MODDIR/module.prop"
+printf '%s\n' "$description"

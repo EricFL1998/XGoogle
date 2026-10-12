@@ -1,0 +1,141 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.plugin.compose'
+}
+android {
+    namespace 'io.github.zopulus.coogle'
+    compileSdk { version = release(37) }
+    buildToolsVersion '36.0.0'
+    defaultConfig {
+        // Distinct from upstream Coogle so LSPosed's repository never offers its ColorOS-only builds as updates.
+        applicationId 'io.github.leekinn.xgoogle'
+        minSdk 35
+        targetSdk 36
+        versionCode 120
+        versionName '1.2'
+        ndk { abiFilters 'arm64-v8a' }
+    }
+    buildTypes {
+        release { signingConfig signingConfigs.debug; minifyEnabled true; shrinkResources true; proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro' }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    buildFeatures { compose true; buildConfig true }
+    packaging { resources { excludes += ['META-INF/LICENSE*','META-INF/NOTICE*','META-INF/AL2.0','META-INF/LGPL2.1'] } }
+}
+dependencies {
+    compileOnly 'io.github.libxposed:api:102.0.0'
+    implementation 'io.github.libxposed:service:102.0.0'
+    implementation 'io.github.libxposed:interface:102.0.0'
+    implementation platform('androidx.compose:compose-bom:2026.09.00')
+    implementation 'androidx.activity:activity-compose:1.12.3'
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.material3:material3:1.5.0-alpha28'
+    implementation 'androidx.compose.material:material-icons-extended:1.7.8'
+    implementation 'androidx.core:core-ktx:1.17.0'
+    // Locates obfuscated Google App code for the live-translate hook (Apache-2.0).
+    implementation 'org.luckypray:dexkit:2.3.0'
+}
+
+// Exercise the native gesture listener against a JVM controller boundary.
+def circleTestClasses = layout.buildDirectory.dir('circle-gesture-tests')
+tasks.register('compileCircleGestureTest', JavaCompile) {
+    source files('src/main/java/io/github/zopulus/coogle/NativeCircleGestureListener.java',
+        '../tests/NativeCircleGestureListenerTest.java')
+    classpath = files()
+    destinationDirectory = circleTestClasses
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+    options.encoding = 'UTF-8'
+}
+tasks.register('testCircleGesture', JavaExec) {
+    dependsOn 'compileCircleGestureTest'
+    classpath = files(circleTestClasses)
+    mainClass = 'io.github.zopulus.coogle.NativeCircleGestureListenerTest'
+}
+
+def contextualTestClasses = layout.buildDirectory.dir('contextual-tests')
+tasks.register('compileContextualSearchTest', JavaCompile) {
+    dependsOn 'compileReleaseKotlin'
+    source files('../tests/ContextualSearchTest.java') + fileTree('../tests/contextual-stubs') { include '**/*.java' }
+    classpath = files()
+    destinationDirectory = contextualTestClasses
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+    options.encoding = 'UTF-8'
+}
+tasks.register('testContextualSearch', JavaExec) {
+    dependsOn 'compileContextualSearchTest'
+    classpath = files(contextualTestClasses, layout.buildDirectory.dir('intermediates/built_in_kotlinc/release/compileReleaseKotlin/classes')) +
+        files({ configurations.releaseRuntimeClasspath.findAll { it.name.startsWith('kotlin-stdlib-') && it.name.endsWith('.jar') } }) +
+        files({ zipTree(configurations.releaseCompileClasspath.find { it.name == 'api-102.0.0.aar' })
+            .matching { include 'classes.jar' }.singleFile })
+    mainClass = 'io.github.zopulus.coogle.ContextualSearchTest'
+}
+
+def hotwordTestClasses = layout.buildDirectory.dir('hotword-tests')
+
+def lifecycleTestClasses = layout.buildDirectory.dir('hook-lifecycle-tests')
+tasks.register('compileHookLifecycleTests', JavaCompile) {
+    dependsOn 'compileReleaseJavaWithJavac'
+    source files('../tests/SignalModelHookLifecycleTest.java', '../tests/RoleReconciliationTest.java', '../tests/HookInstallRollbackTest.java', '../tests/HiddenCircleNoAssistantTest.java', '../tests/FeatureQueryTest.java', '../tests/ContextBindingCacheTest.java') +
+        fileTree('../tests/lifecycle-stubs') { include '**/*.java' } +
+        fileTree('../tests/contextual-stubs') { include 'android/**/*.java' }
+    classpath = files(layout.buildDirectory.dir('intermediates/built_in_kotlinc/release/compileReleaseKotlin/classes'),
+        layout.buildDirectory.dir('intermediates/javac/release/compileReleaseJavaWithJavac/classes')) +
+        files(androidComponents.sdkComponents.bootClasspath) +
+        files({ configurations.releaseRuntimeClasspath.findAll { it.name.startsWith('kotlin-stdlib-') && it.name.endsWith('.jar') } }) +
+        files({ zipTree(configurations.releaseCompileClasspath.find { it.name == 'api-102.0.0.aar' })
+            .matching { include 'classes.jar' }.singleFile })
+    destinationDirectory = lifecycleTestClasses
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+    options.encoding = 'UTF-8'
+}
+['SignalModelHookLifecycleTest', 'RoleReconciliationTest', 'HookInstallRollbackTest', 'HiddenCircleNoAssistantTest', 'FeatureQueryTest', 'ContextBindingCacheTest'].each { testName ->
+    tasks.register("test${testName}", JavaExec) {
+        dependsOn 'compileHookLifecycleTests'
+        classpath = files(lifecycleTestClasses) + tasks.named('compileHookLifecycleTests').get().classpath
+        mainClass = "io.github.zopulus.coogle.${testName}"
+    }
+}
+tasks.register('testHookLifecycle') {
+    dependsOn 'testSignalModelHookLifecycleTest', 'testRoleReconciliationTest', 'testHookInstallRollbackTest', 'testHiddenCircleNoAssistantTest', 'testFeatureQueryTest', 'testContextBindingCacheTest'
+}
+tasks.register('compileHotwordUidTest', JavaCompile) {
+    source files('../tests/HotwordUidTest.java') + fileTree('../tests/hotword-stubs') { include '**/*.java' }
+    classpath = files()
+    destinationDirectory = hotwordTestClasses
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+    options.encoding = 'UTF-8'
+}
+tasks.register('testHotwordUid', JavaExec) {
+    dependsOn 'compileReleaseKotlin', 'compileHotwordUidTest'
+    classpath = files(hotwordTestClasses, layout.buildDirectory.dir('intermediates/built_in_kotlinc/release/compileReleaseKotlin/classes')) +
+        files({ configurations.releaseRuntimeClasspath.findAll { it.name.startsWith('kotlin-stdlib-') && it.name.endsWith('.jar') } }) +
+        files({ zipTree(configurations.releaseCompileClasspath.find { it.name == 'api-102.0.0.aar' })
+            .matching { include 'classes.jar' }.singleFile })
+    mainClass = 'io.github.zopulus.coogle.HotwordUidTest'
+}
+
+// Exercise production wallpaper callbacks without an Android device or Xposed runtime.
+def wallpaperTestClasses = layout.buildDirectory.dir('wallpaper-tests')
+tasks.register('compileWallpaperTest', JavaCompile) {
+    dependsOn 'compileReleaseKotlin'
+    source files('../tests/WallpaperQuickEntryTest.java') + fileTree('../tests/wallpaper-stubs') { include '**/*.java' }
+    classpath = files(layout.buildDirectory.dir('intermediates/built_in_kotlinc/release/compileReleaseKotlin/classes')) +
+        files({ zipTree(configurations.releaseCompileClasspath.find { it.name == 'api-102.0.0.aar' })
+            .matching { include 'classes.jar' }.singleFile })
+    destinationDirectory = wallpaperTestClasses
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+    options.encoding = 'UTF-8'
+}
+tasks.register('testWallpaper', JavaExec) {
+    dependsOn 'compileWallpaperTest'
+    classpath = files(wallpaperTestClasses, layout.buildDirectory.dir('intermediates/built_in_kotlinc/release/compileReleaseKotlin/classes')) +
+        files({ configurations.releaseRuntimeClasspath.findAll { it.name.startsWith('kotlin-stdlib-') && it.name.endsWith('.jar') } }) +
+        files({ zipTree(configurations.releaseCompileClasspath.find { it.name == 'api-102.0.0.aar' })
+            .matching { include 'classes.jar' }.singleFile })
+    mainClass = 'io.github.zopulus.coogle.WallpaperQuickEntryTest'
+}

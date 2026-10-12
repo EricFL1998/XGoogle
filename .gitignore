@@ -1,0 +1,10 @@
+build/
+test-classes/
+libs/
+local.properties
+.gradle/
+.kotlin/
+app/build/
+test-crc/
+work/
+__pycache__/

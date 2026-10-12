@@ -1,0 +1,441 @@
+package io.github.zopulus.coogle.ui
+
+enum class AppLanguage(val code: String, val label: String) {
+    TR("tr", "Türkçe"),
+    EN("en", "English"),
+    RU("ru", "Русский"),
+    ES("es", "Español"),
+    ZH("zh", "简体中文");
+
+    companion object {
+        fun of(code: String?) = entries.firstOrNull { it.code == code } ?: TR
+
+        /** First launch: the system language when supported, otherwise English. */
+        fun forSystem(code: String) = entries.firstOrNull { it.code == code } ?: EN
+    }
+}
+
+/** Every user-visible string of the app, per language. */
+class Texts(
+    val subtitle: String,
+    val language: String,
+    val version: (String) -> String,
+    val active: String,
+    val inactive: String,
+    val groupAssistant: String,
+    val defaultAssistant: String,
+    val assistantReading: String,
+    val assistantNone: String,
+    val assistantTap: String,
+    val assistantCurrent: (String) -> String,
+    val heyGoogle: String,
+    val lens: String,
+    val lensSummary: String,
+    val liveTranslate: String,
+    val liveTranslateSummary: String,
+    val groupSystem: String,
+    val circle: String,
+    val circleSummary: String,
+    val wallet: String,
+    val walletSummary: String,
+    val lockShortcuts: String,
+    val lockShortcutsSummary: String,
+    val gms: String,
+    val gmsSummary: String,
+    val groupOther: String,
+    val hideIcon: String,
+    val hideIconSummary: String,
+    val about: String,
+    val aboutSummary: (String) -> String,
+    val switchOn: String,
+    val switchOff: String,
+    val companion: (CompanionState) -> String,
+    val statusTitle: String,
+    val statusMessage: String,
+    val installTitle: String,
+    val installMessage: String,
+    val disabledTitle: String,
+    val disabledMessage: String,
+    val installedTitle: String,
+    val installedMessage: String,
+    val hideIconTitle: String,
+    val hideIconMessage: String,
+    val errorTitle: String,
+    val install: String,
+    val hide: String,
+    val ok: String,
+    val cancel: String,
+    val errSave: String,
+    val errSaveGeneric: String,
+    val errWalletPower: String,
+    val errCheckCompanion: String,
+    val errCompanionSaved: String,
+    val errCompanionInstall: String,
+    val errOpenAssistant: String,
+    val errIcon: String,
+    val errRepository: String,
+    val errTelegram: String,
+)
+
+private val TR = Texts(
+    subtitle = "Xiaomi HyperOS Çin ROM'una Google özellikleri",
+    language = "Dil",
+    version = { "Sürüm $it" },
+    active = "Etkin",
+    inactive = "Etkin değil",
+    groupAssistant = "Dijital asistan",
+    defaultAssistant = "Varsayılan dijital asistan",
+    assistantReading = "Geçerli dijital asistan: okunuyor…",
+    assistantNone = "Geçerli dijital asistan: seçilmedi",
+    assistantTap = "Sistemdeki seçimi görmek için dokunun",
+    assistantCurrent = { "Geçerli dijital asistan: $it" },
+    heyGoogle = "Hey Google'ı aç",
+    lens = "Google Lens",
+    lensSummary = "Google Lens özelliklerini tamamlar",
+    liveTranslate = "Canlı çeviri",
+    liveTranslateSummary = "Circle to Search'te Çevir'e basıp kaydırınca çeviri devam eder",
+    groupSystem = "Sistem ayarları",
+    circle = "Circle to Search",
+    circleSummary = "Alt çubuğa basılı tutunca Circle to Search açılır",
+    wallet = "Google Cüzdan",
+    walletSummary = "Güç tuşuna çift basınca Google Cüzdan açılır; Google Cüzdan varsayılan ödeme uygulaması olmalı",
+    lockShortcuts = "Kilit ekranı kısayolları",
+    lockShortcutsSummary = "Kilit ekranı düzenleyicisine Asistan, Lens/QR, Cüzdan ve Ev kontrolleri eklenir. Lens kutucuğu kontrol merkezinde her zaman eklenebilir",
+    gms = "GMS kısıtlamasını kaldır",
+    gmsSummary = "Xiaomi Çin ROM'undaki GMS kısıtlama işaretini kaldırır",
+    groupOther = "Diğer ayarlar",
+    hideIcon = "Ana ekran simgesini gizle",
+    hideIconSummary = "Gizlendikten sonra LSPosed'den açılabilir",
+    about = "XGoogle hakkında",
+    aboutSummary = { "Bu modül Xiaomi HyperOS 4 için tasarlanmıştır\nCoogle tabanlı · zopulus & Leekinn · $it\nTelegram: t.me/xioamifetiscisi" },
+    switchOn = "Açık",
+    switchOff = "Kapalı",
+    companion = {
+        when (it) {
+            CompanionState.UNKNOWN -> "Ek modül: açılınca otomatik kontrol edilir"
+            CompanionState.CHECKING -> "Ek modül: kurulum durumu kontrol ediliyor…"
+            CompanionState.MISSING -> "Ek modül: kurulu değil"
+            CompanionState.DISABLED -> "Ek modül: devre dışı"
+            CompanionState.READY -> "Ek modül: kurulu ve etkin"
+            CompanionState.PENDING -> "Ek modül: kuruldu, yeniden başlatma bekleniyor"
+            CompanionState.INSTALLING -> "Ek modül: kuruluyor…"
+        }
+    },
+    statusTitle = "Modül durumu",
+    statusMessage = "LSPosed'de XGoogle'ı etkinleştirip önerilen kapsamları işaretleyin. Ayarları değiştirdikten sonra ilgili kapsamı yeniden başlatın.\n\nDesteklenen sistem: Xiaomi HyperOS (Çin ROM).",
+    installTitle = "Ek modülü kur",
+    installMessage = "Hey Google için XGoogle ek modülü gerekli. Kurulum Root izni ister.\n\nEk modülü ilk kez kurduktan sonra telefonu yeniden başlatın, ardından Google ayarlarından Voice Match'i tamamlayın.",
+    disabledTitle = "Ek modül devre dışı",
+    disabledMessage = "SukiSU/KernelSU'da XGoogle ek modülünü etkinleştirin, ardından Hey Google'ı yeniden açın.",
+    installedTitle = "Kurulum tamamlandı",
+    installedMessage = "XGoogle ek modülü kuruldu ve Hey Google açıldı.\n\nTelefonu yeniden başlatın, ardından Google ayarlarından Voice Match'i tamamlayın.",
+    hideIconTitle = "Ana ekran simgesi gizlensin mi?",
+    hideIconMessage = "Gizlendikten sonra uygulamayı LSPosed'deki XGoogle modül ayarlarından açabilirsiniz.",
+    errorTitle = "İşlem tamamlanamadı",
+    install = "Kur",
+    hide = "Gizle",
+    ok = "Tamam",
+    cancel = "İptal",
+    errSave = "Ayar kaydedilemedi, LSPosed bağlantısını kontrol edin.",
+    errSaveGeneric = "Ayar kaydedilemedi",
+    errWalletPower = "Ayar kaydedildi ama güç tuşu ayarlanamadı. XGoogle'a Root izni verin.",
+    errCheckCompanion = "Kurulum durumu kontrol edilemedi. SukiSU/KernelSU'da XGoogle'a Root izni verip Hey Google'ı yeniden açın.",
+    errCompanionSaved = "Ek modül kuruldu ama ayar kaydedilemedi, Hey Google'ı yeniden açın.",
+    errCompanionInstall = "Ek modül kurulamadı",
+    errOpenAssistant = "Sistemin asistan seçim sayfası açılamadı.",
+    errIcon = "Ana ekran simgesinin durumu değiştirilemedi.",
+    errRepository = "github.com/zopulus/coogle adresini tarayıcıda açın.",
+    errTelegram = "t.me/xioamifetiscisi adresini Telegram'da ya da tarayıcıda açın.",
+)
+
+private val EN = Texts(
+    subtitle = "Google features for the Xiaomi HyperOS China ROM",
+    language = "Language",
+    version = { "Version $it" },
+    active = "Active",
+    inactive = "Inactive",
+    groupAssistant = "Digital assistant",
+    defaultAssistant = "Default digital assistant",
+    assistantReading = "Current digital assistant: reading…",
+    assistantNone = "Current digital assistant: none selected",
+    assistantTap = "Tap to see the system's choice",
+    assistantCurrent = { "Current digital assistant: $it" },
+    heyGoogle = "Enable Hey Google",
+    lens = "Google Lens",
+    lensSummary = "Completes Google Lens features",
+    liveTranslate = "Live translate",
+    liveTranslateSummary = "In Circle to Search, tap Translate and keep translating as you scroll",
+    groupSystem = "System settings",
+    circle = "Circle to Search",
+    circleSummary = "Long-press the navigation handle to open Circle to Search",
+    wallet = "Google Wallet",
+    walletSummary = "Double-press power to open Google Wallet; Google Wallet must be the default payment app",
+    lockShortcuts = "Lock screen shortcuts",
+    lockShortcutsSummary = "Adds Assistant, Lens/QR, Wallet and Home controls to the lock screen editor. The Lens tile can always be added to the control center",
+    gms = "Remove GMS restriction",
+    gmsSummary = "Removes the GMS restriction flag of the Xiaomi China ROM",
+    groupOther = "Other settings",
+    hideIcon = "Hide home screen icon",
+    hideIconSummary = "Once hidden, open it from LSPosed",
+    about = "About XGoogle",
+    aboutSummary = { "Designed for Xiaomi HyperOS 4\nBased on Coogle · zopulus & Leekinn · $it\nTelegram: t.me/xioamifetiscisi" },
+    switchOn = "On",
+    switchOff = "Off",
+    companion = {
+        when (it) {
+            CompanionState.UNKNOWN -> "Companion module: checked automatically when enabled"
+            CompanionState.CHECKING -> "Companion module: checking installation…"
+            CompanionState.MISSING -> "Companion module: not installed"
+            CompanionState.DISABLED -> "Companion module: disabled"
+            CompanionState.READY -> "Companion module: installed and enabled"
+            CompanionState.PENDING -> "Companion module: installed, reboot pending"
+            CompanionState.INSTALLING -> "Companion module: installing…"
+        }
+    },
+    statusTitle = "Module status",
+    statusMessage = "Enable XGoogle in LSPosed and select the recommended scopes. After changing a setting, restart the affected scope.\n\nSupported system: Xiaomi HyperOS (China ROM).",
+    installTitle = "Install companion module",
+    installMessage = "Hey Google needs the XGoogle companion module. Installing it asks for root access.\n\nAfter the first install, reboot the phone, then complete Voice Match in Google settings.",
+    disabledTitle = "Companion module disabled",
+    disabledMessage = "Enable the XGoogle companion module in SukiSU/KernelSU, then turn Hey Google on again.",
+    installedTitle = "Installation complete",
+    installedMessage = "The XGoogle companion module is installed and Hey Google is on.\n\nReboot the phone, then complete Voice Match in Google settings.",
+    hideIconTitle = "Hide the home screen icon?",
+    hideIconMessage = "Once hidden, you can still open the app from XGoogle's module settings in LSPosed.",
+    errorTitle = "Could not complete",
+    install = "Install",
+    hide = "Hide",
+    ok = "OK",
+    cancel = "Cancel",
+    errSave = "Setting not saved; check the LSPosed connection.",
+    errSaveGeneric = "Setting not saved",
+    errWalletPower = "Setting saved, but the power key could not be set. Grant XGoogle root access.",
+    errCheckCompanion = "Could not check the installation. Grant XGoogle root access in SukiSU/KernelSU, then turn Hey Google on again.",
+    errCompanionSaved = "The companion module was installed but the setting was not saved; turn Hey Google on again.",
+    errCompanionInstall = "Companion module installation failed",
+    errOpenAssistant = "Could not open the system's assistant picker.",
+    errIcon = "Could not change the home screen icon state.",
+    errRepository = "Open github.com/zopulus/coogle in a browser.",
+    errTelegram = "Open t.me/xioamifetiscisi in Telegram or a browser.",
+)
+
+private val RU = Texts(
+    subtitle = "Функции Google для китайской прошивки Xiaomi HyperOS",
+    language = "Язык",
+    version = { "Версия $it" },
+    active = "Активен",
+    inactive = "Не активен",
+    groupAssistant = "Цифровой помощник",
+    defaultAssistant = "Цифровой помощник по умолчанию",
+    assistantReading = "Текущий помощник: загрузка…",
+    assistantNone = "Текущий помощник: не выбран",
+    assistantTap = "Нажмите, чтобы посмотреть выбор системы",
+    assistantCurrent = { "Текущий помощник: $it" },
+    heyGoogle = "Включить «Окей, Google»",
+    lens = "Google Объектив",
+    lensSummary = "Дополняет функции Google Объектива",
+    liveTranslate = "Живой перевод",
+    liveTranslateSummary = "В «Обвести и найти» нажмите «Перевести» — перевод продолжается при прокрутке",
+    groupSystem = "Системные настройки",
+    circle = "Обвести и найти",
+    circleSummary = "Удерживайте полоску навигации, чтобы открыть «Обвести и найти»",
+    wallet = "Google Кошелёк",
+    walletSummary = "Двойное нажатие кнопки питания открывает Google Кошелёк; он должен быть платёжным приложением по умолчанию",
+    lockShortcuts = "Ярлыки экрана блокировки",
+    lockShortcutsSummary = "Добавляет Помощника, Объектив/QR, Кошелёк и Управление домом в редактор экрана блокировки. Плитку Объектива всегда можно добавить в Центр управления",
+    gms = "Снять ограничение GMS",
+    gmsSummary = "Убирает флаг ограничения GMS китайской прошивки Xiaomi",
+    groupOther = "Другие настройки",
+    hideIcon = "Скрыть значок на рабочем столе",
+    hideIconSummary = "После скрытия открывается из LSPosed",
+    about = "О XGoogle",
+    aboutSummary = { "Создан для Xiaomi HyperOS 4\nНа основе Coogle · zopulus & Leekinn · $it\nTelegram: t.me/xioamifetiscisi" },
+    switchOn = "Вкл.",
+    switchOff = "Выкл.",
+    companion = {
+        when (it) {
+            CompanionState.UNKNOWN -> "Доп. модуль: проверяется автоматически при включении"
+            CompanionState.CHECKING -> "Доп. модуль: проверка установки…"
+            CompanionState.MISSING -> "Доп. модуль: не установлен"
+            CompanionState.DISABLED -> "Доп. модуль: отключён"
+            CompanionState.READY -> "Доп. модуль: установлен и включён"
+            CompanionState.PENDING -> "Доп. модуль: установлен, требуется перезагрузка"
+            CompanionState.INSTALLING -> "Доп. модуль: установка…"
+        }
+    },
+    statusTitle = "Состояние модуля",
+    statusMessage = "Включите XGoogle в LSPosed и отметьте рекомендуемые области. После изменения настроек перезапустите соответствующую область.\n\nПоддерживаемая система: Xiaomi HyperOS (китайская прошивка).",
+    installTitle = "Установить доп. модуль",
+    installMessage = "Для «Окей, Google» нужен дополнительный модуль XGoogle. Установка запросит root-доступ.\n\nПосле первой установки перезагрузите телефон, затем настройте Voice Match в настройках Google.",
+    disabledTitle = "Доп. модуль отключён",
+    disabledMessage = "Включите дополнительный модуль XGoogle в SukiSU/KernelSU, затем снова включите «Окей, Google».",
+    installedTitle = "Установка завершена",
+    installedMessage = "Дополнительный модуль XGoogle установлен, «Окей, Google» включён.\n\nПерезагрузите телефон, затем настройте Voice Match в настройках Google.",
+    hideIconTitle = "Скрыть значок на рабочем столе?",
+    hideIconMessage = "После скрытия приложение можно открыть из настроек модуля XGoogle в LSPosed.",
+    errorTitle = "Не удалось выполнить",
+    install = "Установить",
+    hide = "Скрыть",
+    ok = "ОК",
+    cancel = "Отмена",
+    errSave = "Настройка не сохранена; проверьте подключение к LSPosed.",
+    errSaveGeneric = "Настройка не сохранена",
+    errWalletPower = "Настройка сохранена, но кнопку питания назначить не удалось. Дайте XGoogle root-доступ.",
+    errCheckCompanion = "Не удалось проверить установку. Дайте XGoogle root-доступ в SukiSU/KernelSU и снова включите «Окей, Google».",
+    errCompanionSaved = "Доп. модуль установлен, но настройка не сохранена; снова включите «Окей, Google».",
+    errCompanionInstall = "Не удалось установить доп. модуль",
+    errOpenAssistant = "Не удалось открыть выбор помощника.",
+    errIcon = "Не удалось изменить состояние значка.",
+    errRepository = "Откройте github.com/zopulus/coogle в браузере.",
+    errTelegram = "Откройте t.me/xioamifetiscisi в Telegram или браузере.",
+)
+
+private val ES = Texts(
+    subtitle = "Funciones de Google para la ROM china de Xiaomi HyperOS",
+    language = "Idioma",
+    version = { "Versión $it" },
+    active = "Activo",
+    inactive = "Inactivo",
+    groupAssistant = "Asistente digital",
+    defaultAssistant = "Asistente digital predeterminado",
+    assistantReading = "Asistente actual: leyendo…",
+    assistantNone = "Asistente actual: ninguno",
+    assistantTap = "Toca para ver la elección del sistema",
+    assistantCurrent = { "Asistente actual: $it" },
+    heyGoogle = "Activar Hey Google",
+    lens = "Google Lens",
+    lensSummary = "Completa las funciones de Google Lens",
+    liveTranslate = "Traducción en vivo",
+    liveTranslateSummary = "En Rodea para buscar, toca Traducir y la traducción continúa al desplazarte",
+    groupSystem = "Ajustes del sistema",
+    circle = "Rodea para buscar",
+    circleSummary = "Mantén pulsada la barra de navegación para abrir Rodea para buscar",
+    wallet = "Google Wallet",
+    walletSummary = "Pulsa dos veces el botón de encendido para abrir Google Wallet; debe ser la app de pago predeterminada",
+    lockShortcuts = "Accesos de la pantalla de bloqueo",
+    lockShortcutsSummary = "Añade Asistente, Lens/QR, Wallet y Control del hogar al editor de la pantalla de bloqueo. El icono de Lens siempre se puede añadir al centro de control",
+    gms = "Quitar la restricción de GMS",
+    gmsSummary = "Elimina la marca de restricción de GMS de la ROM china de Xiaomi",
+    groupOther = "Otros ajustes",
+    hideIcon = "Ocultar icono de inicio",
+    hideIconSummary = "Una vez oculto, ábrelo desde LSPosed",
+    about = "Acerca de XGoogle",
+    aboutSummary = { "Diseñado para Xiaomi HyperOS 4\nBasado en Coogle · zopulus & Leekinn · $it\nTelegram: t.me/xioamifetiscisi" },
+    switchOn = "Activado",
+    switchOff = "Desactivado",
+    companion = {
+        when (it) {
+            CompanionState.UNKNOWN -> "Módulo complementario: se comprueba al activarlo"
+            CompanionState.CHECKING -> "Módulo complementario: comprobando instalación…"
+            CompanionState.MISSING -> "Módulo complementario: no instalado"
+            CompanionState.DISABLED -> "Módulo complementario: desactivado"
+            CompanionState.READY -> "Módulo complementario: instalado y activo"
+            CompanionState.PENDING -> "Módulo complementario: instalado, reinicio pendiente"
+            CompanionState.INSTALLING -> "Módulo complementario: instalando…"
+        }
+    },
+    statusTitle = "Estado del módulo",
+    statusMessage = "Activa XGoogle en LSPosed y marca los ámbitos recomendados. Tras cambiar un ajuste, reinicia el ámbito correspondiente.\n\nSistema compatible: Xiaomi HyperOS (ROM china).",
+    installTitle = "Instalar módulo complementario",
+    installMessage = "Hey Google necesita el módulo complementario de XGoogle. La instalación pide acceso root.\n\nTras la primera instalación, reinicia el teléfono y completa Voice Match en los ajustes de Google.",
+    disabledTitle = "Módulo complementario desactivado",
+    disabledMessage = "Activa el módulo complementario de XGoogle en SukiSU/KernelSU y vuelve a activar Hey Google.",
+    installedTitle = "Instalación completada",
+    installedMessage = "El módulo complementario de XGoogle está instalado y Hey Google activado.\n\nReinicia el teléfono y completa Voice Match en los ajustes de Google.",
+    hideIconTitle = "¿Ocultar el icono de inicio?",
+    hideIconMessage = "Una vez oculto, puedes abrir la app desde los ajustes del módulo XGoogle en LSPosed.",
+    errorTitle = "No se pudo completar",
+    install = "Instalar",
+    hide = "Ocultar",
+    ok = "Aceptar",
+    cancel = "Cancelar",
+    errSave = "No se guardó el ajuste; revisa la conexión con LSPosed.",
+    errSaveGeneric = "No se guardó el ajuste",
+    errWalletPower = "Ajuste guardado, pero no se pudo configurar el botón de encendido. Concede acceso root a XGoogle.",
+    errCheckCompanion = "No se pudo comprobar la instalación. Concede acceso root a XGoogle en SukiSU/KernelSU y vuelve a activar Hey Google.",
+    errCompanionSaved = "El módulo complementario se instaló pero no se guardó el ajuste; vuelve a activar Hey Google.",
+    errCompanionInstall = "No se pudo instalar el módulo complementario",
+    errOpenAssistant = "No se pudo abrir el selector de asistente.",
+    errIcon = "No se pudo cambiar el estado del icono.",
+    errRepository = "Abre github.com/zopulus/coogle en un navegador.",
+    errTelegram = "Abre t.me/xioamifetiscisi en Telegram o en un navegador.",
+)
+
+private val ZH = Texts(
+    subtitle = "为小米 HyperOS 国行版带来 Google 功能",
+    language = "语言",
+    version = { "版本 $it" },
+    active = "已激活",
+    inactive = "未激活",
+    groupAssistant = "数字助理",
+    defaultAssistant = "默认数字助理",
+    assistantReading = "当前数字助理：读取中…",
+    assistantNone = "当前数字助理：未选择",
+    assistantTap = "点击查看系统当前选择",
+    assistantCurrent = { "当前数字助理：$it" },
+    heyGoogle = "开启 Hey Google",
+    lens = "Google 智能镜头",
+    lensSummary = "补全 Google 智能镜头功能",
+    liveTranslate = "实时翻译",
+    liveTranslateSummary = "在圈定即搜中点击翻译，滚动时持续翻译",
+    groupSystem = "系统设置",
+    circle = "圈定即搜",
+    circleSummary = "长按导航条打开圈定即搜",
+    wallet = "Google 钱包",
+    walletSummary = "双击电源键打开 Google 钱包；需将 Google 钱包设为默认付款应用",
+    lockShortcuts = "锁屏快捷入口",
+    lockShortcutsSummary = "在锁屏编辑器中添加助理、智能镜头/二维码、钱包和家居控制。智能镜头磁贴可随时添加到控制中心",
+    gms = "移除 GMS 使用限制",
+    gmsSummary = "移除小米国行版的 GMS 限制标记",
+    groupOther = "其他设置",
+    hideIcon = "隐藏桌面图标",
+    hideIconSummary = "隐藏后可从 LSPosed 打开",
+    about = "关于 XGoogle",
+    aboutSummary = { "专为小米 HyperOS 4 设计\n基于 Coogle · zopulus & Leekinn · $it\nTelegram: t.me/xioamifetiscisi" },
+    switchOn = "已开启",
+    switchOff = "已关闭",
+    companion = {
+        when (it) {
+            CompanionState.UNKNOWN -> "附属模块：开启时自动检测"
+            CompanionState.CHECKING -> "附属模块：正在检测安装状态…"
+            CompanionState.MISSING -> "附属模块：未安装"
+            CompanionState.DISABLED -> "附属模块：已禁用"
+            CompanionState.READY -> "附属模块：已安装并启用"
+            CompanionState.PENDING -> "附属模块：已安装，待重启"
+            CompanionState.INSTALLING -> "附属模块：正在安装…"
+        }
+    },
+    statusTitle = "模块状态",
+    statusMessage = "在 LSPosed 中启用 XGoogle 并勾选推荐作用域。更改设置后，重启对应作用域生效。\n\n支持的系统：小米 HyperOS（国行版）。",
+    installTitle = "安装附属模块",
+    installMessage = "Hey Google 需要 XGoogle 附属模块。安装会请求 Root 授权。\n\n首次安装后请重启手机，再在 Google 设置中完成 Voice Match。",
+    disabledTitle = "附属模块已禁用",
+    disabledMessage = "请在 SukiSU/KernelSU 中启用 XGoogle 附属模块，然后重新开启 Hey Google。",
+    installedTitle = "安装完成",
+    installedMessage = "XGoogle 附属模块已安装，Hey Google 已开启。\n\n请重启手机，再在 Google 设置中完成 Voice Match。",
+    hideIconTitle = "隐藏桌面图标？",
+    hideIconMessage = "隐藏后，仍可从 LSPosed 的 XGoogle 模块设置入口打开应用。",
+    errorTitle = "操作未完成",
+    install = "安装",
+    hide = "隐藏",
+    ok = "知道了",
+    cancel = "取消",
+    errSave = "设置未保存，请检查 LSPosed 连接。",
+    errSaveGeneric = "设置保存失败",
+    errWalletPower = "设置已保存，但电源键设置失败。请授予 XGoogle Root 权限。",
+    errCheckCompanion = "无法检查安装状态。请在 SukiSU/KernelSU 中为 XGoogle 授予 Root 权限，然后重新开启 Hey Google。",
+    errCompanionSaved = "附属模块已安装，但设置保存失败，请重新开启 Hey Google。",
+    errCompanionInstall = "附属模块安装失败",
+    errOpenAssistant = "无法打开系统语音助理选择页面。",
+    errIcon = "无法修改桌面图标状态。",
+    errRepository = "请使用浏览器打开 github.com/zopulus/coogle。",
+    errTelegram = "请在 Telegram 或浏览器中打开 t.me/xioamifetiscisi。",
+)
+
+fun textsFor(language: AppLanguage) = when (language) {
+    AppLanguage.TR -> TR
+    AppLanguage.EN -> EN
+    AppLanguage.RU -> RU
+    AppLanguage.ES -> ES
+    AppLanguage.ZH -> ZH
+}
