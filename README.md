@@ -19,6 +19,17 @@
 - 🧪 Güç tuşuna çift bas → Google Cüzdan
 - 🌐 Arayüz dilleri: Türkçe, English, Русский, Español, 简体中文
 
+Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir.
+
+## Nitelikler
+
+- **Boyut:** Uygulama ~3,2 MB, ek modül ~0,45 MB
+- **RAM:** Ek yük yok. Google asistan işlemi ~90 MB kullanır, bu her Android telefonda zaten böyledir.
+- **Pil:** "Hey Google" kapalıyken etkisi neredeyse sıfır. Açıkken tam şarjda tahminen %5–10 (yazılım algılama mikrofonu dinler).
+- **Otomatik güncelleme:** Ek modül, root yöneticinizde yeni sürüm çıkınca güncelleme bildirir.
+- **Güvenli kaldırma:** Ek modül kaldırılınca değiştirdiği tuş ayarları eski haline döner.
+- **Temizlikten etkilenmez:** HyperOS "tek tuşla temizle" Google asistanını kapatmaz.
+
 ## Gereksinimler
 
 - Xiaomi HyperOS 4 Çin ROM (Android 17). Xiaomi 15 Ultra'da test edildi.
@@ -80,6 +91,17 @@ Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorO
 - 🧪 Control center Lens/QR tile
 - 🧪 Double-press power → Google Wallet
 - 🌐 UI languages: Türkçe, English, Русский, Español, 简体中文
+
+Every feature can be toggled on its own.
+
+### Specs
+
+- **Size:** app ~3.2 MB, companion module ~0.45 MB
+- **RAM:** no extra cost. The Google assistant process uses ~90 MB, as on any Android phone.
+- **Battery:** ~0 with Hey Google off; roughly 5–10% per full charge with it on (software detection listens to the microphone).
+- **Auto-update:** the companion module shows updates in your root manager.
+- **Safe uninstall:** removing the companion module restores your key settings.
+- **Survives cleanup:** HyperOS one-key clean no longer kills the Google assistant.
 
 ### Requirements
 
