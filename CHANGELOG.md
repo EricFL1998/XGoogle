@@ -1,5 +1,18 @@
 # Değişiklikler / Changelog
 
+## XGoogle 1.2.1
+
+- HyperOS "tek tuşla temizle" artık Google'ın asistanını ve Hey Google algılayıcısını kapatmıyor; güç tuşu ve Hey Google temizlikten sonra da çalışır.
+  HyperOS one-key clean no longer kills the Google assistant and the Hey Google detector; the power key and Hey Google keep working after cleaning.
+- Uygulama açılırken ayarlar artık bir anlığına kapalı görünmüyor.
+  Settings no longer flash as off while the app opens.
+- Ek modül HyperOS'ta DSP ses modeli kaydetmiyor (Hey Google'ı durdurabiliyordu); yazılım algılaması kullanılır.
+  The companion module no longer enrolls a DSP keyphrase model on HyperOS (it could stop Hey Google); software detection is used.
+- Ek modül durum yazısı HyperOS'ta yanlış uyarı göstermiyor.
+  The companion status no longer shows a false warning on HyperOS.
+- README: Google'ı varsayılan asistan yapma ve açılacak seçenekler eklendi.
+  README: setting Google as default assistant and which options to enable.
+
 ## XGoogle 1.2
 
 Coogle 1.2'den (zopulus) çatallandı ve Xiaomi HyperOS 4 Çin ROM'una uyarlandı.

@@ -36,6 +36,7 @@ object MigrationEntry {
         }
     }
     @JvmStatic fun hookSystem(loader: ClassLoader) {
+        AssistantKeepAliveHooks.install(loader)
         if (FeatureConfig.enabled(FeaturePolicy.WALLET)) WalletPowerHooks.hook(loader)
         GmsRegionRestrictionHooker.hook(loader)
         AssistantHooker.hook("system", loader)

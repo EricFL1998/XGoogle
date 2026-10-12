@@ -26,7 +26,12 @@ if [ -d "$MODDIR/system/product/priv-app/AndroidAuto" ]; then
 fi
 sleep 30
 # Binder shell commands require pipe FDs rather than module-directory FDs.
-/system/bin/sh "$MODDIR/setup.sh" 2>&1 | cat > /dev/null
+# setup.sh enrolls a DSP keyphrase model. On HyperOS the Qualcomm DSP path crashes the
+# Google assistant and an enrolled model the Google app cannot use stops Hey Google
+# entirely, so HyperOS stays on Google's software detection.
+if [ -z "$(getprop ro.mi.os.version.name)" ]; then
+    /system/bin/sh "$MODDIR/setup.sh" 2>&1 | cat > /dev/null
+fi
 /system/bin/sh "$MODDIR/status.sh" > /dev/null 2>&1
 
 # HyperOS can kill the Google app during boot; the voice interaction service then stays

@@ -42,7 +42,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         // First run follows the system language; afterwards the user's choice wins.
         val saved = uiPreferences.getString("language", null)
-        state = state.copy(language = saved?.let(AppLanguage::of) ?: AppLanguage.forSystem(Locale.getDefault().language))
+        state = state.copy(language = saved?.let(AppLanguage::of) ?: AppLanguage.forSystem(Locale.getDefault().language),
+            features = cachedFeatures())
+        // If LSPosed never answers (module disabled), stop waiting and show the real state.
+        window.decorView.postDelayed({ if (!isDestroyed && state.loading) state = state.copy(loading = false) }, 2000)
         setContent {
             CoogleTheme {
                 CoogleScreen(state, ::changeSetting, ::openAssistant, ::changeIconVisibility,
@@ -68,6 +71,8 @@ class MainActivity : ComponentActivity() {
 
     fun onFrameworkChanged(service: XposedService?) {
         if (isDestroyed) return
+        // The first callback arrives before LSPosed binds; keep showing the cached values.
+        if (service == null && state.loading) return
         preferences = runCatching { service?.getRemotePreferences(FeatureConfig.GROUP) }.getOrNull()
         syncPreferences()
         if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
@@ -86,11 +91,24 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun syncPreferences() {
-        val values = CoogleState.featureKeys.associateWith { key ->
-            runCatching { preferences?.getBoolean(key, FeaturePolicy.defaultValue(key)) }
+        val remote = preferences
+        val values = if (remote == null) state.features else CoogleState.featureKeys.associateWith { key ->
+            runCatching { remote.getBoolean(key, FeaturePolicy.defaultValue(key)) }
                 .getOrNull() ?: FeaturePolicy.defaultValue(key)
         }
-        state = state.copy(connected = preferences != null, features = values)
+        state = state.copy(connected = remote != null, features = values, loading = false)
+        if (remote != null) cacheFeatures(values)
+    }
+
+    /** Last values read from LSPosed, so the screen opens without switches flipping. */
+    private fun cachedFeatures(): Map<String, Boolean> = CoogleState.featureKeys.associateWith { key ->
+        uiPreferences.getBoolean("feature_$key", FeaturePolicy.defaultValue(key))
+    }
+
+    private fun cacheFeatures(values: Map<String, Boolean>) {
+        val editor = uiPreferences.edit()
+        values.forEach { (key, enabled) -> editor.putBoolean("feature_$key", enabled) }
+        editor.apply()
     }
 
     private fun changeSetting(key: String, enabled: Boolean) {
@@ -119,6 +137,7 @@ class MainActivity : ComponentActivity() {
                 savingKeys.remove(key)
                 result.onSuccess {
                     state = state.copy(features = state.features + (key to enabled))
+                    cacheFeatures(state.features)
                 }.onFailure { error(it.message ?: t.errSaveGeneric) }
             }
         }

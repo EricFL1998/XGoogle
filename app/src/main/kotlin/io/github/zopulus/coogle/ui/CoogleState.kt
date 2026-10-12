@@ -32,6 +32,8 @@ data class CoogleState(
     val dialog: DialogKind = DialogKind.NONE,
     val dialogText: String = "",
     val language: AppLanguage = AppLanguage.TR,
+    /** True until the LSPosed service answers, so cached values are shown instead of defaults. */
+    val loading: Boolean = true,
 ) {
     companion object {
         val featureKeys = listOf(FeaturePolicy.HEY_GOOGLE, FeaturePolicy.GMS, FeaturePolicy.GOOGLE_ENTRY,

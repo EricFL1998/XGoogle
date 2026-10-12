@@ -32,8 +32,9 @@
 2. **LSPosed → Modüller → XGoogle**'ı etkinleştirin, önerilen kapsamların hepsini seçin:
    Sistem Çerçevesi, Sistem Arayüzü, Ayarlar, Google, XiaoAi (`com.miui.voiceassist`), Her Zaman Açık Ekran (`com.miui.aod`).
 3. Root yöneticinizde XGoogle'a **root izni** verin.
-4. XGoogle'ı açıp **Hey Google**'ı açın; ek modül otomatik kurulur. (Ya da Releases'teki ek modül ZIP'ini root yöneticinizden kurun.)
-5. Telefonu yeniden başlatın. Ardından Google uygulamasından **Voice Match**'i tamamlayın.
+4. **Ayarlar → Uygulamalar → Varsayılan uygulamalar → Dijital asistan** → **Google** seçin.
+5. XGoogle'ı açın ve şunları açın: **Hey Google** (ek modül otomatik kurulur; ya da Releases'teki ZIP'i root yöneticinizden kurun), **GMS kısıtlamasını kaldır**. Circle to Search, Lens ve canlı çeviri varsayılan olarak açıktır.
+6. Telefonu yeniden başlatın. Ardından Google uygulamasından **Voice Match**'i tamamlayın.
 
 > ⚠️ **XiaoAi'yi kaldırmayın.** HyperOS 4'te alt çubuk hareketi XiaoAi üzerinden Circle to Search'e yönlendirilir.
 
@@ -93,8 +94,9 @@ Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorO
 2. Enable **XGoogle** in **LSPosed → Modules** and select all recommended scopes:
    System Framework, System UI, Settings, Google, XiaoAi (`com.miui.voiceassist`), Always-on display (`com.miui.aod`).
 3. Grant XGoogle **root access** in your root manager.
-4. Open XGoogle and turn on **Hey Google**; the companion module installs automatically. (Or install the companion ZIP from Releases in your root manager.)
-5. Reboot, then complete **Voice Match** in the Google app.
+4. **Settings → Apps → Default apps → Digital assistant** → choose **Google**.
+5. Open XGoogle and turn on **Hey Google** (the companion module installs automatically; or install the ZIP from Releases in your root manager) and **Remove GMS restriction**. Circle to Search, Lens and live translate are on by default.
+6. Reboot, then complete **Voice Match** in the Google app.
 
 > ⚠️ **Do not remove XiaoAi.** On HyperOS 4 the navigation handle gesture reaches Circle to Search through XiaoAi.
 

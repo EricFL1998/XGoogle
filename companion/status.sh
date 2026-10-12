@@ -3,6 +3,8 @@ MODDIR=${0%/*}
 google='⚠️Google sistem uygulaması değil'
 enrollment='⚠️Kayıt bileşenleri hazır değil'
 dsp='⚠️DSP çalışmıyor'
+# HyperOS uses Google's software detection by design; no session yet is not a fault.
+[ -n "$(getprop ro.mi.os.version.name)" ] && dsp='⏳Hey Google oturumu bekleniyor'
 package=$(dumpsys -t 10 package com.google.android.googlequicksearchbox 2>/dev/null | grep -m 1 'flags=\[.*SYSTEM')
 if [ -n "$package" ]; then
     google='✅Google sistem uygulaması'

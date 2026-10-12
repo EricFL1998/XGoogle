@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.HighlightOff
+import androidx.compose.material.icons.rounded.HourglassTop
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Extension
 import androidx.compose.material.icons.rounded.Info
@@ -110,7 +111,7 @@ fun CoogleScreen(
         Column(Modifier.padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
             Spacer(Modifier.height(12.dp))
             // Same Surface, ListItem and StatusTag geometry as KernelSU HomeMaterial.
-            val statusColor = if (state.connected) MaterialTheme.colorScheme.secondaryContainer
+            val statusColor = if (state.connected || state.loading) MaterialTheme.colorScheme.secondaryContainer
                 else MaterialTheme.colorScheme.errorContainer
             val statusContentColor = MaterialTheme.colorScheme.contentColorFor(statusColor)
             Surface(modifier = Modifier.fillMaxWidth(), color = statusColor,
@@ -118,8 +119,11 @@ fun CoogleScreen(
                 onClick = onStatus) {
                 ListItem(
                     leadingContent = {
-                        Icon(if (state.connected) Icons.Rounded.CheckCircle else Icons.Rounded.HighlightOff,
-                            contentDescription = null)
+                        Icon(when {
+                            state.connected -> Icons.Rounded.CheckCircle
+                            state.loading -> Icons.Rounded.HourglassTop
+                            else -> Icons.Rounded.HighlightOff
+                        }, contentDescription = null)
                     },
                     trailingContent = {
                         Box(Modifier.padding(end = 4.dp).background(
@@ -140,12 +144,16 @@ fun CoogleScreen(
                         supportingContentColor = statusContentColor.copy(alpha = 0.7f)),
                     elevation = ListItemDefaults.elevation(),
                     content = {
-                        Text(if (state.connected) t.active else t.inactive,
-                            style = MaterialTheme.typography.titleMediumEmphasized)
+                        Text(when {
+                            state.connected -> t.active
+                            state.loading -> t.connecting
+                            else -> t.inactive
+                        }, style = MaterialTheme.typography.titleMediumEmphasized)
                     }
                 )
             }
-            val available = state.connected
+            // While connecting, show the cached switches as usable; taps wait for the connection.
+            val available = state.connected || state.loading
             val assistant = when (val info = state.assistant) {
                 AssistantInfo.Loading -> t.assistantReading
                 AssistantInfo.None -> t.assistantNone
