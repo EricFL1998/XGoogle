@@ -47,8 +47,15 @@ Ek modül, root yöneticinizde **otomatik güncelleme** destekler.
 ## Lisans ve teşekkür
 
 GPL-3.0. Ayrıntılar için [LICENSE](LICENSE) ve [NOTICE.txt](NOTICE.txt).
-Orijinal Coogle: **zopulus**. Xiaomi HyperOS uyarlaması: **Leekinn**.
+Xiaomi HyperOS uyarlaması: **Leekinn**.
 Telegram: [t.me/xioamifetiscisi](https://t.me/xioamifetiscisi)
+
+Teşekkürler — bu proje onların emeği üzerine kurulu:
+- [@zopulus](https://github.com/zopulus) — ColorOS için [Coogle](https://github.com/zopulus/coogle), XGoogle'ın temeli
+- [@MiToverG422](https://github.com/MiToverG422) — [ONextBox](https://github.com/MiToverG422/ONextBox), asistan hook'larının kaynağı
+- [@luckyzyx](https://github.com/luckyzyx) — [LuckyTool](https://github.com/luckyzyx/LuckyTool), kod referansı
+- [@tiann](https://github.com/tiann) — [KernelSU](https://github.com/tiann/KernelSU), arayüz tasarımı
+- [@LuckyPray](https://github.com/LuckyPray) — [DexKit](https://github.com/LuckyPray/DexKit)
 
 Bu proje Google veya Xiaomi ile bağlantılı değildir; markalar sahiplerine aittir.
 
@@ -101,6 +108,13 @@ The companion module supports **automatic updates** in your root manager.
 ### License and credits
 
 GPL-3.0. See [LICENSE](LICENSE) and [NOTICE.txt](NOTICE.txt).
-Original Coogle: **zopulus**. Xiaomi HyperOS port: **Leekinn**.
+Xiaomi HyperOS port: **Leekinn**.
+
+Thanks — this project is built on their work:
+- [@zopulus](https://github.com/zopulus) — [Coogle](https://github.com/zopulus/coogle) for ColorOS, the base of XGoogle
+- [@MiToverG422](https://github.com/MiToverG422) — [ONextBox](https://github.com/MiToverG422/ONextBox), origin of the assistant hooks
+- [@luckyzyx](https://github.com/luckyzyx) — [LuckyTool](https://github.com/luckyzyx/LuckyTool), code reference
+- [@tiann](https://github.com/tiann) — [KernelSU](https://github.com/tiann/KernelSU), UI design
+- [@LuckyPray](https://github.com/LuckyPray) — [DexKit](https://github.com/LuckyPray/DexKit)
 
 This project is not affiliated with Google or Xiaomi; trademarks belong to their owners.
