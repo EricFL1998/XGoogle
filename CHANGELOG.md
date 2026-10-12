@@ -1,5 +1,12 @@
 # Değişiklikler / Changelog
 
+## XGoogle 1.2.2
+
+- Android Auto: araç projeksiyonu rolü artık veriliyor; Android Auto araca bağlanmak için gereken izinleri alıyor.
+  Android Auto: the car projection role is now granted, so Android Auto gets the permissions it needs to connect to the car.
+- HyperOS'ta LSPosed kaydında ColorOS'a ait Ayarlar hataları artık çıkmıyor.
+  No more ColorOS-only Settings errors in the LSPosed log on HyperOS.
+
 ## XGoogle 1.2.1
 
 - HyperOS "tek tuşla temizle" artık Google'ın asistanını ve Hey Google algılayıcısını kapatmıyor; güç tuşu ve Hey Google temizlikten sonra da çalışır.
