@@ -8,7 +8,7 @@ android {
     buildToolsVersion '36.0.0'
     defaultConfig {
         // Distinct from upstream Coogle so LSPosed's repository never offers its ColorOS-only builds as updates.
-        applicationId 'io.github.leekinn.xgoogle'
+        applicationId 'io.github.leekin2.xgoogle'
         minSdk 35
         targetSdk 36
         versionCode 120

@@ -14,7 +14,7 @@ import io.github.zopulus.coogle.migration.AssistantRuntime.installedHooks
  */
 internal object KeyguardShortcutHooks {
     const val AOD_PACKAGE = "com.miui.aod"
-    private const val COOGLE_PACKAGE = "io.github.leekinn.xgoogle"
+    private const val COOGLE_PACKAGE = "io.github.leekin2.xgoogle"
     private const val DATA_UTILS = "com.miui.keyguard.shortcuts.utils.DataUtils"
     private val TAGS = listOf("coogle_assistant", "coogle_lens", "coogle_wallet", "coogle_home")
 

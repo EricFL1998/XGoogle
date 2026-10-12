@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        <provider android:name="io.github.libxposed.service.XposedProvider" android:authorities="io.github.leekinn.xgoogle.XposedService" android:exported="true" />
+        <provider android:name="io.github.libxposed.service.XposedProvider" android:authorities="io.github.leekin2.xgoogle.XposedService" android:exported="true" />
         <!-- HyperOS: Google entries for the native lock screen shortcut picker. -->
         <meta-data android:name="miui_keyguard_shortcuts" android:resource="@xml/miui_keyguard_shortcuts" />
         <!-- Control center tile; the HyperOS CN ROM has no Lens/QR entry of its own. -->

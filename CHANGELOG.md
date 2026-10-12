@@ -21,5 +21,5 @@ Forked from Coogle 1.2 (zopulus) and ported to the Xiaomi HyperOS 4 China ROM.
   Companion module: Xiaomi privileged-permission allowlist, Android 16+ check, install failure checks, Magisk/APatch support, key settings restored on uninstall, automatic updates.
 - Türkçe, English, Русский, Español, 简体中文 arayüz.
   Türkçe, English, Русский, Español, 简体中文 UI.
-- Yeni paket kimliği: `io.github.leekinn.xgoogle`.
-  New package id: `io.github.leekinn.xgoogle`.
+- Yeni paket kimliği: `io.github.leekin2.xgoogle`.
+  New package id: `io.github.leekin2.xgoogle`.
