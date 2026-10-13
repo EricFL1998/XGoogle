@@ -4,6 +4,15 @@
 
 package io.github.zopulus.coogle.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
@@ -167,54 +176,54 @@ fun CoogleScreen(
                 AssistantInfo.Hidden -> t.assistantTap
                 is AssistantInfo.App -> t.assistantCurrent(info.label)
             }
-            Group(t.groupAssistant) {
-                SettingRow(0, 3, Icons.Rounded.RecordVoiceOver, t.defaultAssistant, assistant, onClick = onAssistant)
-                ToggleRow(t, 1, 3, Icons.Rounded.Mic, t.heyGoogle, t.companion(state.companion),
+            Group(t.groupAssistant, Accent.ASSISTANT) {
+                SettingRow(0, 2, Icons.Rounded.RecordVoiceOver, t.defaultAssistant, assistant, onClick = onAssistant)
+                ToggleRow(t, 1, 2, Icons.Rounded.Mic, t.heyGoogle, t.companion(state.companion),
                     checked = state.features[FeaturePolicy.HEY_GOOGLE] == true, enabled = available && !state.busy,
                     onChange = { onSetting(FeaturePolicy.HEY_GOOGLE, it) })
-                ToggleRow(t, 2, 3, Icons.Rounded.CenterFocusStrong, t.lens, t.lensSummary,
-                    state.features[FeaturePolicy.LENS] == true, available, { onSetting(FeaturePolicy.LENS, it) })
             }
-            Group(t.groupSystem) {
+            Group(t.groupSearch, Accent.SEARCH) {
                 // Circle to Search's own options fold under it, so the list stays short.
                 var circleOpen by rememberSaveable { mutableStateOf(false) }
                 val extra = if (circleOpen) 2 else 0
-                val count = 6 + extra
+                val count = 3 + extra
                 val circleOn = state.features[FeaturePolicy.NAVIGATION] == true
                 SettingRow(0, count, Icons.Rounded.TouchApp, t.circle, t.circleSummary, { circleOpen = !circleOpen },
                     modifier = Modifier.semantics { stateDescription = if (circleOn) t.switchOn else t.switchOff }) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Rounded.ExpandMore, t.circleOptions,
-                            Modifier.padding(end = 8.dp).rotate(if (circleOpen) 180f else 0f))
-                        Switch(checked = circleOn, enabled = available,
-                            onCheckedChange = { onSetting(FeaturePolicy.NAVIGATION, it) },
-                            thumbContent = { Icon(if (circleOn) Icons.Rounded.Check else Icons.Rounded.Close, null,
-                                Modifier.size(SwitchDefaults.IconSize)) },
-                            colors = SwitchDefaults.colors(
-                                checkedIconColor = MaterialTheme.colorScheme.primary,
-                                uncheckedIconColor = MaterialTheme.colorScheme.surfaceContainerHighest))
+                        val turn by animateFloatAsState(if (circleOpen) 180f else 0f, label = "circleOptions")
+                        Icon(Icons.Rounded.ExpandMore, t.circleOptions, Modifier.padding(end = 8.dp).rotate(turn))
+                        SettingSwitch(circleOn, available) { onSetting(FeaturePolicy.NAVIGATION, it) }
                     }
                 }
-                if (circleOpen) {
-                    ToggleRow(t, 1, count, Icons.Rounded.Translate, t.liveTranslate, t.liveTranslateSummary,
-                        state.features[FeaturePolicy.LIVE_TRANSLATE] == true, available,
-                        { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) }, Modifier.padding(start = 24.dp))
-                    ToggleRow(t, 2, count, Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
-                        state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available,
-                        { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) }, Modifier.padding(start = 24.dp))
+                AnimatedVisibility(circleOpen, enter = expandVertically() + fadeIn(), exit = shrinkVertically() + fadeOut()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        ToggleRow(t, 1, count, Icons.Rounded.Translate, t.liveTranslate, t.liveTranslateSummary,
+                            state.features[FeaturePolicy.LIVE_TRANSLATE] == true, available,
+                            { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) }, Modifier.padding(start = 24.dp))
+                        ToggleRow(t, 2, count, Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
+                            state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available,
+                            { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) }, Modifier.padding(start = 24.dp))
+                    }
                 }
-                ToggleRow(t, 1 + extra, count, Icons.Rounded.PhotoCamera, t.cameraLens, t.cameraLensSummary,
+                ToggleRow(t, 1 + extra, count, Icons.Rounded.CenterFocusStrong, t.lens, t.lensSummary,
+                    state.features[FeaturePolicy.LENS] == true, available, { onSetting(FeaturePolicy.LENS, it) })
+                ToggleRow(t, 2 + extra, count, Icons.Rounded.PhotoCamera, t.cameraLens, t.cameraLensSummary,
                     state.features[FeaturePolicy.CAMERA_LENS] == true, available, { onSetting(FeaturePolicy.CAMERA_LENS, it) })
-                ToggleRow(t, 2 + extra, count, Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
-                    state.features[FeaturePolicy.WALLET] == true, available, { onSetting(FeaturePolicy.WALLET, it) })
-                ToggleRow(t, 3 + extra, count, Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
+            }
+            Group(t.groupLock, Accent.LOCK) {
+                ToggleRow(t, 0, 2, Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
                     state.features[FeaturePolicy.QUICK_ENTRIES] == true, available, { onSetting(FeaturePolicy.QUICK_ENTRIES, it) })
-                ToggleRow(t, 4 + extra, count, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
+                ToggleRow(t, 1, 2, Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
+                    state.features[FeaturePolicy.WALLET] == true, available, { onSetting(FeaturePolicy.WALLET, it) })
+            }
+            Group(t.groupSystem, Accent.SYSTEM) {
+                ToggleRow(t, 0, 2, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
                     state.features[FeaturePolicy.GMS] == true, available, { onSetting(FeaturePolicy.GMS, it) })
-                ToggleRow(t, 5 + extra, count, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
+                ToggleRow(t, 1, 2, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
                     state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available, { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) })
             }
-            Group(t.groupOther) {
+            Group(t.groupOther, Accent.OTHER) {
                 ToggleRow(t, 0, 2, Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
                     state.iconHidden, true, onIconVisibility)
                 SettingRow(1, 2, Icons.Rounded.Info, t.about, t.aboutSummary(BuildConfig.VERSION_NAME),
@@ -243,12 +252,29 @@ private fun LanguageMenu(current: AppLanguage, label: String, onLanguage: (AppLa
     }
 }
 
+/** Each group tints its icons, as Android's own settings do. */
+private enum class Accent { ASSISTANT, SEARCH, LOCK, SYSTEM, OTHER }
+
+private val LocalAccent = staticCompositionLocalOf { Accent.OTHER }
+
 @Composable
-private fun Group(title: String, content: @Composable () -> Unit) {
+private fun Accent.colors(): Pair<Color, Color> = with(MaterialTheme.colorScheme) {
+    when (this@colors) {
+        Accent.ASSISTANT -> primaryContainer to onPrimaryContainer
+        Accent.SEARCH -> tertiaryContainer to onTertiaryContainer
+        Accent.LOCK -> secondaryContainer to onSecondaryContainer
+        Accent.SYSTEM, Accent.OTHER -> onSurface.copy(alpha = 0.08f) to onSurfaceVariant
+    }
+}
+
+@Composable
+private fun Group(title: String, accent: Accent, content: @Composable () -> Unit) {
     Column(Modifier.padding(top = 24.dp)) {
         Text(title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(start = 16.dp, bottom = 8.dp))
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp), content = { content() })
+        CompositionLocalProvider(LocalAccent provides accent) {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp), content = { content() })
+        }
     }
 }
 
@@ -267,7 +293,12 @@ private fun SettingRow(index: Int, count: Int, icon: ImageVector, title: String,
         enabled = enabled,
         onClick = onClick,
         verticalAlignment = Alignment.CenterVertically,
-        leadingContent = { Icon(icon, null, Modifier.size(24.dp)) },
+        leadingContent = {
+            val (background, tint) = LocalAccent.current.colors()
+            Box(Modifier.size(40.dp).background(background, CircleShape), contentAlignment = Alignment.Center) {
+                Icon(icon, null, Modifier.size(22.dp), tint = tint)
+            }
+        },
         trailingContent = trailing ?: { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) },
         supportingContent = { Text(summary) },
         content = { Text(title) }
@@ -279,18 +310,24 @@ private fun ToggleRow(t: Texts, index: Int, count: Int, icon: ImageVector, title
     checked: Boolean, enabled: Boolean, onChange: (Boolean) -> Unit, modifier: Modifier = Modifier) {
     SettingRow(index, count, icon, title, summary, { onChange(!checked) }, enabled,
         modifier.semantics { role = Role.Switch; stateDescription = if (checked) t.switchOn else t.switchOff }) {
-        Switch(
-            checked = checked,
-            onCheckedChange = null,
-            enabled = enabled,
-            thumbContent = if (checked || enabled) {
-                { Icon(if (checked) Icons.Rounded.Check else Icons.Rounded.Close, null, Modifier.size(SwitchDefaults.IconSize)) }
-            } else null,
-            colors = SwitchDefaults.colors(
-                checkedIconColor = MaterialTheme.colorScheme.primary,
-                uncheckedIconColor = MaterialTheme.colorScheme.surfaceContainerHighest)
-        )
+        SettingSwitch(checked, enabled, onChange = null)
     }
+}
+
+/** With onChange null the row handles the tap. */
+@Composable
+private fun SettingSwitch(checked: Boolean, enabled: Boolean, onChange: ((Boolean) -> Unit)?) {
+    Switch(
+        checked = checked,
+        onCheckedChange = onChange,
+        enabled = enabled,
+        thumbContent = if (checked || enabled) {
+            { Icon(if (checked) Icons.Rounded.Check else Icons.Rounded.Close, null, Modifier.size(SwitchDefaults.IconSize)) }
+        } else null,
+        colors = SwitchDefaults.colors(
+            checkedIconColor = MaterialTheme.colorScheme.primary,
+            uncheckedIconColor = MaterialTheme.colorScheme.surfaceContainerHighest)
+    )
 }
 
 @Composable
