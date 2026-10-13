@@ -196,14 +196,14 @@ fun CoogleScreen(
                         SettingSwitch(circleOn, available) { onSetting(FeaturePolicy.NAVIGATION, it) }
                     }
                 }
-                AnimatedVisibility(circleOpen, enter = expandVertically() + fadeIn(), exit = shrinkVertically() + fadeOut()) {
+                AnimatedVisibility(circleOpen, enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(), exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()) {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         ToggleRow(t, 1, count, Icons.Rounded.Translate, t.liveTranslate, t.liveTranslateSummary,
                             state.features[FeaturePolicy.LIVE_TRANSLATE] == true, available,
-                            { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) }, Modifier.padding(start = 24.dp))
+                            { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) })
                         ToggleRow(t, 2, count, Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
                             state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available,
-                            { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) }, Modifier.padding(start = 24.dp))
+                            { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) })
                     }
                 }
                 ToggleRow(t, 1 + extra, count, Icons.Rounded.CenterFocusStrong, t.lens, t.lensSummary,
