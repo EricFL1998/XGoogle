@@ -161,7 +161,29 @@ internal object WalletPowerHooks {
      * With the wallet picked for the power key, Android's own gesture service hands the double
      * press to SystemUI, which looks for the same missing quick access wallet. Open Google Wallet.
      */
+    /** XGoogle's lock screen Wallet shortcut asks SystemUI to open Wallet. */
+    const val SHOW_WALLET = "io.github.leekin2.xgoogle.SHOW_WALLET"
+
+    /**
+     * HyperOS asks before one app opens another ("chain start"), and over the lock screen that
+     * question stays hidden, so the shortcut seemed to do nothing. SystemUI opens Wallet as for a
+     * double press of the power key.
+     */
+    private fun listenForShortcut() {
+        android.os.Handler(android.os.Looper.getMainLooper()).post {
+            runCatching {
+                val app = Class.forName("android.app.ActivityThread").getMethod("currentApplication").invoke(null) as Context
+                app.registerReceiver(object : android.content.BroadcastReceiver() {
+                    override fun onReceive(c: Context, intent: android.content.Intent) {
+                        resultCode = if (FeatureConfig.enabled(FeaturePolicy.WALLET) && openGoogleWallet(c, currentUser())) 1 else 0
+                    }
+                }, android.content.IntentFilter(SHOW_WALLET), AssistantShortcutReceiver.PERMISSION, null, Context.RECEIVER_EXPORTED)
+            }.onFailure { HookLog.w("WalletPowerHooks", "Wallet shortcut receiver unavailable", it) }
+        }
+    }
+
     fun hookSystemUi(loader: ClassLoader) {
+        listenForShortcut()
         runCatching {
             val target = ModernReflect.findClass("com.android.systemui.statusbar.phone.CentralSurfacesCommandQueueCallbacks", loader)
             ModernReflect.findAndHookMethod(target, "onWalletLaunchGestureDetected",
