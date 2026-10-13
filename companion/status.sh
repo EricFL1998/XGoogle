@@ -25,7 +25,8 @@ state=$(dumpsys -t 10 voiceinteraction 2>/dev/null | "$BB" awk -f "$MODDIR/hotwo
 case "$state" in
     dsp) dsp='✅DSP oturumu hazır' ;;
     software) dsp='ℹ️Yazılım algılama oturumu hazır' ;;
-    unknown) dsp='⏳DSP durumu bilinmiyor' ;;
+    # HyperOS uses software detection, so an unknown DSP state is not news there.
+    unknown) if [ -n "$(getprop ro.mi.os.version.name)" ]; then dsp='⏳Hey Google oturumu bekleniyor'; else dsp='⏳DSP durumu bilinmiyor'; fi ;;
 esac
 # HyperOS keeps its own audio config elsewhere (and already enables HOTWORD_VOICE_UI),
 # so the ColorOS audio patch is not applicable there; only report it on ColorOS.

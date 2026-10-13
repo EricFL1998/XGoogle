@@ -1,7 +1,7 @@
 id=coogle_companion
 name=XGoogle ek modülü
-version=1.2.4
-versionCode=124
+version=1.2.5
+versionCode=125
 author=zopulus & Leekinn
 description=[⏳Yeniden başlatma sonrası kontrol edilecek]
 updateJson=https://raw.githubusercontent.com/Leekin2/XGoogle/main/update.json

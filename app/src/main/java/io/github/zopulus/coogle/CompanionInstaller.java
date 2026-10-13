@@ -26,7 +26,9 @@ public final class CompanionInstaller {
         Path zip=context.getCacheDir().toPath().resolve("coogle-companion.zip");
         try (InputStream source=context.getAssets().open("coogle-companion.zip")) { Files.copy(source,zip,java.nio.file.StandardCopyOption.REPLACE_EXISTING); }
         String quoted="'"+zip.toString().replace("'","'\\''")+"'";
+        // Some KernelSU-Next / SukiSU builds keep ksud at /data/adb/ksud.
         run("if [ -x /data/adb/ksu/bin/ksud ]; then /data/adb/ksu/bin/ksud module install "+quoted+"; "
+                +"elif [ -x /data/adb/ksud ]; then /data/adb/ksud module install "+quoted+"; "
                 +"elif [ -x /data/adb/apd ]; then /data/adb/apd module install "+quoted+"; "
                 +"else magisk --install-module "+quoted+"; fi",120);
     }
