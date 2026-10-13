@@ -17,7 +17,7 @@
 - 🧪 Kilit ekranı kısayolları: Gemini, Lens/QR, Cüzdan, Ev kontrolleri. Gemini, Lens ve Ev kilit açılmadan açılır
 - 🧪 Kamerada Google Lens butonu (isteğe bağlı), kilit ekranında da çalışır
 - 🧪 Kontrol merkezi Lens/QR kutucuğu
-- 🧪 Güç tuşuna çift bas → Google Cüzdan
+- 🧪 Güç tuşuna çift bas → Google Cüzdan, kilit ekranında da açılır
 - 🌐 Arayüz dilleri: Türkçe, English, Русский, Español, 简体中文
 
 Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir. Ayarlar'ın altındaki Google hizmetleri girişi de isteğe bağlı olarak gösterilip gizlenebilir.
@@ -91,7 +91,7 @@ Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorO
 - 🧪 Lock screen shortcuts: Gemini, Lens/QR, Wallet, Home controls. Gemini, Lens and Home open without unlocking
 - 🧪 Google Lens button in the camera (optional), also over the lock screen
 - 🧪 Control center Lens/QR tile
-- 🧪 Double-press power → Google Wallet
+- 🧪 Double-press power → Google Wallet, also on the lock screen
 - 🌐 UI languages: Türkçe, English, Русский, Español, 简体中文
 
 Every feature can be toggled on its own, including the Google services entry at the bottom of Settings.

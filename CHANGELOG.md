@@ -14,6 +14,10 @@
   Even after reinstalling Wallet, the power key's tap-to-pay screen opens over the lock screen (no HyperOS "show on lock screen" permission needed).
 - Yeniden kurulan uygulamalar LSPosed kapsamından düşünce XGoogle açılışta onları geri eklemek için bir kez onay ister.
   When reinstalled apps drop out of the LSPosed scope, XGoogle asks once at launch to add them back.
+- Kilit ekranındaki ödeme ekranında "Cüzdan'ı açın" artık kilidi ister ve kilit açılınca Cüzdan'ı açar (önceden tepki vermiyordu).
+  On the lock screen tap-to-pay screen, "Open Wallet" now asks for the lock and opens Wallet once unlocked (it did nothing before).
+- HyperOS'ta LSPosed kaydında ColorOS'a ait uyarılar artık çıkmıyor.
+  No more ColorOS-only warnings in the LSPosed log on HyperOS.
 
 ## XGoogle 1.2.3
 
