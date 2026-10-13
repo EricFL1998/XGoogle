@@ -265,7 +265,7 @@ class MainActivity : ComponentActivity() {
             .onFailure { error(texts.errRepository) }
     }
     private fun openTelegram() {
-        runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/xioamifetiscisi"))) }
+        runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/emcleek"))) }
             .onFailure { error(texts.errTelegram) }
     }
 

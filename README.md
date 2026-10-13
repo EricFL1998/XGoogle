@@ -3,7 +3,7 @@
 **An LSPosed module bringing Google features to the Xiaomi HyperOS 4 China ROM.**
 Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorOS to Xiaomi HyperOS 4.
 
-📥 **Download:** [Latest release](https://github.com/Leekin2/XGoogle/releases/latest) · 💬 **Feedback and complaints:** Telegram [@emcleek](https://t.me/emcleek) · 📢 **Channel:** [t.me/xioamifetiscisi](https://t.me/xioamifetiscisi)
+📥 **Download:** [Latest release](https://github.com/Leekin2/XGoogle/releases/latest) · 💬 **Feedback and complaints:** Telegram [@emcleek](https://t.me/emcleek)
 
 [Türkçe aşağıda](#türkçe)
 
@@ -99,7 +99,7 @@ This project is not affiliated with Google or Xiaomi; trademarks belong to their
 **Xiaomi HyperOS 4 Çin ROM'una Google özellikleri getiren LSPosed modülü.**
 [zopulus/Coogle](https://github.com/zopulus/coogle) tabanlıdır; ColorOS yerine Xiaomi HyperOS 4 için uyarlanmıştır.
 
-📥 **İndir:** [Son sürüm](https://github.com/Leekin2/XGoogle/releases/latest) · 💬 **Geri bildirim ve şikayet:** Telegram [@emcleek](https://t.me/emcleek) · 📢 **Kanal:** [t.me/xioamifetiscisi](https://t.me/xioamifetiscisi)
+📥 **İndir:** [Son sürüm](https://github.com/Leekin2/XGoogle/releases/latest) · 💬 **Geri bildirim ve şikayet:** Telegram [@emcleek](https://t.me/emcleek)
 
 ### Özellikler
 

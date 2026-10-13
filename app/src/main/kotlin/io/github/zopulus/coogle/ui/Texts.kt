@@ -127,7 +127,7 @@ private val TR = Texts(
     hideIcon = "Ana ekran simgesini gizle",
     hideIconSummary = "Gizlendikten sonra LSPosed'den açılabilir",
     about = "XGoogle hakkında",
-    aboutSummary = { "Coogle tabanlı · zopulus & Leekinn · $it\nTelegram: t.me/xioamifetiscisi" },
+    aboutSummary = { "Coogle tabanlı · zopulus & Leekinn · $it\nTelegram: @emcleek" },
     switchOn = "Açık",
     switchOff = "Kapalı",
     companion = {
@@ -165,7 +165,7 @@ private val TR = Texts(
     errOpenAssistant = "Sistemin asistan seçim sayfası açılamadı.",
     errIcon = "Ana ekran simgesinin durumu değiştirilemedi.",
     errRepository = "github.com/zopulus/coogle adresini tarayıcıda açın.",
-    errTelegram = "t.me/xioamifetiscisi adresini Telegram'da ya da tarayıcıda açın.",
+    errTelegram = "t.me/emcleek adresini Telegram'da ya da tarayıcıda açın.",
 )
 
 private val EN = Texts(
@@ -208,7 +208,7 @@ private val EN = Texts(
     hideIcon = "Hide home screen icon",
     hideIconSummary = "Once hidden, open it from LSPosed",
     about = "About XGoogle",
-    aboutSummary = { "Based on Coogle · zopulus & Leekinn · $it\nTelegram: t.me/xioamifetiscisi" },
+    aboutSummary = { "Based on Coogle · zopulus & Leekinn · $it\nTelegram: @emcleek" },
     switchOn = "On",
     switchOff = "Off",
     companion = {
@@ -246,7 +246,7 @@ private val EN = Texts(
     errOpenAssistant = "Could not open the system's assistant picker.",
     errIcon = "Could not change the home screen icon state.",
     errRepository = "Open github.com/zopulus/coogle in a browser.",
-    errTelegram = "Open t.me/xioamifetiscisi in Telegram or a browser.",
+    errTelegram = "Open t.me/emcleek in Telegram or a browser.",
 )
 
 private val RU = Texts(
@@ -289,7 +289,7 @@ private val RU = Texts(
     hideIcon = "Скрыть значок на рабочем столе",
     hideIconSummary = "После скрытия открывается из LSPosed",
     about = "О XGoogle",
-    aboutSummary = { "На основе Coogle · zopulus & Leekinn · $it\nTelegram: t.me/xioamifetiscisi" },
+    aboutSummary = { "На основе Coogle · zopulus & Leekinn · $it\nTelegram: @emcleek" },
     switchOn = "Вкл.",
     switchOff = "Выкл.",
     companion = {
@@ -327,7 +327,7 @@ private val RU = Texts(
     errOpenAssistant = "Не удалось открыть выбор помощника.",
     errIcon = "Не удалось изменить состояние значка.",
     errRepository = "Откройте github.com/zopulus/coogle в браузере.",
-    errTelegram = "Откройте t.me/xioamifetiscisi в Telegram или браузере.",
+    errTelegram = "Откройте t.me/emcleek в Telegram или браузере.",
 )
 
 private val ES = Texts(
@@ -370,7 +370,7 @@ private val ES = Texts(
     hideIcon = "Ocultar icono de inicio",
     hideIconSummary = "Una vez oculto, ábrelo desde LSPosed",
     about = "Acerca de XGoogle",
-    aboutSummary = { "Basado en Coogle · zopulus & Leekinn · $it\nTelegram: t.me/xioamifetiscisi" },
+    aboutSummary = { "Basado en Coogle · zopulus & Leekinn · $it\nTelegram: @emcleek" },
     switchOn = "Activado",
     switchOff = "Desactivado",
     companion = {
@@ -408,7 +408,7 @@ private val ES = Texts(
     errOpenAssistant = "No se pudo abrir el selector de asistente.",
     errIcon = "No se pudo cambiar el estado del icono.",
     errRepository = "Abre github.com/zopulus/coogle en un navegador.",
-    errTelegram = "Abre t.me/xioamifetiscisi en Telegram o en un navegador.",
+    errTelegram = "Abre t.me/emcleek en Telegram o en un navegador.",
 )
 
 private val ZH = Texts(
@@ -451,7 +451,7 @@ private val ZH = Texts(
     hideIcon = "隐藏桌面图标",
     hideIconSummary = "隐藏后可从 LSPosed 打开",
     about = "关于 XGoogle",
-    aboutSummary = { "基于 Coogle · zopulus & Leekinn · $it\nTelegram: t.me/xioamifetiscisi" },
+    aboutSummary = { "基于 Coogle · zopulus & Leekinn · $it\nTelegram: @emcleek" },
     switchOn = "已开启",
     switchOff = "已关闭",
     companion = {
@@ -489,7 +489,7 @@ private val ZH = Texts(
     errOpenAssistant = "无法打开系统语音助理选择页面。",
     errIcon = "无法修改桌面图标状态。",
     errRepository = "请使用浏览器打开 github.com/zopulus/coogle。",
-    errTelegram = "请在 Telegram 或浏览器中打开 t.me/xioamifetiscisi。",
+    errTelegram = "请在 Telegram 或浏览器中打开 t.me/emcleek。",
 )
 
 fun textsFor(language: AppLanguage) = when (language) {
