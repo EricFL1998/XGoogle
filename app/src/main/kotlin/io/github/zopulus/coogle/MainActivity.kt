@@ -75,8 +75,32 @@ class MainActivity : ComponentActivity() {
         if (service == null && state.loading) return
         preferences = runCatching { service?.getRemotePreferences(FeatureConfig.GROUP) }.getOrNull()
         syncPreferences()
+        if (service != null) requestMissingScope(service)
         if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
             state.features[FeaturePolicy.HEY_GOOGLE] == true) checkCompanion(false)
+    }
+
+    /**
+     * LSPosed drops an app from the scope when it is reinstalled (Google Wallet, the Google app),
+     * and XGoogle then silently stops working there. Ask LSPosed once per installation to add the
+     * installed apps XGoogle works in back; the camera only while its Lens button is on.
+     */
+    private fun requestMissingScope(service: XposedService) {
+        runCatching {
+            val scope = service.scope.toSet()
+            val declared = javaClass.classLoader!!.getResourceAsStream("META-INF/xposed/scope.list")
+                .bufferedReader().readLines().map(String::trim)
+            val missing = declared.filter { it.isNotEmpty() && it != "system" && it !in scope }
+                .filter { it != "com.android.camera" || state.features[FeaturePolicy.CAMERA_LENS] == true }
+                .mapNotNull { name ->
+                    val installed = runCatching { packageManager.getPackageInfo(name, 0).firstInstallTime }.getOrNull()
+                    installed?.let { name to "scope_asked_${name}_$it" }
+                }
+                .filterNot { (_, asked) -> uiPreferences.getBoolean(asked, false) }
+            if (missing.isEmpty()) return
+            uiPreferences.edit().apply { missing.forEach { (_, asked) -> putBoolean(asked, true) } }.apply()
+            service.requestScope(missing.map { it.first }, object : XposedService.OnScopeEventListener {})
+        }
     }
 
     private fun readAssistant(): AssistantInfo = when (val label = AssistantSelection.label(this)) {
