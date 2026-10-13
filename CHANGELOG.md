@@ -1,5 +1,20 @@
 # Değişiklikler / Changelog
 
+## XGoogle 1.2.5
+
+- Güvenlik düzeltmesi: kilit ekranında Google Cüzdan, doğrulama yapılmadan "Okuyucuya tutun" ekranına ulaşabiliyordu. XGoogle artık Cüzdan'ın doğrulamasını onun yerine cevaplamıyor; Cüzdan parmak izi/şifre istiyor.
+  Security fix: on the lock screen, Google Wallet could reach "Hold to reader" without verifying you. XGoogle no longer answers Wallet's verification for it; Wallet now asks for your fingerprint/PIN.
+- Kilit ekranındaki Cüzdan kısayolu, güç tuşuna çift basmadaki gibi ödeme ekranını açar.
+  The lock screen Wallet shortcut opens the tap-to-pay screen like double-pressing power.
+- Kilit ekranında Lens: "Konuş" artık kilit ekranının üstünde açılır.
+  Lens on the lock screen: Talk now opens over the lock screen too.
+- Circle to Search sadece alt çubuğa basılı tutunca açılır; çift dokunma ve sürükleyip tutma XiaoAi'de kalır.
+  Circle to Search only takes the long press on the navigation handle; double tap and drag-and-hold stay with XiaoAi.
+- Yeniden başlatma gerektiren bir ayar değişince kısa bir hatırlatma çıkar.
+  A short reminder appears when a setting needs a restart.
+- Ek modül 1.2.5: ksud'u /data/adb içinde tutan KernelSU sürümlerinde de kurulur; HyperOS'ta Hey Google durumu daha anlaşılır.
+  Companion 1.2.5: installs on KernelSU builds that keep ksud in /data/adb; clearer Hey Google status on HyperOS.
+
 ## XGoogle 1.2.4
 
 - Google Lens "Konuş" ve "Oluştur": Google güncellense de hedefleri kendisi bulur; Google 17.66.11'de yeniden çalışıyor.

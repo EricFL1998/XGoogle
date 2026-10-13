@@ -16,7 +16,7 @@ Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorO
 - ✅ **Google Lens:** Talk and Create included; keeps working after Google app updates
 - ✅ **Android Auto:** system app and car projection role
 - ✅ **Removes the GMS China restriction** (Quick Share included)
-- 🧪 **Lock screen shortcuts:** Gemini, Lens/QR, Wallet, Home controls. Gemini, Lens and Home open without unlocking
+- 🧪 **Lock screen shortcuts:** Gemini, Lens/QR, Wallet, Home controls. They open over the lock screen; Wallet asks you to verify when it needs to
 - 🧪 **Double-press power → Google Wallet**, also on the lock screen
 - 🧪 **Google Lens button in the camera** (optional), also over the lock screen
 - 🧪 Control center Lens/QR tile
@@ -110,7 +110,7 @@ This project is not affiliated with Google or Xiaomi; trademarks belong to their
 - ✅ **Google Lens:** Konuş ve Oluştur dahil; Google güncellense de çalışmaya devam eder
 - ✅ **Android Auto:** sistem uygulaması ve araç projeksiyonu rolü
 - ✅ **GMS Çin kısıtlamasının kaldırılması** (Quick Share dahil)
-- 🧪 **Kilit ekranı kısayolları:** Gemini, Lens/QR, Cüzdan, Ev kontrolleri. Gemini, Lens ve Ev kilit açılmadan açılır
+- 🧪 **Kilit ekranı kısayolları:** Gemini, Lens/QR, Cüzdan, Ev kontrolleri. Kilit ekranının üstünde açılır; Cüzdan gerektiğinde doğrulama ister
 - 🧪 **Güç tuşuna çift bas → Google Cüzdan**, kilit ekranında da açılır
 - 🧪 **Kamerada Google Lens butonu** (isteğe bağlı), kilit ekranında da çalışır
 - 🧪 Kontrol merkezi Lens/QR kutucuğu
