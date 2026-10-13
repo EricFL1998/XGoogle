@@ -9,6 +9,8 @@ final class LensHooks {
     /** google://lens, which Xiaomi's camera uses; it closes the same way. */
     private static final String EXPORTED = "com.google.android.apps.search.lens.LensExportedActivity";
     private static final String LENS = "com.google.android.apps.search.lens.LensActivity";
+    /** Lens's Talk screen, a separate screen that Lens starts. */
+    private static final String LIVE = "com.google.android.apps.search.lens.live.activity.LiveActivity";
     /** Set by XGoogle's lock screen shortcut: Lens may show over the lock screen. */
     static final String KEYGUARD_EXTRA = "io.github.leekin2.xgoogle.KEYGUARD";
 
@@ -35,6 +37,18 @@ final class LensHooks {
                     Object created = chain.proceed();
                     guardGallery(activity);
                     return created;
+                }
+                // Talk opens its own screen; from Lens over the lock screen it must show there too,
+                // or it runs (with the microphone) hidden behind the lock screen.
+                if (LIVE.equals(activity.getComponentName().getClassName()) && lockedLens.get() != null) {
+                    android.app.KeyguardManager keyguard = activity.getSystemService(android.app.KeyguardManager.class);
+                    if (keyguard != null && keyguard.isDeviceLocked()) {
+                        // Photos stay locked while Talk is open.
+                        lockedLens = new java.lang.ref.WeakReference<>(activity);
+                        activity.setShowWhenLocked(true);
+                        closeOnScreenOff(activity);
+                    }
+                    return chain.proceed();
                 }
                 Object result = chain.proceed();
                 // LensDeeplink is an activity-alias: match the component, not the class.
