@@ -11,8 +11,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
@@ -176,13 +174,13 @@ fun CoogleScreen(
                 AssistantInfo.Hidden -> t.assistantTap
                 is AssistantInfo.App -> t.assistantCurrent(info.label)
             }
-            Group(t.groupAssistant, Accent.ASSISTANT) {
+            Group(t.groupAssistant) {
                 SettingRow(0, 2, Icons.Rounded.RecordVoiceOver, t.defaultAssistant, assistant, onClick = onAssistant)
                 ToggleRow(t, 1, 2, Icons.Rounded.Mic, t.heyGoogle, t.companion(state.companion),
                     checked = state.features[FeaturePolicy.HEY_GOOGLE] == true, enabled = available && !state.busy,
                     onChange = { onSetting(FeaturePolicy.HEY_GOOGLE, it) })
             }
-            Group(t.groupSearch, Accent.SEARCH) {
+            Group(t.groupSearch) {
                 // Circle to Search's own options fold under it, so the list stays short.
                 var circleOpen by rememberSaveable { mutableStateOf(false) }
                 val extra = if (circleOpen) 2 else 0
@@ -211,19 +209,19 @@ fun CoogleScreen(
                 ToggleRow(t, 2 + extra, count, Icons.Rounded.PhotoCamera, t.cameraLens, t.cameraLensSummary,
                     state.features[FeaturePolicy.CAMERA_LENS] == true, available, { onSetting(FeaturePolicy.CAMERA_LENS, it) })
             }
-            Group(t.groupLock, Accent.LOCK) {
+            Group(t.groupLock) {
                 ToggleRow(t, 0, 2, Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
                     state.features[FeaturePolicy.QUICK_ENTRIES] == true, available, { onSetting(FeaturePolicy.QUICK_ENTRIES, it) })
                 ToggleRow(t, 1, 2, Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
                     state.features[FeaturePolicy.WALLET] == true, available, { onSetting(FeaturePolicy.WALLET, it) })
             }
-            Group(t.groupSystem, Accent.SYSTEM) {
+            Group(t.groupSystem) {
                 ToggleRow(t, 0, 2, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
                     state.features[FeaturePolicy.GMS] == true, available, { onSetting(FeaturePolicy.GMS, it) })
                 ToggleRow(t, 1, 2, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
                     state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available, { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) })
             }
-            Group(t.groupOther, Accent.OTHER) {
+            Group(t.groupOther) {
                 ToggleRow(t, 0, 2, Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
                     state.iconHidden, true, onIconVisibility)
                 SettingRow(1, 2, Icons.Rounded.Info, t.about, t.aboutSummary(BuildConfig.VERSION_NAME),
@@ -252,29 +250,12 @@ private fun LanguageMenu(current: AppLanguage, label: String, onLanguage: (AppLa
     }
 }
 
-/** Each group tints its icons, as Android's own settings do. */
-private enum class Accent { ASSISTANT, SEARCH, LOCK, SYSTEM, OTHER }
-
-private val LocalAccent = staticCompositionLocalOf { Accent.OTHER }
-
 @Composable
-private fun Accent.colors(): Pair<Color, Color> = with(MaterialTheme.colorScheme) {
-    when (this@colors) {
-        Accent.ASSISTANT -> primaryContainer to onPrimaryContainer
-        Accent.SEARCH -> tertiaryContainer to onTertiaryContainer
-        Accent.LOCK -> secondaryContainer to onSecondaryContainer
-        Accent.SYSTEM, Accent.OTHER -> onSurface.copy(alpha = 0.08f) to onSurfaceVariant
-    }
-}
-
-@Composable
-private fun Group(title: String, accent: Accent, content: @Composable () -> Unit) {
+private fun Group(title: String, content: @Composable () -> Unit) {
     Column(Modifier.padding(top = 24.dp)) {
         Text(title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(start = 16.dp, bottom = 8.dp))
-        CompositionLocalProvider(LocalAccent provides accent) {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp), content = { content() })
-        }
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp), content = { content() })
     }
 }
 
@@ -294,9 +275,9 @@ private fun SettingRow(index: Int, count: Int, icon: ImageVector, title: String,
         onClick = onClick,
         verticalAlignment = Alignment.CenterVertically,
         leadingContent = {
-            val (background, tint) = LocalAccent.current.colors()
-            Box(Modifier.size(40.dp).background(background, CircleShape), contentAlignment = Alignment.Center) {
-                Icon(icon, null, Modifier.size(22.dp), tint = tint)
+            Box(Modifier.size(40.dp).background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f), CircleShape),
+                contentAlignment = Alignment.Center) {
+                Icon(icon, null, Modifier.size(22.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
         trailingContent = trailing ?: { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) },
