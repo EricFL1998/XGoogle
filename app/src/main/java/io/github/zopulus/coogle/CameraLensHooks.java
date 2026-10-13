@@ -52,14 +52,17 @@ final class CameraLensHooks {
             Method dismiss = KeyguardManager.class.getDeclaredMethod("requestDismissKeyguard",
                     Activity.class, KeyguardManager.KeyguardDismissCallback.class);
             hooks.untracked(dismiss, chain -> {
-                if (dismissing || Looper.myLooper() != Looper.getMainLooper()) return chain.proceed();
                 KeyguardManager keyguard = (KeyguardManager) chain.getThisObject();
+                if (dismissing || Looper.myLooper() != Looper.getMainLooper() || !lockScreenLens()
+                        || !keyguard.isKeyguardLocked()) return chain.proceed();
                 Activity activity = (Activity) chain.getArg(0);
                 KeyguardManager.KeyguardDismissCallback callback = (KeyguardManager.KeyguardDismissCallback) chain.getArg(1);
                 Runnable later = () -> {
                     pendingDismiss = null;
+                    if (activity.isDestroyed()) return;
                     dismissing = true;
                     try { keyguard.requestDismissKeyguard(activity, callback); }
+                    catch (Throwable error) { hooks.error("CAMERA lock request failed", error); }
                     finally { dismissing = false; }
                 };
                 if (pendingDismiss != null) MAIN.removeCallbacks(pendingDismiss);
@@ -71,7 +74,7 @@ final class CameraLensHooks {
             hooks.untracked(start, chain -> {
                 Intent intent = (Intent) chain.getArg(0);
                 Uri data = intent == null ? null : intent.getData();
-                if (data != null && "google".equals(data.getScheme()) && "lens".equals(data.getHost())
+                if (data != null && lockScreenLens() && "google".equals(data.getScheme()) && "lens".equals(data.getHost())
                         && GOOGLE.equals(intent.getPackage())) {
                     KeyguardManager keyguard = ((Activity) chain.getThisObject()).getSystemService(KeyguardManager.class);
                     if (keyguard != null && keyguard.isKeyguardLocked()) {
@@ -88,6 +91,11 @@ final class CameraLensHooks {
         } catch (Throwable error) {
             hooks.error("CAMERA lock screen Lens unavailable", error);
         }
+    }
+
+    /** Both switches: Lens shows over the lock screen only through XGoogle's Google app hooks. */
+    private static boolean lockScreenLens() {
+        return FeatureConfig.enabled(FeaturePolicy.CAMERA_LENS) && FeatureConfig.enabled(FeaturePolicy.LENS);
     }
 
     private static boolean googleInstalled() {

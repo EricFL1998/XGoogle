@@ -26,7 +26,7 @@ object MigrationEntry {
             NativeQuickEntryHooks.install(loader)
             KeyguardShortcutHooks.installInSystemUi()
             HomeControlsHooks.install()
-        }
+        } else if (packageName == "com.android.systemui") HomeControlsHooks.restore()
         if (packageName == KeyguardShortcutHooks.AOD_PACKAGE) {
             if (FeatureConfig.enabled(FeaturePolicy.QUICK_ENTRIES)) KeyguardShortcutHooks.install(loader)
             return

@@ -45,6 +45,20 @@ internal object HomeControlsHooks {
         }.onFailure { installedHooks.remove(key); log("Google Home panel left behind the lock screen", it) }
     }
 
+    /** SystemUI, with the lock screen shortcuts off: give back the user's lock screen controls setting. */
+    fun restore() {
+        android.os.Handler(android.os.Looper.getMainLooper()).post {
+            runCatching {
+                val context = Class.forName("android.app.ActivityThread").getMethod("currentApplication").invoke(null) as Context
+                val resolver = context.contentResolver
+                val saved = android.provider.Settings.Secure.getString(resolver, SAVED) ?: return@runCatching
+                android.provider.Settings.Secure.putInt(resolver, SHOW_CONTROLS, saved.toIntOrNull() ?: 0)
+                android.provider.Settings.Secure.putString(resolver, SAVED, null)
+                log("Restored the lock screen device controls setting")
+            }.onFailure { log("Lock screen device controls setting not restored", it) }
+        }
+    }
+
     /** SystemUI: XGoogle's lock screen shortcut asks for the device controls. */
     fun install() {
         val key = "home-controls:receiver"
@@ -61,9 +75,18 @@ internal object HomeControlsHooks {
         }
     }
 
+    private const val SHOW_CONTROLS = "lockscreen_show_controls"
+    /** The user's own value, kept while XGoogle turns the switch on. */
+    private const val SAVED = "xgoogle_saved_lockscreen_show_controls"
+
     private fun show(context: Context): Boolean = runCatching {
-        // Android's own switch for "Show device controls" on the lock screen.
-        android.provider.Settings.Secure.putInt(context.contentResolver, "lockscreen_show_controls", 1)
+        // Android's own switch for "Show device controls" on the lock screen; remember the user's.
+        val resolver = context.contentResolver
+        val current = android.provider.Settings.Secure.getInt(resolver, SHOW_CONTROLS, 0)
+        if (current != 1) {
+            android.provider.Settings.Secure.putString(resolver, SAVED, current.toString())
+            android.provider.Settings.Secure.putInt(resolver, SHOW_CONTROLS, 1)
+        }
         context.startActivity(Intent(CONTROLS_PAGE).setPackage(context.packageName)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
         true
