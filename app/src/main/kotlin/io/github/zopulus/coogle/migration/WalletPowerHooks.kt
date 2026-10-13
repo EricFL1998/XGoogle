@@ -111,7 +111,35 @@ internal object WalletPowerHooks {
      * key. Google's quick access wallet lives in Play services, not in Google Wallet, so HyperOS
      * finds no wallet and only shows "Can't open the default wallet". Open Google Wallet instead.
      */
+    /**
+     * HyperOS has its own "Show on lock screen" app permission, and a reinstalled Google Wallet
+     * starts without it: the tap-to-pay screen then stays behind the lock screen. Let that one
+     * screen show over the lock screen while the Wallet switch is on.
+     */
+    private fun showQuickDrawWhenLocked(loader: ClassLoader) {
+        runCatching {
+            val record = ModernReflect.findClass("com.android.server.wm.ActivityRecord", loader)
+            val component = ModernReflect.findField(record, "mActivityComponent")
+            val intentField = ModernReflect.findField(record, "intent")
+            val requested = ModernReflect.findField(record, "mShowWhenLocked")
+            ModernReflect.findAndHookMethod(record, "canShowWhenLocked", object : ModernMethodHook() {
+                override fun afterHookedMethod(param: MethodHookParam) {
+                    if (param.result == true) return
+                    val name = component.get(param.thisObject) as? android.content.ComponentName ?: return
+                    if (name.packageName != WalletPowerPolicy.WALLET_PACKAGE) return
+                    val action = (intentField.get(param.thisObject) as? android.content.Intent)?.action
+                    if (!WalletPowerPolicy.isQuickDrawPreview(name.className, action)) return
+                    // Only when the screen itself asks to show over the lock screen (XGoogle's
+                    // Wallet hook does), and only while the switch is on.
+                    if (requested.getBoolean(param.thisObject) && FeatureConfig.enabled(FeaturePolicy.WALLET)) param.result = true
+                }
+            })
+            HookLog.i("WalletPowerHooks", "Tap-to-pay screen may show over the HyperOS lock screen")
+        }.onFailure { HookLog.w("WalletPowerHooks", "Tap-to-pay screen left to HyperOS's lock screen permission", it) }
+    }
+
     private fun hookHyperOs(loader: ClassLoader) {
+        showQuickDrawWhenLocked(loader)
         runCatching {
             val target = ModernReflect.findClass("com.miui.server.input.util.ShortCutActionsUtils", loader)
             val contextField = ModernReflect.findField(target, "mContext")

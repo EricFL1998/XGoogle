@@ -10,6 +10,10 @@
   Companion 1.2.4: Google stays a system app under KernelSU NoMount; the "Google system app" status is read correctly (from Coogle 1.3.3).
 - Daha sade ayar ekranı: bölümlere ayrıldı, açıklamalar kısaldı.
   Simpler settings screen: grouped into sections, shorter descriptions.
+- Cüzdan yeniden kurulsa da güç tuşuyla açılan ödeme ekranı kilit ekranının üstünde açılır (HyperOS'un "kilit ekranında göster" izni gerekmez).
+  Even after reinstalling Wallet, the power key's tap-to-pay screen opens over the lock screen (no HyperOS "show on lock screen" permission needed).
+- Yeniden kurulan uygulamalar LSPosed kapsamından düşünce XGoogle açılışta onları geri eklemek için bir kez onay ister.
+  When reinstalled apps drop out of the LSPosed scope, XGoogle asks once at launch to add them back.
 
 ## XGoogle 1.2.3
 
