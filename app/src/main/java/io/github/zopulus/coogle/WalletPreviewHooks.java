@@ -3,11 +3,13 @@ package io.github.zopulus.coogle;
 import android.app.Activity;
 import android.app.KeyguardManager;
 
-/** Resolves repackaged Kotlin code while retaining the verified QUICKDRAW preview boundary. */
+/** Google Wallet's tap-to-pay screen over the lock screen. */
 final class WalletPreviewHooks {
     /** Waiting for the lock after "Open Wallet"; the tap-to-pay screen stays open meanwhile. */
     private static volatile boolean holding;
     private static boolean unlocking;
+    /** Sending Wallet's own deferred lock request. */
+    private static boolean requesting;
 
     private static boolean isPreview(Activity activity) {
         return WalletPowerPolicy.isQuickDrawPreview(activity.getClass().getName(),
@@ -17,26 +19,35 @@ final class WalletPreviewHooks {
     static void install(HookInstaller hooks, ClassLoader loader, String apkPath, String dataDir) {
         if (!FeatureConfig.enabled(FeaturePolicy.WALLET)) return;
         int mark = hooks.mark();
-        try (AppDexTargets targets = new AppDexTargets(loader, apkPath, dataDir)) {
-            var methods = targets.resolve(FeaturePolicy.WALLET);
-            if (methods.size() != 2) { hooks.info("WALLET preview target not uniquely found"); return; }
-            WalletPreviewBinding binding = WalletPreviewBinding.bind(methods.get(0), methods.get(1).getDeclaringClass());
-            if (binding == null) return;
-            hooks.install(binding.invoke, chain -> {
-                if (!FeatureConfig.enabled(FeaturePolicy.WALLET)) return chain.proceed();
-                Object request = chain.getThisObject();
-                Activity activity = request == null ? null : (Activity)binding.activity.get(request);
-                if (activity == null || !WalletPowerPolicy.isQuickDrawPreview(activity.getClass().getName(),
-                        activity.getIntent() == null ? null : activity.getIntent().getAction())) return chain.proceed();
-                KeyguardManager keyguard = (KeyguardManager)binding.keyguard.get(request);
-                if (keyguard == null || !keyguard.isDeviceLocked()) return chain.proceed();
-                // No authentication-success callback; the wallet's tap flow remains original.
-                return binding.unit;
+        try {
+            // Wallet asks for the lock (to verify the person) as this screen starts, before it is
+            // on screen; HyperOS then cancels the request and Wallet closes the screen. Never answer
+            // it falsely (Coogle's skip made Wallet treat the phone as verified and offer "Hold to
+            // reader" without any check): send the real request once the screen has focus, so the
+            // fingerprint/PIN prompt shows over it.
+            hooks.install(KeyguardManager.class.getDeclaredMethod("requestDismissKeyguard",
+                    Activity.class, KeyguardManager.KeyguardDismissCallback.class), chain -> {
+                Activity activity = (Activity) chain.getArg(0);
+                if (requesting || activity == null || !isPreview(activity) || activity.hasWindowFocus()) return chain.proceed();
+                KeyguardManager keyguard = (KeyguardManager) chain.getThisObject();
+                KeyguardManager.KeyguardDismissCallback callback = (KeyguardManager.KeyguardDismissCallback) chain.getArg(1);
+                android.view.ViewTreeObserver observer = activity.getWindow().getDecorView().getViewTreeObserver();
+                observer.addOnWindowFocusChangeListener(new android.view.ViewTreeObserver.OnWindowFocusChangeListener() {
+                    @Override public void onWindowFocusChanged(boolean focused) {
+                        if (!focused) return;
+                        activity.getWindow().getDecorView().getViewTreeObserver().removeOnWindowFocusChangeListener(this);
+                        if (activity.isFinishing() || activity.isDestroyed()) return;
+                        requesting = true;
+                        try { keyguard.requestDismissKeyguard(activity, callback); }
+                        catch (Throwable error) { hooks.error("WALLET lock request failed", error); }
+                        finally { requesting = false; }
+                    }
+                });
+                return null;
             });
             // "Open Wallet" starts the full app and closes this screen straight away; the app then
-            // waits behind the lock screen (the screen's own lock request was skipped above). Ask
-            // for the lock first and keep this screen open until it is answered: once unlocked the
-            // app opens and the screen closes, as Wallet meant.
+            // waits behind the lock screen. Ask for the lock first and keep this screen open until
+            // it is answered: once unlocked the app opens and the screen closes, as Wallet meant.
             hooks.install(Activity.class.getDeclaredMethod("startActivity", android.content.Intent.class, android.os.Bundle.class), chain -> {
                 Activity from = (Activity) chain.getThisObject();
                 android.content.Intent intent = (android.content.Intent) chain.getArg(0);
@@ -64,10 +75,10 @@ final class WalletPreviewHooks {
                 hooks.install(Activity.class.getDeclaredMethod(close), chain ->
                         holding && isPreview((Activity) chain.getThisObject()) ? null : chain.proceed());
             }
-            hooks.info("WALLET dynamic QUICKDRAW preview hook installed");
+            hooks.info("WALLET Open Wallet asks for the lock on the tap-to-pay screen");
         } catch (Throwable failure) {
             hooks.unhookSince(mark);
-            hooks.error("WALLET preview lookup failed; original behavior retained", failure);
+            hooks.error("WALLET Open Wallet hook unavailable; original behavior retained", failure);
         }
     }
     private WalletPreviewHooks() {}
