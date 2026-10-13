@@ -11,11 +11,15 @@ import io.github.zopulus.coogle.migration.AssistantRuntime.installedHooks
 
 /**
  * HyperOS 4: the native (Rust) launcher hands the nav-handle long press to XiaoAi's
- * VoiceService as ACTION_ASSIST. Answer it with Circle to Search instead.
+ * VoiceService as ACTION_ASSIST. Answer it with Circle to Search instead. The double tap and
+ * drag-and-hold gestures reach XiaoAi the same way; they keep XiaoAi.
  */
 internal object XiaoAiNavRedirectHooks {
     const val XIAOAI_PACKAGE = "com.miui.voiceassist"
     private const val START_NOT_STICKY = 2
+    /** The launcher names the gesture: NavLongPress, NavDoubleClick or SideSlid. */
+    private const val TRIGGER_TYPE = "triggerType"
+    private const val LONG_PRESS = "NavLongPress"
 
     @Volatile
     private var lastRedirectAt = 0L
@@ -59,6 +63,9 @@ internal object XiaoAiNavRedirectHooks {
                                 if (!LspConfig.isAssistantNativeCircleEnabledXposed()) return
                                 val intent = param.args.firstOrNull() as? Intent ?: return
                                 if (intent.action != Intent.ACTION_ASSIST) return
+                                // Only the long press; the other gestures open XiaoAi as before.
+                                val trigger = intent.getStringExtra(TRIGGER_TYPE)
+                                if (trigger != null && trigger != LONG_PRESS) return
                                 // The launcher can deliver the same press twice.
                                 val now = SystemClock.elapsedRealtime()
                                 if (now - lastRedirectAt < 1000) {
