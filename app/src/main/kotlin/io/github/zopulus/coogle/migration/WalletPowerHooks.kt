@@ -49,6 +49,8 @@ internal object WalletPowerHooks {
 
     fun hook(loader: ClassLoader) {
         hookHyperOs(loader)
+        // OplusWalletController exists only on ColorOS.
+        if (io.github.zopulus.coogle.SystemCompatibility.isHyperOs()) return
         runCatching {
             val target = ModernReflect.findClass("com.android.server.policy.OplusWalletController", loader)
             val contextField = ModernReflect.findField(target, "mContext")

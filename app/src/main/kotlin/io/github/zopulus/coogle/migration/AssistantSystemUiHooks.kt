@@ -244,7 +244,8 @@ internal object AssistantSystemUiHooks {
         }
     }
     private fun hookNativeCircleSystemUi(classLoader: ClassLoader) {
-        VisibleCircleGestureHooks.install(classLoader) {
+        // The visible-handle gesture classes are ColorOS SystemUI's; HyperOS routes through XiaoAi.
+        if (!io.github.zopulus.coogle.SystemCompatibility.isHyperOs()) VisibleCircleGestureHooks.install(classLoader) {
             triggerCircleToSearchC17()
         }
         val customizeClass = XposedHelpers.findClassIfExists(
