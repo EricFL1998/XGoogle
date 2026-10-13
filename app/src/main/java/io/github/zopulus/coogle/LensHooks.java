@@ -1,11 +1,8 @@
 package io.github.zopulus.coogle;
 
-import io.github.libxposed.api.XposedInterface;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
-import static io.github.zopulus.coogle.HookInstaller.target;
 
 final class LensHooks {
     private static final String DEEPLINK = "com.google.android.apps.search.lens.deeplink.LensDeeplink";
@@ -150,44 +147,30 @@ final class LensHooks {
                 android.content.Context.RECEIVER_EXPORTED);
     }
 
-    static void install(HookInstaller hooks, ClassLoader loader) {
+    static void install(HookInstaller hooks, ClassLoader loader, String apkPath, String dataDir) {
         installDeeplink(hooks);
         installGalleryBlock(hooks);
-        List<XposedInterface.HookHandle> lensHandles = new ArrayList<>();
+        // Google renames its code with every update: find the Talk and Create eligibility checks
+        // by their shape (DexKit, as in Coogle 1.3.2), and cache them per Google app version.
+        try (AppDexTargets targets = new AppDexTargets(loader, apkPath, dataDir)) {
+            installEligibility(hooks, targets.resolve(FeaturePolicy.LENS));
+        } catch (Throwable failure) {
+            hooks.error("LENS lookup failed; original behavior retained", failure);
+        }
+    }
+
+    static void installEligibility(HookInstaller hooks, List<Method> targets) {
+        if (targets.size() < 2) { hooks.info("LENS skip: eligibility targets not uniquely found"); return; }
+        int mark = hooks.mark();
         try {
-            Class<?> create = target(loader, "ctwn");
-            Class<?> talk = target(loader, "dsky");
-            Method createEligible = create.getDeclaredMethod("c");
-            Method talkEligible = talk.getDeclaredMethod("f");
-            if (createEligible.getReturnType() != boolean.class || talkEligible.getReturnType() != boolean.class
-                    || Modifier.isStatic(createEligible.getModifiers()) || Modifier.isStatic(talkEligible.getModifiers())) {
-                throw new NoSuchMethodException("Lens eligibility signature changed");
+            for (int i = 0; i < 2; i++) {
+                hooks.install(targets.get(i), chain -> FeatureConfig.enabled(FeaturePolicy.LENS) ? true : chain.proceed());
             }
-            // These two pure eligibility predicates control the Lens Create and Talk entries.
-            lensHandles.add(hooks.untracked(createEligible, chain -> FeatureConfig.enabled(FeaturePolicy.LENS) ? true : chain.proceed()));
-            lensHandles.add(hooks.untracked(talkEligible, chain -> FeatureConfig.enabled(FeaturePolicy.LENS) ? true : chain.proceed()));
-            String[][] callers = {{"dvwm", "K", "V"}, {"dsky", "c", "e"}, {"dupk", "af"}, {"dwcj", "af"},
-                    {"dwax", "accept"}, {"dwbp", "a"}, {"dwbs", "a"}};
-            for (String[] caller : callers) {
-                Class<?> callerClass;
-                try { callerClass = target(loader, caller[0]); }
-                catch (ClassNotFoundException unavailable) {
-                    hooks.info("Lens optional caller unavailable: " + caller[0]);
-                    continue;
-                }
-                for (Method method : callerClass.getDeclaredMethods()) {
-                    for (int i = 1; i < caller.length; i++) {
-                        if (method.getName().equals(caller[i]) && !Modifier.isAbstract(method.getModifiers())
-                                && !Modifier.isNative(method.getModifiers())) hooks.deoptimize(method);
-                    }
-                }
-            }
-            hooks.info("LENS Talk + Create eligibility hooks installed");
-        } catch (Throwable error) {
-            for (int i = lensHandles.size() - 1; i >= 0; i--) {
-                try { lensHandles.get(i).unhook(); } catch (Throwable ignored) { }
-            }
-            hooks.error("LENS skip incompatible Google; eligibility hooks removed", error);
+            for (int i = 2; i < targets.size(); i++) hooks.deoptimize(targets.get(i));
+            hooks.info("LENS Talk + Create dynamic eligibility hooks installed; callers=" + (targets.size() - 2));
+        } catch (Throwable failure) {
+            hooks.unhookSince(mark);
+            hooks.error("LENS incompatible targets; eligibility hooks removed", failure);
         }
     }
 }

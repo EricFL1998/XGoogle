@@ -28,6 +28,10 @@ public final class CoogleModule extends XposedModule {
         String packageName = param.getPackageName();
         if (!SystemCompatibility.isSupported()) return;
         if ("com.android.launcher".equals(packageName)) SearchBarHooks.install(hooks, param.getClassLoader());
+        // Wallet renames its code with every update; the preview unlock is found by its shape.
+        if ("com.google.android.apps.walletnfcrel".equals(packageName))
+            WalletPreviewHooks.install(hooks, param.getClassLoader(), param.getApplicationInfo().sourceDir,
+                    param.getApplicationInfo().dataDir);
         if ("com.android.camera".equals(packageName) && FeatureConfig.enabled(FeaturePolicy.CAMERA_LENS)) CameraLensHooks.install(hooks, param.getClassLoader());
         // The Settings entry hooks target ColorOS classes; HyperOS has none of them.
         boolean colorOs = SystemCompatibility.isColorOs17();
@@ -42,7 +46,8 @@ public final class CoogleModule extends XposedModule {
                 || "com.google.android.googlequicksearchbox".equals(packageName)) {
             MigrationEntry.attach(this);
             MigrationEntry.hookPackage(packageName, param.getClassLoader());
-            if ("com.google.android.googlequicksearchbox".equals(packageName) && FeatureConfig.enabled(FeaturePolicy.LENS)) LensHooks.install(hooks, param.getClassLoader());
+            if ("com.google.android.googlequicksearchbox".equals(packageName) && FeatureConfig.enabled(FeaturePolicy.LENS)) LensHooks.install(hooks, param.getClassLoader(),
+                    param.getApplicationInfo().sourceDir, param.getApplicationInfo().dataDir);
             if ("com.google.android.googlequicksearchbox".equals(packageName) && FeatureConfig.enabled(FeaturePolicy.LIVE_TRANSLATE))
                 LiveTranslateHooks.install(hooks, param.getClassLoader(), param.getApplicationInfo().sourceDir,
                         param.getApplicationInfo().dataDir);

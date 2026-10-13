@@ -1,5 +1,16 @@
 # Değişiklikler / Changelog
 
+## XGoogle 1.2.4
+
+- Google Lens "Konuş" ve "Oluştur": Google güncellense de hedefleri kendisi bulur (Coogle 1.3.2'den, DexKit); Google 17.66.11'de yeniden çalışıyor.
+  Google Lens Talk and Create: finds its targets even after Google updates (from Coogle 1.3.2, DexKit); works again on Google 17.66.11.
+- Google Cüzdan kilit ekranı önizlemesi de Cüzdan güncellemelerinden etkilenmiyor (Coogle 1.3'ten).
+  Google Wallet's lock screen preview also survives Wallet updates (from Coogle 1.3).
+- Ek modül 1.2.4: KernelSU NoMount ile Google artık sistem uygulaması olarak kalıyor; "Google sistem uygulaması" durumu doğru okunuyor (Coogle 1.3.3'ten).
+  Companion 1.2.4: Google stays a system app under KernelSU NoMount; the "Google system app" status is read correctly (from Coogle 1.3.3).
+- Daha sade ayar ekranı: bölümlere ayrıldı, açıklamalar kısaldı.
+  Simpler settings screen: grouped into sections, shorter descriptions.
+
 ## XGoogle 1.2.3
 
 - Kilit ekranı kısayolları: Gemini ve Google Home cihaz kontrolleri kilit açılmadan açılır; Cüzdan önce kilidi ister.

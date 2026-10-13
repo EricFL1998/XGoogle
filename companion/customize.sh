@@ -23,6 +23,16 @@ done
 unset IFS
 [ -f "$APP_DIR/base.apk" ] || abort "! Google uygulaması kopyalanamadı"
 
+# NoMount (KernelSU) turns .replace into a whiteout and then drops every file below it, so
+# Google would vanish from /system/priv-app. Merge instead while NoMount is active (Coogle 1.3.3).
+nomount_nm=/data/adb/modules/nomount/bin/nm
+if [ -x "$nomount_nm" ] && "$nomount_nm" version >/dev/null 2>&1; then
+    rm -f "$APP_DIR/.replace" || abort "! NoMount için .replace kaldırılamadı"
+    ui_print "- NoMount algılandı, birleştirme modu kullanılıyor"
+else
+    : > "$APP_DIR/.replace" || abort "! .replace oluşturulamadı"
+fi
+
 # Android Auto is optional: systemize it only when it is installed.
 case "$(/system/bin/sh "$MODPATH/systemize-aa.sh" "$MODPATH")" in
     missing) ui_print "- Android Auto kurulu değil, atlandı (kurduktan sonra modülü yeniden kurun)" ;;

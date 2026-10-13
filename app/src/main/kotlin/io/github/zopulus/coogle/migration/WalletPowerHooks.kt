@@ -1,7 +1,6 @@
 package io.github.zopulus.coogle.migration
 
 import android.app.Activity
-import android.app.KeyguardManager
 import android.content.ContentResolver
 import android.content.Context
 import android.provider.Settings
@@ -16,33 +15,6 @@ internal object WalletPowerHooks {
     fun hookPackage(packageName: String, loader: ClassLoader) {
         if (packageName != "com.google.android.apps.walletnfcrel") return
         showOverLockScreen()
-        runCatching {
-            val previewUnlock = ModernReflect.findClass("awvk", loader)
-            val unitClass = ModernReflect.findClass("bqmv", loader)
-            val activityField = ModernReflect.findField(previewUnlock, "c")
-            val keyguardField = ModernReflect.findField(previewUnlock, "b")
-            // Do not silently apply an old obfuscation binding to a changed layout.
-            require(Activity::class.java.isAssignableFrom(activityField.type))
-            require(KeyguardManager::class.java.isAssignableFrom(keyguardField.type))
-            val unit = requireNotNull(ModernReflect.findField(unitClass, "a").get(null))
-            ModernReflect.findAndHookMethod(previewUnlock, "b", Any::class.java,
-                object : ModernMethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-                        if (!FeatureConfig.enabled(FeaturePolicy.WALLET)) return
-                        val request = param.thisObject ?: return
-                        val activity = activityField.get(request) as? Activity ?: return
-                        if (!WalletPowerPolicy.isQuickDrawPreview(
-                                activity.javaClass.name, activity.intent?.action,
-                            )) return
-                        val keyguard = keyguardField.get(request) as? KeyguardManager ?: return
-                        if (!keyguard.isDeviceLocked) return
-                        // No authentication-success callback; TAP_EVENT runs unchanged.
-                        param.result = unit
-                    }
-                },
-            )
-            HookLog.i("WalletPowerHooks", "Installed QUICKDRAW automatic unlock hook")
-        }.onFailure { HookLog.w("WalletPowerHooks", "Wallet preview binding unavailable; original behavior retained", it) }
     }
 
     /**
