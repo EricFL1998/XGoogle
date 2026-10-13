@@ -2,12 +2,12 @@
 
 ## XGoogle 1.2.4
 
-- Google Lens "Konuş" ve "Oluştur": Google güncellense de hedefleri kendisi bulur (Coogle 1.3.2'den, DexKit); Google 17.66.11'de yeniden çalışıyor.
-  Google Lens Talk and Create: finds its targets even after Google updates (from Coogle 1.3.2, DexKit); works again on Google 17.66.11.
-- Google Cüzdan kilit ekranı önizlemesi de Cüzdan güncellemelerinden etkilenmiyor (Coogle 1.3'ten).
-  Google Wallet's lock screen preview also survives Wallet updates (from Coogle 1.3).
-- Ek modül 1.2.4: KernelSU NoMount ile Google artık sistem uygulaması olarak kalıyor; "Google sistem uygulaması" durumu doğru okunuyor (Coogle 1.3.3'ten).
-  Companion 1.2.4: Google stays a system app under KernelSU NoMount; the "Google system app" status is read correctly (from Coogle 1.3.3).
+- Google Lens "Konuş" ve "Oluştur": Google güncellense de hedefleri kendisi bulur; Google 17.66.11'de yeniden çalışıyor.
+  Google Lens Talk and Create: finds its targets even after Google updates; works again on Google 17.66.11.
+- Google Cüzdan kilit ekranı önizlemesi de Cüzdan güncellemelerinden etkilenmiyor.
+  Google Wallet's lock screen preview also survives Wallet updates.
+- Ek modül 1.2.4: KernelSU NoMount ile Google artık sistem uygulaması olarak kalıyor; "Google sistem uygulaması" durumu doğru okunuyor.
+  Companion 1.2.4: Google stays a system app under KernelSU NoMount; the "Google system app" status is read correctly.
 - Daha sade ayar ekranı: bölümlere ayrıldı, açıklamalar kısaldı.
   Simpler settings screen: grouped into sections, shorter descriptions.
 - Cüzdan yeniden kurulsa da güç tuşuyla açılan ödeme ekranı kilit ekranının üstünde açılır (HyperOS'un "kilit ekranında göster" izni gerekmez).
@@ -18,6 +18,9 @@
   On the lock screen tap-to-pay screen, "Open Wallet" now asks for the lock and opens Wallet once unlocked (it did nothing before).
 - HyperOS'ta LSPosed kaydında ColorOS'a ait uyarılar artık çıkmıyor.
   No more ColorOS-only warnings in the LSPosed log on HyperOS.
+
+Lens Konuş/Oluştur, Cüzdan önizlemesi ve NoMount düzeltmesi fikirlerini sağlayan [Coogle](https://github.com/zopulus/coogle) projesine teşekkürler.
+Thanks to the [Coogle](https://github.com/zopulus/coogle) project for the Lens Talk/Create lookup, the Wallet preview and the NoMount fix.
 
 ## XGoogle 1.2.3
 
