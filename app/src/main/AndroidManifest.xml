@@ -1,10 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Lets XGoogle (and nothing else) ask SystemUI for the Gemini session from a lock screen shortcut. -->
+    <permission android:name="io.github.leekin2.xgoogle.permission.SHOW_ASSISTANT" android:protectionLevel="signature" />
+    <uses-permission android:name="io.github.leekin2.xgoogle.permission.SHOW_ASSISTANT" />
     <queries>
         <intent><action android:name="android.intent.action.ASSIST" /></intent>
         <intent><action android:name="android.service.voice.VoiceInteractionService" /></intent>
         <package android:name="com.google.android.googlequicksearchbox" />
         <package android:name="com.android.settings" />
         <package android:name="com.google.android.apps.chromecast.app" />
+        <package android:name="com.google.android.apps.walletnfcrel" />
+        <package android:name="com.google.android.apps.bard" />
     </queries>
     <application android:name=".XGoogleApp" android:label="XGoogle" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@style/AppTheme" android:description="@string/module_description" android:allowBackup="false" android:supportsRtl="true">
         <activity android:name=".MainActivity" android:exported="true">

@@ -16,7 +16,7 @@ final class SettingsConnection {
     private static boolean registered;
 
     /** Scopes added after the first release; LSPosed does not add them to existing installs. */
-    private static final String[] LATER_SCOPES = {"com.miui.securitycore"};
+    private static final String[] LATER_SCOPES = {"com.miui.securitycore", "com.android.camera"};
     private static Context app;
 
     /** From the application: connect early so missing scopes are offered even without the UI. */

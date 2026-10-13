@@ -2,7 +2,7 @@
 <!-- Read by HyperOS's lock screen shortcut picker (com.miui.aod) through the
      "miui_keyguard_shortcuts" meta-data. Tags must match KeyguardShortcutHooks.TAGS.
      HyperOS wants the opened screen over the lock screen: Assistant and Lens go through
-     KeyguardLaunchActivity (Home too), Wallet opens its own tap-to-pay screen. -->
+     KeyguardLaunchActivity, and so do Wallet and Home. -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <intent
         android:name="@string/shortcut_assistant"
@@ -24,9 +24,10 @@
         android:name="@string/shortcut_wallet"
         android:icon="@drawable/ic_shortcut_wallet"
         android:tag="coogle_wallet"
-        android:action="com.google.android.apps.wallet.main.QUICKDRAW"
-        android:targetPackage="com.google.android.apps.walletnfcrel"
-        android:targetClass="com.google.android.apps.wallet.pmode.PresentationModeActivity" />
+        android:action="android.intent.action.VIEW"
+        android:data="xgoogle://keyguard/wallet"
+        android:targetPackage="io.github.leekin2.xgoogle"
+        android:targetClass="io.github.zopulus.coogle.KeyguardLaunchActivity" />
     <intent
         android:name="@string/shortcut_home"
         android:icon="@drawable/ic_shortcut_home"

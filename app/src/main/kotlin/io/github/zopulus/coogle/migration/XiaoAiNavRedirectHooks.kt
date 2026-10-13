@@ -20,14 +20,21 @@ internal object XiaoAiNavRedirectHooks {
     @Volatile
     private var lastRedirectAt = 0L
 
-    /** A short tick as Circle to Search opens, like on Pixel; follows the touch feedback setting. */
+    /**
+     * A short tick as Circle to Search opens, like on Pixel. It follows the touch feedback setting
+     * unless "always vibrate" is on; then it is sent as hardware feedback, which Android does not
+     * silence with touch feedback.
+     */
     private fun tick(context: android.content.Context?) {
         context ?: return
         runCatching {
-            if (android.provider.Settings.System.getInt(context.contentResolver,
+            val always = io.github.zopulus.coogle.FeatureConfig.enabled(io.github.zopulus.coogle.FeaturePolicy.CIRCLE_VIBRATE)
+            if (!always && android.provider.Settings.System.getInt(context.contentResolver,
                     android.provider.Settings.System.HAPTIC_FEEDBACK_ENABLED, 1) == 0) return
             val vibrator = context.getSystemService(android.os.VibratorManager::class.java)?.defaultVibrator ?: return
-            vibrator.vibrate(android.os.VibrationEffect.createPredefined(android.os.VibrationEffect.EFFECT_HEAVY_CLICK))
+            val effect = android.os.VibrationEffect.createPredefined(android.os.VibrationEffect.EFFECT_HEAVY_CLICK)
+            if (always) vibrator.vibrate(effect, android.os.VibrationAttributes.createForUsage(android.os.VibrationAttributes.USAGE_HARDWARE_FEEDBACK))
+            else vibrator.vibrate(effect)
         }.onFailure { log("Circle to Search haptic unavailable", it) }
     }
 

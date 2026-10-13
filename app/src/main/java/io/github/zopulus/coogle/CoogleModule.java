@@ -28,6 +28,7 @@ public final class CoogleModule extends XposedModule {
         String packageName = param.getPackageName();
         if (!SystemCompatibility.isSupported()) return;
         if ("com.android.launcher".equals(packageName)) SearchBarHooks.install(hooks, param.getClassLoader());
+        if ("com.android.camera".equals(packageName) && FeatureConfig.enabled(FeaturePolicy.LENS)) CameraLensHooks.install(hooks, param.getClassLoader());
         // The Settings entry hooks target ColorOS classes; HyperOS has none of them.
         boolean colorOs = SystemCompatibility.isColorOs17();
         if (colorOs && "com.android.settings".equals(packageName)) SettingsHooks.installGoogleSettingsEntry(hooks, param.getClassLoader());

@@ -37,6 +37,7 @@ import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.RecordVoiceOver
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.TouchApp
+import androidx.compose.material.icons.rounded.Vibration
 import androidx.compose.material.icons.rounded.CenterFocusStrong
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.AlertDialog
@@ -172,15 +173,17 @@ fun CoogleScreen(
                     state.features[FeaturePolicy.LIVE_TRANSLATE] == true, available, { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) })
             }
             Group(t.groupSystem) {
-                ToggleRow(t, 0, 5, Icons.Rounded.TouchApp, t.circle, t.circleSummary,
+                ToggleRow(t, 0, 6, Icons.Rounded.TouchApp, t.circle, t.circleSummary,
                     state.features[FeaturePolicy.NAVIGATION] == true, available, { onSetting(FeaturePolicy.NAVIGATION, it) })
-                ToggleRow(t, 1, 5, Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
+                ToggleRow(t, 1, 6, Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
+                    state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available, { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) })
+                ToggleRow(t, 2, 6, Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
                     state.features[FeaturePolicy.WALLET] == true, available, { onSetting(FeaturePolicy.WALLET, it) })
-                ToggleRow(t, 2, 5, Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
+                ToggleRow(t, 3, 6, Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
                     state.features[FeaturePolicy.QUICK_ENTRIES] == true, available, { onSetting(FeaturePolicy.QUICK_ENTRIES, it) })
-                ToggleRow(t, 3, 5, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
+                ToggleRow(t, 4, 6, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
                     state.features[FeaturePolicy.GMS] == true, available, { onSetting(FeaturePolicy.GMS, it) })
-                ToggleRow(t, 4, 5, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
+                ToggleRow(t, 5, 6, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
                     state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available, { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) })
             }
             Group(t.groupOther) {

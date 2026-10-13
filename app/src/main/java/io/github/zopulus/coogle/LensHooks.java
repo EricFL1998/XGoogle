@@ -9,6 +9,8 @@ import static io.github.zopulus.coogle.HookInstaller.target;
 
 final class LensHooks {
     private static final String DEEPLINK = "com.google.android.apps.search.lens.deeplink.LensDeeplink";
+    /** google://lens, which Xiaomi's camera uses; it closes the same way. */
+    private static final String EXPORTED = "com.google.android.apps.search.lens.LensExportedActivity";
     private static final String LENS = "com.google.android.apps.search.lens.LensActivity";
     /** Set by XGoogle's lock screen shortcut: Lens may show over the lock screen. */
     static final String KEYGUARD_EXTRA = "io.github.leekin2.xgoogle.KEYGUARD";
@@ -39,9 +41,11 @@ final class LensHooks {
                 }
                 Object result = chain.proceed();
                 // LensDeeplink is an activity-alias: match the component, not the class.
-                if (!DEEPLINK.equals(activity.getComponentName().getClassName())) return result;
+                String component = activity.getComponentName().getClassName();
+                if (!DEEPLINK.equals(component) && !EXPORTED.equals(component)) return result;
                 android.net.Uri data = activity.getIntent() == null ? null : activity.getIntent().getData();
-                if (data == null || !"googleapp".equals(data.getScheme())) return result;
+                if (data == null || !"lens".equals(data.getHost())
+                        || !("googleapp".equals(data.getScheme()) || "google".equals(data.getScheme()))) return result;
                 try {
                     android.content.Intent lens = new android.content.Intent().setClassName(activity.getPackageName(), LENS)
                             .putExtra(KEYGUARD_EXTRA, fromLockScreen)
@@ -106,7 +110,9 @@ final class LensHooks {
      * instead; once unlocked it shows as usual.
      */
     static void guardGallery(android.app.Activity activity) {
-        int id = activity.getResources().getIdentifier("lens_gallery_container", "id", activity.getPackageName());
+        // Only the picker's surface: on some Google app versions the container also holds the
+        // camera buttons.
+        int id = activity.getResources().getIdentifier("lens_gallery_surface", "id", activity.getPackageName());
         if (id == 0) return;
         android.view.View decor = activity.getWindow().getDecorView();
         boolean[] asked = {false};
@@ -124,7 +130,6 @@ final class LensHooks {
                             @Override public void onDismissError() { asked[0] = false; }
                         });
                     }
-                    return false;
                 }
             } else if (gallery.getVisibility() == android.view.View.INVISIBLE) {
                 gallery.setVisibility(android.view.View.VISIBLE);

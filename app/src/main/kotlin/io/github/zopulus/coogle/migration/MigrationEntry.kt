@@ -17,6 +17,7 @@ object MigrationEntry {
         // Wallet hooks check the switch on every press, so turning it on needs no restart.
         if (packageName == "com.android.systemui") WalletPowerHooks.hookSystemUi(loader)
         if (packageName == "com.android.systemui") wakeModuleApp()
+        if (packageName == "com.android.systemui") AssistantShortcutReceiver.install()
         if (packageName == PowerKeyWalletOption.PACKAGE) {
             PowerKeyWalletOption.install(loader)
             return

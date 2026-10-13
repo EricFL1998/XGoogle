@@ -52,9 +52,38 @@ internal object KeyguardShortcutHooks {
         }
     }
 
+    /**
+     * At boot SystemUI can check the saved shortcuts against its white list before XGoogle has
+     * added its entries to it, and then resets them to none. Keep a saved XGoogle shortcut when
+     * SystemUI tries to blank it; changes made in the shortcut picker (another process) still apply.
+     */
+    private fun keepShortcutsAtBoot() {
+        val key = "keyguard-shortcuts:keep-at-boot"
+        if (!installedHooks.add(key)) return
+        runCatching {
+            val put = android.provider.Settings.Secure::class.java.getMethod("putStringForUser",
+                android.content.ContentResolver::class.java, String::class.java, String::class.java, Int::class.javaPrimitiveType)
+            XposedBridge.hookMethod(put, object : XC_MethodHook() {
+                override fun beforeHookedMethod(param: MethodHookParam) {
+                    val name = param.args[1] as? String ?: return
+                    if (name != "keyguard_shortcut_left" && name != "keyguard_shortcut_right") return
+                    if (!io.github.zopulus.coogle.FeatureConfig.enabled(io.github.zopulus.coogle.FeaturePolicy.QUICK_ENTRIES)) return
+                    val value = param.args[2] as? String
+                    if (value != null && value.contains("packageName")) return
+                    val resolver = param.args[0] as? android.content.ContentResolver ?: return
+                    val saved = android.provider.Settings.Secure.getString(resolver, name) ?: return
+                    if (!saved.contains(COOGLE_PACKAGE)) return
+                    log("Kept the XGoogle lock screen shortcut ($name) that SystemUI tried to reset")
+                    param.result = true
+                }
+            })
+        }.onFailure { installedHooks.remove(key); log("Failed to keep lock screen shortcuts at boot", it) }
+    }
+
     /** SystemUI: catch the loader created for MIUIAod.apk. */
     fun installInSystemUi() {
         closeHomePanelOnScreenOff()
+        keepShortcutsAtBoot()
         val key = "keyguard-shortcuts:aod-loader"
         if (!installedHooks.add(key)) return
         runCatching {
