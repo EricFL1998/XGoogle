@@ -4,8 +4,9 @@
         <intent><action android:name="android.service.voice.VoiceInteractionService" /></intent>
         <package android:name="com.google.android.googlequicksearchbox" />
         <package android:name="com.android.settings" />
+        <package android:name="com.google.android.apps.chromecast.app" />
     </queries>
-    <application android:label="XGoogle" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@style/AppTheme" android:description="@string/module_description" android:allowBackup="false" android:supportsRtl="true">
+    <application android:name=".XGoogleApp" android:label="XGoogle" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@style/AppTheme" android:description="@string/module_description" android:allowBackup="false" android:supportsRtl="true">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,6 +20,17 @@
             </intent-filter>
         </activity-alias>
         <provider android:name="io.github.libxposed.service.XposedProvider" android:authorities="io.github.leekin2.xgoogle.XposedService" android:exported="true" />
+        <!-- Lock screen shortcuts: shows over the lock screen, asks for the lock, opens Google. -->
+        <activity android:name=".KeyguardLaunchActivity" android:exported="true"
+            android:showWhenLocked="true" android:excludeFromRecents="true" android:noHistory="true"
+            android:taskAffinity="" android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <!-- HyperOS starts lock screen shortcuts by package, action and data, not by class. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="xgoogle" android:host="keyguard" />
+            </intent-filter>
+        </activity>
         <!-- HyperOS: Google entries for the native lock screen shortcut picker. -->
         <meta-data android:name="miui_keyguard_shortcuts" android:resource="@xml/miui_keyguard_shortcuts" />
         <!-- Control center tile; the HyperOS CN ROM has no Lens/QR entry of its own. -->

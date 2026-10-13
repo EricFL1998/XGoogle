@@ -20,6 +20,17 @@ internal object XiaoAiNavRedirectHooks {
     @Volatile
     private var lastRedirectAt = 0L
 
+    /** A short tick as Circle to Search opens, like on Pixel; follows the touch feedback setting. */
+    private fun tick(context: android.content.Context?) {
+        context ?: return
+        runCatching {
+            if (android.provider.Settings.System.getInt(context.contentResolver,
+                    android.provider.Settings.System.HAPTIC_FEEDBACK_ENABLED, 1) == 0) return
+            val vibrator = context.getSystemService(android.os.VibratorManager::class.java)?.defaultVibrator ?: return
+            vibrator.vibrate(android.os.VibrationEffect.createPredefined(android.os.VibrationEffect.EFFECT_HEAVY_CLICK))
+        }.onFailure { log("Circle to Search haptic unavailable", it) }
+    }
+
     fun install(classLoader: ClassLoader) {
         val cls = XposedHelpers.findClassIfExists(
             "com.xiaomi.voiceassistant.VoiceService",
@@ -50,6 +61,7 @@ internal object XiaoAiNavRedirectHooks {
                                 lastRedirectAt = now
                                 if (triggerCircleToSearchC17()) {
                                     param.result = START_NOT_STICKY
+                                    tick(param.thisObject as? android.content.Context)
                                 }
                             }
                         },

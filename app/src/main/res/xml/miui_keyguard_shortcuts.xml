@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Read by HyperOS's lock screen shortcut picker (com.miui.aod) through the
-     "miui_keyguard_shortcuts" meta-data. Tags must match KeyguardShortcutHooks.TAGS. -->
+     "miui_keyguard_shortcuts" meta-data. Tags must match KeyguardShortcutHooks.TAGS.
+     HyperOS wants the opened screen over the lock screen: Assistant and Lens go through
+     KeyguardLaunchActivity (Home too), Wallet opens its own tap-to-pay screen. -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <intent
         android:name="@string/shortcut_assistant"
         android:icon="@drawable/ic_shortcut_assistant"
         android:tag="coogle_assistant"
-        android:action="android.intent.action.ASSIST"
-        android:targetPackage="com.google.android.googlequicksearchbox" />
+        android:action="android.intent.action.VIEW"
+        android:data="xgoogle://keyguard/assistant"
+        android:targetPackage="io.github.leekin2.xgoogle"
+        android:targetClass="io.github.zopulus.coogle.KeyguardLaunchActivity" />
     <intent
         android:name="@string/shortcut_lens"
         android:icon="@drawable/ic_shortcut_lens"
         android:tag="coogle_lens"
         android:action="android.intent.action.VIEW"
-        android:data="googleapp://lens"
-        android:targetPackage="com.google.android.googlequicksearchbox" />
+        android:data="xgoogle://keyguard/lens"
+        android:targetPackage="io.github.leekin2.xgoogle"
+        android:targetClass="io.github.zopulus.coogle.KeyguardLaunchActivity" />
     <intent
         android:name="@string/shortcut_wallet"
         android:icon="@drawable/ic_shortcut_wallet"
         android:tag="coogle_wallet"
-        android:action="android.intent.action.MAIN"
+        android:action="com.google.android.apps.wallet.main.QUICKDRAW"
         android:targetPackage="com.google.android.apps.walletnfcrel"
-        android:targetClass="com.google.commerce.tapandpay.android.wallet.WalletActivity" />
+        android:targetClass="com.google.android.apps.wallet.pmode.PresentationModeActivity" />
     <intent
         android:name="@string/shortcut_home"
         android:icon="@drawable/ic_shortcut_home"
         android:tag="coogle_home"
-        android:action="android.intent.action.MAIN"
-        android:targetPackage="com.android.systemui"
-        android:targetClass="com.android.systemui.controls.ui.ControlsActivity" />
+        android:action="android.intent.action.VIEW"
+        android:data="xgoogle://keyguard/home"
+        android:targetPackage="io.github.leekin2.xgoogle"
+        android:targetClass="io.github.zopulus.coogle.KeyguardLaunchActivity" />
 </shortcuts>

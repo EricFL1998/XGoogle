@@ -23,8 +23,38 @@ internal object KeyguardShortcutHooks {
         hookWhiteList(classLoader)
     }
 
+    private const val HOME_PANEL = "com.google.android.apps.chromecast.app/.systemcontrol.panel.GoogleHomePanelActivity"
+
+    /**
+     * The Home controls shortcut opens Google Home's panel over the lock screen, and HyperOS leaves
+     * it open, so it is back over the lock screen the next time the phone wakes. Close it when the
+     * screen goes off, as Pixel's controls do.
+     */
+    private fun closeHomePanelOnScreenOff() {
+        val key = "keyguard-shortcuts:home-panel"
+        if (!installedHooks.add(key)) return
+        android.os.Handler(android.os.Looper.getMainLooper()).post {
+            runCatching {
+                val context = Class.forName("android.app.ActivityThread").getMethod("currentApplication").invoke(null) as android.content.Context
+                context.registerReceiver(object : android.content.BroadcastReceiver() {
+                    override fun onReceive(c: android.content.Context, intent: android.content.Intent) {
+                        runCatching {
+                            val panel = android.content.ComponentName.unflattenFromString(HOME_PANEL)
+                            @Suppress("DEPRECATION")
+                            val tasks = c.getSystemService(android.app.ActivityManager::class.java).getRunningTasks(10)
+                            val service = Class.forName("android.app.ActivityTaskManager").getMethod("getService").invoke(null)
+                            val remove = service.javaClass.getMethod("removeTask", Int::class.javaPrimitiveType)
+                            for (task in tasks) if (task.topActivity == panel || task.baseActivity == panel) remove.invoke(service, task.taskId)
+                        }.onFailure { log("Google Home panel not closed", it) }
+                    }
+                }, android.content.IntentFilter(android.content.Intent.ACTION_SCREEN_OFF), android.content.Context.RECEIVER_EXPORTED)
+            }.onFailure { installedHooks.remove(key); log("Failed to watch the screen for the Home panel", it) }
+        }
+    }
+
     /** SystemUI: catch the loader created for MIUIAod.apk. */
     fun installInSystemUi() {
+        closeHomePanelOnScreenOff()
         val key = "keyguard-shortcuts:aod-loader"
         if (!installedHooks.add(key)) return
         runCatching {

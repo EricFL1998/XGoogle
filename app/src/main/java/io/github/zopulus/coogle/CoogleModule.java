@@ -37,6 +37,7 @@ public final class CoogleModule extends XposedModule {
                 || "com.google.android.apps.walletnfcrel".equals(packageName)
                 || "com.miui.voiceassist".equals(packageName)
                 || "com.miui.aod".equals(packageName)
+                || "com.miui.securitycore".equals(packageName)
                 || "com.google.android.googlequicksearchbox".equals(packageName)) {
             MigrationEntry.attach(this);
             MigrationEntry.hookPackage(packageName, param.getClassLoader());
