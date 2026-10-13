@@ -25,6 +25,7 @@ object MigrationEntry {
         if (packageName == "com.android.systemui" && FeatureConfig.enabled(FeaturePolicy.QUICK_ENTRIES)) {
             NativeQuickEntryHooks.install(loader)
             KeyguardShortcutHooks.installInSystemUi()
+            HomeControlsHooks.install()
         }
         if (packageName == KeyguardShortcutHooks.AOD_PACKAGE) {
             if (FeatureConfig.enabled(FeaturePolicy.QUICK_ENTRIES)) KeyguardShortcutHooks.install(loader)
@@ -65,5 +66,6 @@ object MigrationEntry {
         GmsRegionRestrictionHooker.hook(loader)
         AssistantHooker.hook("system", loader)
         OkGoogleHotwordCompatibilityHooker.hookSystemServer(loader)
+        HomeControlsHooks.hookSystem(loader)
     }
 }

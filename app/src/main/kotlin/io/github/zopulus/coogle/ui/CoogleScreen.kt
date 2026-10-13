@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -26,6 +27,8 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.HighlightOff
 import androidx.compose.material.icons.rounded.HourglassTop
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.ExpandMore
+import androidx.compose.material.icons.rounded.PhotoCamera
 import androidx.compose.material.icons.rounded.Extension
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Language
@@ -63,10 +66,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -163,27 +168,50 @@ fun CoogleScreen(
                 is AssistantInfo.App -> t.assistantCurrent(info.label)
             }
             Group(t.groupAssistant) {
-                SettingRow(0, 4, Icons.Rounded.RecordVoiceOver, t.defaultAssistant, assistant, onClick = onAssistant)
-                ToggleRow(t, 1, 4, Icons.Rounded.Mic, t.heyGoogle, t.companion(state.companion),
+                SettingRow(0, 3, Icons.Rounded.RecordVoiceOver, t.defaultAssistant, assistant, onClick = onAssistant)
+                ToggleRow(t, 1, 3, Icons.Rounded.Mic, t.heyGoogle, t.companion(state.companion),
                     checked = state.features[FeaturePolicy.HEY_GOOGLE] == true, enabled = available && !state.busy,
                     onChange = { onSetting(FeaturePolicy.HEY_GOOGLE, it) })
-                ToggleRow(t, 2, 4, Icons.Rounded.CenterFocusStrong, t.lens, t.lensSummary,
+                ToggleRow(t, 2, 3, Icons.Rounded.CenterFocusStrong, t.lens, t.lensSummary,
                     state.features[FeaturePolicy.LENS] == true, available, { onSetting(FeaturePolicy.LENS, it) })
-                ToggleRow(t, 3, 4, Icons.Rounded.Translate, t.liveTranslate, t.liveTranslateSummary,
-                    state.features[FeaturePolicy.LIVE_TRANSLATE] == true, available, { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) })
             }
             Group(t.groupSystem) {
-                ToggleRow(t, 0, 6, Icons.Rounded.TouchApp, t.circle, t.circleSummary,
-                    state.features[FeaturePolicy.NAVIGATION] == true, available, { onSetting(FeaturePolicy.NAVIGATION, it) })
-                ToggleRow(t, 1, 6, Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
-                    state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available, { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) })
-                ToggleRow(t, 2, 6, Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
+                // Circle to Search's own options fold under it, so the list stays short.
+                var circleOpen by rememberSaveable { mutableStateOf(false) }
+                val extra = if (circleOpen) 2 else 0
+                val count = 6 + extra
+                val circleOn = state.features[FeaturePolicy.NAVIGATION] == true
+                SettingRow(0, count, Icons.Rounded.TouchApp, t.circle, t.circleSummary, { circleOpen = !circleOpen },
+                    modifier = Modifier.semantics { stateDescription = if (circleOn) t.switchOn else t.switchOff }) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Rounded.ExpandMore, t.circleOptions,
+                            Modifier.padding(end = 8.dp).rotate(if (circleOpen) 180f else 0f))
+                        Switch(checked = circleOn, enabled = available,
+                            onCheckedChange = { onSetting(FeaturePolicy.NAVIGATION, it) },
+                            thumbContent = { Icon(if (circleOn) Icons.Rounded.Check else Icons.Rounded.Close, null,
+                                Modifier.size(SwitchDefaults.IconSize)) },
+                            colors = SwitchDefaults.colors(
+                                checkedIconColor = MaterialTheme.colorScheme.primary,
+                                uncheckedIconColor = MaterialTheme.colorScheme.surfaceContainerHighest))
+                    }
+                }
+                if (circleOpen) {
+                    ToggleRow(t, 1, count, Icons.Rounded.Translate, t.liveTranslate, t.liveTranslateSummary,
+                        state.features[FeaturePolicy.LIVE_TRANSLATE] == true, available,
+                        { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) }, Modifier.padding(start = 24.dp))
+                    ToggleRow(t, 2, count, Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
+                        state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available,
+                        { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) }, Modifier.padding(start = 24.dp))
+                }
+                ToggleRow(t, 1 + extra, count, Icons.Rounded.PhotoCamera, t.cameraLens, t.cameraLensSummary,
+                    state.features[FeaturePolicy.CAMERA_LENS] == true, available, { onSetting(FeaturePolicy.CAMERA_LENS, it) })
+                ToggleRow(t, 2 + extra, count, Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
                     state.features[FeaturePolicy.WALLET] == true, available, { onSetting(FeaturePolicy.WALLET, it) })
-                ToggleRow(t, 3, 6, Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
+                ToggleRow(t, 3 + extra, count, Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
                     state.features[FeaturePolicy.QUICK_ENTRIES] == true, available, { onSetting(FeaturePolicy.QUICK_ENTRIES, it) })
-                ToggleRow(t, 4, 6, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
+                ToggleRow(t, 4 + extra, count, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
                     state.features[FeaturePolicy.GMS] == true, available, { onSetting(FeaturePolicy.GMS, it) })
-                ToggleRow(t, 5, 6, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
+                ToggleRow(t, 5 + extra, count, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
                     state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available, { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) })
             }
             Group(t.groupOther) {
@@ -248,9 +276,9 @@ private fun SettingRow(index: Int, count: Int, icon: ImageVector, title: String,
 
 @Composable
 private fun ToggleRow(t: Texts, index: Int, count: Int, icon: ImageVector, title: String, summary: String,
-    checked: Boolean, enabled: Boolean, onChange: (Boolean) -> Unit) {
+    checked: Boolean, enabled: Boolean, onChange: (Boolean) -> Unit, modifier: Modifier = Modifier) {
     SettingRow(index, count, icon, title, summary, { onChange(!checked) }, enabled,
-        Modifier.semantics { role = Role.Switch; stateDescription = if (checked) t.switchOn else t.switchOff }) {
+        modifier.semantics { role = Role.Switch; stateDescription = if (checked) t.switchOn else t.switchOff }) {
         Switch(
             checked = checked,
             onCheckedChange = null,

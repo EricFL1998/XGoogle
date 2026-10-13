@@ -1,5 +1,14 @@
 # Değişiklikler / Changelog
 
+## XGoogle 1.2.3
+
+- Kilit ekranı kısayolları: Gemini ve Google Home cihaz kontrolleri kilit açılmadan açılır; Cüzdan önce kilidi ister.
+  Lock screen shortcuts: Gemini and Google Home's device controls open without unlocking; Wallet asks for the lock first.
+- Yeni "Kamerada Google Lens" düğmesi (varsayılan: kapalı): kameraya Lens butonu ekler, kilit ekranında da şifresiz açılır (fotoğraflar kilitli kalır).
+  New "Google Lens in Camera" switch (off by default): adds a Lens button to the camera, which also opens over the lock screen (photos stay locked).
+- Canlı çeviri ve "hep titreşsin" artık Circle to Search'ün altında açılır bir bölümde.
+  Live translate and "always vibrate" now fold under Circle to Search.
+
 ## XGoogle 1.2.2
 
 - Android Auto: araç projeksiyonu rolü artık veriliyor; Android Auto araca bağlanmak için gereken izinleri alıyor.

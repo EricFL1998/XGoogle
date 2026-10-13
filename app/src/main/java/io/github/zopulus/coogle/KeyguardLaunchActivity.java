@@ -10,12 +10,14 @@ import android.util.Log;
 /**
  * HyperOS lock screen shortcuts expect the opened screen to show over the lock screen, and say
  * "Couldn't launch app" when it does not. Google Assistant and Lens never show over it. This
- * invisible screen does; Lens then opens over the lock screen, the Assistant (Gemini), Wallet
- * and Google Home after the lock.
+ * invisible screen does; Lens, the Assistant (Gemini) and Google Home's controls then open over
+ * the lock screen, Wallet after the lock.
  */
 public final class KeyguardLaunchActivity extends Activity {
     private static final String GOOGLE = "com.google.android.googlequicksearchbox";
     private static final String SHOW_ASSISTANT = "io.github.leekin2.xgoogle.SHOW_ASSISTANT";
+    private static final String SHOW_HOME_CONTROLS = "io.github.leekin2.xgoogle.SHOW_HOME_CONTROLS";
+    private static final String HOME = "com.google.android.apps.chromecast.app";
 
     @Override
     protected void onCreate(Bundle state) {
@@ -24,6 +26,9 @@ public final class KeyguardLaunchActivity extends Activity {
         if (target == null) { finish(); return; }
         KeyguardManager keyguard = getSystemService(KeyguardManager.class);
         if (keyguard == null || !keyguard.isKeyguardLocked()) { open(target); return; }
+        // Gemini's panel shows over the lock screen, as after "Hey Google"; so do the Home controls.
+        if (SHOW_ASSISTANT.equals(target.getAction())) { showAssistant(); return; }
+        if (SHOW_HOME_CONTROLS.equals(target.getAction())) { showHomeControls(keyguard); return; }
         // Lens shows over the lock screen (XGoogle marks it in the Google app), like a camera.
         if (Intent.ACTION_VIEW.equals(target.getAction())) {
             open(target.putExtra(LensHooks.KEYGUARD_EXTRA, true));
@@ -56,11 +61,30 @@ public final class KeyguardLaunchActivity extends Activity {
         }, null, 0, null, null);
     }
 
+    /**
+     * Google Home's device controls, as Android's lock screen controls show them: only SystemUI can
+     * open its controls screen, so ask XGoogle's SystemUI hook. Without it, open Google Home after
+     * the lock.
+     */
+    private void showHomeControls(KeyguardManager keyguard) {
+        sendOrderedBroadcast(new Intent(SHOW_HOME_CONTROLS).setPackage("com.android.systemui"), null,
+                new android.content.BroadcastReceiver() {
+            @Override public void onReceive(android.content.Context context, Intent intent) {
+                if (getResultCode() == 1) { finish(); return; }
+                Intent app = getPackageManager().getLaunchIntentForPackage(HOME);
+                if (app == null) { finish(); return; }
+                keyguard.requestDismissKeyguard(KeyguardLaunchActivity.this, new KeyguardManager.KeyguardDismissCallback() {
+                    @Override public void onDismissSucceeded() { open(app); }
+                    @Override public void onDismissCancelled() { finish(); }
+                    @Override public void onDismissError() { finish(); }
+                });
+            }
+        }, null, 0, null, null);
+    }
+
     private Intent target(Uri data) {
         String which = data == null ? null : data.getLastPathSegment();
-        // Google Home's controls loop when HyperOS shows them over the lock screen: open the app
-        // after the lock instead.
-        if ("home".equals(which)) return getPackageManager().getLaunchIntentForPackage("com.google.android.apps.chromecast.app");
+        if ("home".equals(which)) return new Intent(SHOW_HOME_CONTROLS);
         if ("assistant".equals(which)) return new Intent(SHOW_ASSISTANT);
         // Wallet's tap-to-pay screen waits behind the lock screen: ask for the lock first.
         if ("wallet".equals(which)) return new Intent(WalletPowerPolicy.QUICKDRAW_ACTION)
@@ -71,6 +95,11 @@ public final class KeyguardLaunchActivity extends Activity {
 
     private void open(Intent target) {
         if (SHOW_ASSISTANT.equals(target.getAction())) { showAssistant(); return; }
+        if (SHOW_HOME_CONTROLS.equals(target.getAction())) {
+            Intent app = getPackageManager().getLaunchIntentForPackage(HOME);
+            if (app == null) { finish(); return; }
+            target = app;
+        }
         try {
             startActivity(target.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } catch (Exception e) {
