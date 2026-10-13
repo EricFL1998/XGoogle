@@ -29,6 +29,7 @@ import java.util.concurrent.Executors
 
 class MainActivity : ComponentActivity() {
     private val worker = Executors.newSingleThreadExecutor()
+    private val liveKeys = setOf(FeaturePolicy.WALLET, FeaturePolicy.CIRCLE_VIBRATE, FeaturePolicy.HEY_GOOGLE)
     private val savingKeys = mutableSetOf<String>()
     private var preferences: SharedPreferences? = null
     private var companionCheckedThisResume = false
@@ -162,6 +163,9 @@ class MainActivity : ComponentActivity() {
                 result.onSuccess {
                     state = state.copy(features = state.features + (key to enabled))
                     cacheFeatures(state.features)
+                    // Most hooks are put in place as their app starts; Wallet and the vibration
+                    // switch are read live, and Hey Google has its own install dialog.
+                    if (key !in liveKeys) android.widget.Toast.makeText(this, t.restartHint, android.widget.Toast.LENGTH_LONG).show()
                 }.onFailure { error(it.message ?: t.errSaveGeneric) }
             }
         }

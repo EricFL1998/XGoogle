@@ -57,6 +57,7 @@ class Texts(
     val hideIconSummary: String,
     val about: String,
     val aboutSummary: (String) -> String,
+    val restartHint: String,
     val switchOn: String,
     val switchOff: String,
     val companion: (CompanionState) -> String,
@@ -128,6 +129,7 @@ private val TR = Texts(
     hideIconSummary = "Gizlendikten sonra LSPosed'den açılabilir",
     about = "XGoogle hakkında",
     aboutSummary = { "Coogle tabanlı · zopulus & Leekinn · $it\nTelegram: @emcleek" },
+    restartHint = "Değişiklik telefonu yeniden başlatınca geçerli olur",
     switchOn = "Açık",
     switchOff = "Kapalı",
     companion = {
@@ -209,6 +211,7 @@ private val EN = Texts(
     hideIconSummary = "Once hidden, open it from LSPosed",
     about = "About XGoogle",
     aboutSummary = { "Based on Coogle · zopulus & Leekinn · $it\nTelegram: @emcleek" },
+    restartHint = "The change applies after you restart the phone",
     switchOn = "On",
     switchOff = "Off",
     companion = {
@@ -290,6 +293,7 @@ private val RU = Texts(
     hideIconSummary = "После скрытия открывается из LSPosed",
     about = "О XGoogle",
     aboutSummary = { "На основе Coogle · zopulus & Leekinn · $it\nTelegram: @emcleek" },
+    restartHint = "Изменение вступит в силу после перезагрузки телефона",
     switchOn = "Вкл.",
     switchOff = "Выкл.",
     companion = {
@@ -371,6 +375,7 @@ private val ES = Texts(
     hideIconSummary = "Una vez oculto, ábrelo desde LSPosed",
     about = "Acerca de XGoogle",
     aboutSummary = { "Basado en Coogle · zopulus & Leekinn · $it\nTelegram: @emcleek" },
+    restartHint = "El cambio se aplica al reiniciar el teléfono",
     switchOn = "Activado",
     switchOff = "Desactivado",
     companion = {
@@ -452,6 +457,7 @@ private val ZH = Texts(
     hideIconSummary = "隐藏后可从 LSPosed 打开",
     about = "关于 XGoogle",
     aboutSummary = { "基于 Coogle · zopulus & Leekinn · $it\nTelegram: @emcleek" },
+    restartHint = "重启手机后生效",
     switchOn = "已开启",
     switchOff = "已关闭",
     companion = {

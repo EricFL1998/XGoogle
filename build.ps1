@@ -3,6 +3,8 @@ $ErrorActionPreference = 'Stop'
 if ($Jdk) { $env:JAVA_HOME = $Jdk }
 $java = Join-Path $env:JAVA_HOME 'bin/java.exe'
 $javac = Join-Path $env:JAVA_HOME 'bin/javac.exe'
+# Pack the companion module first, so the APK never embeds a stale ZIP.
+& (Join-Path $PSScriptRoot 'build-companion.ps1') | Out-Null
 $tests = Join-Path $PSScriptRoot 'build/policy-tests'
 New-Item -ItemType Directory -Force -Path $tests | Out-Null
 $source = Join-Path $PSScriptRoot 'app/src/main/java/io/github/zopulus/coogle'
