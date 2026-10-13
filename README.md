@@ -14,7 +14,8 @@
 - ✅ **Google Lens**
 - ✅ **Android Auto:** sistem uygulaması ve araç projeksiyonu rolü
 - ✅ **GMS Çin kısıtlamasının kaldırılması** (Quick Share dahil)
-- 🧪 Kilit ekranı kısayolları: Asistan, Lens/QR, Cüzdan, Ev kontrolleri
+- 🧪 Kilit ekranı kısayolları: Gemini, Lens/QR, Cüzdan, Ev kontrolleri. Gemini, Lens ve Ev kilit açılmadan açılır
+- 🧪 Kamerada Google Lens butonu (isteğe bağlı), kilit ekranında da çalışır
 - 🧪 Kontrol merkezi Lens/QR kutucuğu
 - 🧪 Güç tuşuna çift bas → Google Cüzdan
 - 🌐 Arayüz dilleri: Türkçe, English, Русский, Español, 简体中文
@@ -87,7 +88,8 @@ Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorO
 - ✅ **Google Lens**
 - ✅ **Android Auto:** system app and car projection role
 - ✅ **Removes the GMS China restriction** (Quick Share included)
-- 🧪 Lock screen shortcuts: Assistant, Lens/QR, Wallet, Home controls
+- 🧪 Lock screen shortcuts: Gemini, Lens/QR, Wallet, Home controls. Gemini, Lens and Home open without unlocking
+- 🧪 Google Lens button in the camera (optional), also over the lock screen
 - 🧪 Control center Lens/QR tile
 - 🧪 Double-press power → Google Wallet
 - 🌐 UI languages: Türkçe, English, Русский, Español, 简体中文
