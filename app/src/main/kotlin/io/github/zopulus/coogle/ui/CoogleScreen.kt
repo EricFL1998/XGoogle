@@ -30,6 +30,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.HighlightOff
 import androidx.compose.material.icons.rounded.HourglassTop
@@ -101,7 +102,8 @@ fun CoogleScreen(
     onTelegram: () -> Unit,
     onLanguage: (AppLanguage) -> Unit,
     onDialogConfirm: () -> Unit,
-    onDialogDismiss: () -> Unit
+    onDialogDismiss: () -> Unit,
+    onRestartApps: () -> Unit
 ) {
     val t = textsFor(state.language)
     val bar = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -222,9 +224,11 @@ fun CoogleScreen(
                     state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available, { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) })
             }
             Group(t.groupOther) {
-                ToggleRow(t, 0, 2, Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
+                SettingRow(0, 3, Icons.Rounded.RestartAlt, t.restartApps, t.restartAppsSummary,
+                    onClick = onRestartApps, enabled = state.connected && !state.restarting)
+                ToggleRow(t, 1, 3, Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
                     state.iconHidden, true, onIconVisibility)
-                SettingRow(1, 2, Icons.Rounded.Info, t.about, t.aboutSummary(BuildConfig.VERSION_NAME),
+                SettingRow(2, 3, Icons.Rounded.Info, t.about, t.aboutSummary(BuildConfig.VERSION_NAME),
                     onClick = onTelegram)
             }
             Spacer(Modifier.height(24.dp))
@@ -320,6 +324,7 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.DISABLED -> t.disabledTitle
         DialogKind.INSTALLED -> t.installedTitle
         DialogKind.HIDE_ICON -> t.hideIconTitle
+        DialogKind.RESTART -> t.restartTitle
         else -> t.errorTitle
     }
     val message = when (state.dialog) {
@@ -328,18 +333,21 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.DISABLED -> t.disabledMessage
         DialogKind.INSTALLED -> t.installedMessage
         DialogKind.HIDE_ICON -> t.hideIconMessage
+        DialogKind.RESTART -> t.restartMessage
         else -> state.dialogText
     }
     val confirm = when (state.dialog) {
         DialogKind.INSTALL -> t.install
         DialogKind.HIDE_ICON -> t.hide
+        DialogKind.RESTART -> t.restart
         else -> t.ok
     }
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = MaterialTheme.shapes.extraLarge,
         icon = { Icon(if (state.dialog in setOf(DialogKind.INSTALL, DialogKind.INSTALLED, DialogKind.DISABLED))
-            Icons.Rounded.Extension else if (state.dialog == DialogKind.HIDE_ICON) Icons.Rounded.VisibilityOff else Icons.Rounded.Info, null) },
+            Icons.Rounded.Extension else if (state.dialog == DialogKind.HIDE_ICON) Icons.Rounded.VisibilityOff
+            else if (state.dialog == DialogKind.RESTART) Icons.Rounded.RestartAlt else Icons.Rounded.Info, null) },
         title = { Text(title) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -347,7 +355,7 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
             }
         },
         confirmButton = { TextButton(onClick = onConfirm) { Text(confirm) } },
-        dismissButton = if (state.dialog in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON)) {
+        dismissButton = if (state.dialog in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON, DialogKind.RESTART)) {
             { TextButton(onClick = onDismiss) { Text(t.cancel) } }
         } else null
     )

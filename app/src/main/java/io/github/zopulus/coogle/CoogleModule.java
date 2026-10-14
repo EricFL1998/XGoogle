@@ -32,6 +32,8 @@ public final class CoogleModule extends XposedModule {
         if ("com.google.android.apps.walletnfcrel".equals(packageName))
             WalletPreviewHooks.install(hooks, param.getClassLoader(), param.getApplicationInfo().sourceDir,
                     param.getApplicationInfo().dataDir);
+        if ("com.google.android.apps.walletnfcrel".equals(packageName))
+            WalletRecentAuthHooks.install(hooks, param.getClassLoader(), param.getApplicationInfo().sourceDir);
         if ("com.android.camera".equals(packageName) && FeatureConfig.enabled(FeaturePolicy.CAMERA_LENS)) CameraLensHooks.install(hooks, param.getClassLoader());
         // The Settings entry hooks target ColorOS classes; HyperOS has none of them.
         boolean colorOs = SystemCompatibility.isColorOs17();

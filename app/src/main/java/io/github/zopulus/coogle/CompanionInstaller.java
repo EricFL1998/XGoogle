@@ -2,10 +2,9 @@ package io.github.zopulus.coogle;
 
 import android.content.Context;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.TimeUnit;
+import static io.github.zopulus.coogle.RootShell.run;
 
 /** Root is used only after the user asks to check/install the companion. */
 public final class CompanionInstaller {
@@ -43,21 +42,6 @@ public final class CompanionInstaller {
                 +"settings put system double_click_power_key launch_QAW_wallet",20);
         else run("prev=$(cat "+saved+" 2>/dev/null); [ -n \"$prev\" ] && [ \"$prev\" != null ] || prev=none; "
                 +"settings put system double_click_power_key \"$prev\"; rm -f "+saved,20);
-    }
-    private static String run(String command,int timeout) throws Exception {
-        Process process=new ProcessBuilder("su","-c",command).redirectErrorStream(true).start();
-        java.io.ByteArrayOutputStream output=new java.io.ByteArrayOutputStream();
-        Thread drain=new Thread(() -> {
-            try (InputStream input=process.getInputStream()) {
-                byte[] buffer=new byte[4096]; int n;
-                while ((n=input.read(buffer))>=0) if (output.size()<65536) output.write(buffer,0,Math.min(n,65536-output.size()));
-            } catch (Exception ignored) {}
-        },"Coogle-root-output");
-        drain.start();
-        if (!process.waitFor(timeout,TimeUnit.SECONDS)) { process.destroyForcibly(); drain.join(1000); throw new java.io.IOException("İşlem zaman aşımına uğradı"); }
-        drain.join(1000);
-        if (process.exitValue()!=0) throw new java.io.IOException("Root işlemi başarısız; SukiSU/KernelSU iznini ve modül bağlama desteğini kontrol edin");
-        return output.toString(StandardCharsets.UTF_8);
     }
     private CompanionInstaller() {}
 }

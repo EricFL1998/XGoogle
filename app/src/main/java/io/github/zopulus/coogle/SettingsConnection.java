@@ -69,5 +69,41 @@ final class SettingsConnection {
         }
     }
 
+    enum ScopeResult { OK, DENIED, SYSTEM_MISSING }
+
+    /**
+     * Turning a switch on asks LSPosed for that feature's missing app scopes straight away (from
+     * Coogle 1.3.3); the switch is saved either way. LSPosed cannot add the system framework from a
+     * request, so a missing "system" is only reported.
+     */
+    static synchronized void requestScopes(Context context, String feature, java.util.function.Consumer<ScopeResult> done) {
+        XposedService current = service;
+        if (current == null) return;
+        android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+        try {
+            List<String> scope = current.getScope();
+            boolean systemMissing = false;
+            List<String> missing = new ArrayList<>();
+            for (String name : FeatureScopes.required(feature)) {
+                if (scope.contains(name)) continue;
+                if (FeatureScopes.SYSTEM.equals(name)) { systemMissing = true; continue; }
+                try { context.getPackageManager().getPackageInfo(name, 0); missing.add(name); }
+                catch (android.content.pm.PackageManager.NameNotFoundException notInstalled) { }
+            }
+            ScopeResult after = systemMissing ? ScopeResult.SYSTEM_MISSING : ScopeResult.OK;
+            if (missing.isEmpty()) { if (systemMissing) main.post(() -> done.accept(after)); return; }
+            current.requestScope(missing, new XposedService.OnScopeEventListener() {
+                @Override public void onScopeRequestApproved(List<String> approved) { main.post(() -> done.accept(after)); }
+                @Override public void onScopeRequestFailed(String message) { main.post(() -> done.accept(ScopeResult.DENIED)); }
+            });
+        } catch (Throwable t) {
+            Log.w("XGoogle", "Scope request failed", t);
+        }
+    }
+
+    static synchronized List<String> currentScope() {
+        return service == null ? null : service.getScope();
+    }
+
     private SettingsConnection() { }
 }
