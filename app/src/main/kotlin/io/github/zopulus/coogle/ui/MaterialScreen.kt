@@ -28,6 +28,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.border
+import androidx.compose.material.icons.rounded.BlurOn
+import androidx.compose.ui.draw.clip
+import top.yukonga.miuix.kmp.blur.BlendColorEntry
+import top.yukonga.miuix.kmp.blur.BlurColors
+import top.yukonga.miuix.kmp.blur.LayerBackdrop
+import top.yukonga.miuix.kmp.blur.layerBackdrop
+import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
+import top.yukonga.miuix.kmp.blur.textureBlur
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Home
@@ -126,6 +135,9 @@ fun MaterialScreen(
 ) {
     val t = textsFor(state.language)
     val bar = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    // Frosted bar: the list is recorded as a backdrop and blurred behind the floating bar.
+    val backdrop = rememberLayerBackdrop()
+    val background = MaterialTheme.colorScheme.surfaceContainer
     Scaffold(
         modifier = Modifier.nestedScroll(bar.nestedScrollConnection),
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -145,7 +157,9 @@ fun MaterialScreen(
         Box(Modifier.fillMaxSize()) {
             // Switching tabs starts the new tab at its top.
             key(tab) {
-                Column(Modifier.padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
+                Column(Modifier.padding(padding)
+                    .then(if (state.look.blur) Modifier.layerBackdrop(backdrop).background(background) else Modifier)
+                    .verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
                     Spacer(Modifier.height(12.dp))
                     if (tab == 0) HomeTab(state, t, onSetting, onAssistant, onStatus, onRestartApps)
                     else SettingsTab(state, t, onIconVisibility, onAbout, onTelegram, onLanguage, onLook, onCheckUpdates, onSupport)
@@ -153,16 +167,22 @@ fun MaterialScreen(
                     Spacer(Modifier.height(112.dp))
                 }
             }
-            FloatingTabs(t, tab, onTab, Modifier.align(Alignment.BottomCenter))
+            FloatingTabs(t, tab, onTab, if (state.look.blur) backdrop else null, Modifier.align(Alignment.BottomCenter))
         }
     }
     CoogleDialog(state, t, onDialogConfirm, onDialogDismiss)
 }
 
 @Composable
-private fun FloatingTabs(t: Texts, selected: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
-    Surface(modifier.navigationBarsPadding().padding(bottom = 16.dp), shape = CircleShape,
-        color = MaterialTheme.colorScheme.surfaceContainerHighest, shadowElevation = 6.dp) {
+private fun FloatingTabs(t: Texts, selected: Int, onSelect: (Int) -> Unit, backdrop: LayerBackdrop?,
+    modifier: Modifier = Modifier) {
+    val pill = MaterialTheme.colorScheme.surfaceContainerHighest
+    // With a backdrop the bar is frosted glass over the list; otherwise a solid pill.
+    val glass = if (backdrop == null) Modifier else Modifier.clip(CircleShape).textureBlur(backdrop, CircleShape, 25f,
+        colors = BlurColors(blendColors = listOf(BlendColorEntry(pill.copy(alpha = 0.6f)))))
+        .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), CircleShape)
+    Surface(modifier.navigationBarsPadding().padding(bottom = 16.dp).then(glass), shape = CircleShape,
+        color = if (backdrop == null) pill else Color.Transparent, shadowElevation = if (backdrop == null) 6.dp else 0.dp) {
         Row(Modifier.padding(6.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             listOf(Icons.Rounded.Home to t.tabHome, Icons.Rounded.Settings to t.tabSettings).forEachIndexed { index, (icon, label) ->
                 val active = index == selected
@@ -293,9 +313,11 @@ private fun SettingsTab(state: CoogleState, t: Texts, onIconVisibility: (Boolean
     onTelegram: () -> Unit, onLanguage: (AppLanguage) -> Unit, onLook: (Look) -> Unit, onCheckUpdates: () -> Unit,
     onSupport: () -> Unit) {
     Group(t.groupLook) {
-        LanguageRow(0, 2, state.language, t, onLanguage)
-        ToggleRow(t, 1, 2, Icons.Rounded.Palette, t.hyperStyle, t.hyperStyleSummary,
+        LanguageRow(0, 3, state.language, t, onLanguage)
+        ToggleRow(t, 1, 3, Icons.Rounded.Palette, t.hyperStyle, t.hyperStyleSummary,
             false, true, { onLook(state.look.copy(hyper = it)) })
+        ToggleRow(t, 2, 3, Icons.Rounded.BlurOn, t.blur, t.blurSummary,
+            state.look.blur, true, { onLook(state.look.copy(blur = it)) })
     }
     Group(t.groupApp) {
         SettingRow(0, 4, Icons.Rounded.SystemUpdate, t.checkUpdates, when (state.update) {

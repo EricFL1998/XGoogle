@@ -25,6 +25,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.border
+import top.yukonga.miuix.kmp.blur.LayerBackdrop
 import androidx.compose.runtime.key
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
@@ -137,7 +139,7 @@ fun MiuixScreen(
 ) {
     val t = textsFor(state.language)
     val bar = MiuixScrollBehavior()
-    // Frosted bar: the list is recorded as a backdrop and blurred behind the top bar.
+    // Frosted bars: the list is recorded as a backdrop and blurred behind the top and bottom bars.
     val blur = state.look.blur
     val backdrop = rememberLayerBackdrop()
     val surface = MiuixTheme.colorScheme.surface
@@ -153,7 +155,7 @@ fun MiuixScreen(
             )
         },
         bottomBar = {
-            FloatingTabs(t, tab, onTab)
+            FloatingTabs(t, tab, onTab, if (blur) backdrop else null)
         }
     ) { padding ->
         // While connecting, show the cached switches as usable; taps wait for the connection.
@@ -244,10 +246,15 @@ fun MiuixScreen(
 
 /** Floating Home/Settings bar; Miuix's own floating bar shows icons only, so labels are drawn here. */
 @Composable
-private fun FloatingTabs(t: Texts, selected: Int, onSelect: (Int) -> Unit) {
+private fun FloatingTabs(t: Texts, selected: Int, onSelect: (Int) -> Unit, backdrop: LayerBackdrop?) {
     val colors = MiuixTheme.colorScheme
+    // With a backdrop the bar is frosted glass over the list; otherwise a solid pill.
+    val surface = if (backdrop == null) Modifier.background(colors.surfaceContainerHigh)
+        else Modifier.textureBlur(backdrop, CircleShape, 25f,
+            colors = BlurColors(blendColors = listOf(BlendColorEntry(colors.surfaceContainerHigh.copy(alpha = 0.6f)))))
+            .border(1.dp, colors.onSurface.copy(alpha = 0.1f), CircleShape)
     Box(Modifier.fillMaxWidth().navigationBarsPadding().padding(bottom = 16.dp), contentAlignment = Alignment.Center) {
-        Row(Modifier.shadow(8.dp, CircleShape).clip(CircleShape).background(colors.surfaceContainerHigh).padding(6.dp),
+        Row(Modifier.shadow(8.dp, CircleShape).clip(CircleShape).then(surface).padding(6.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             listOf(Icons.Rounded.Home to t.tabHome, Icons.Rounded.Settings to t.tabSettings).forEachIndexed { index, (icon, label) ->
                 val active = index == selected
