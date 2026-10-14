@@ -28,7 +28,8 @@ final class WalletPreviewHooks {
             hooks.install(KeyguardManager.class.getDeclaredMethod("requestDismissKeyguard",
                     Activity.class, KeyguardManager.KeyguardDismissCallback.class), chain -> {
                 Activity activity = (Activity) chain.getArg(0);
-                if (requesting || activity == null || !isPreview(activity) || activity.hasWindowFocus()) return chain.proceed();
+                if (requesting || !FeatureConfig.enabled(FeaturePolicy.WALLET) || activity == null
+                        || !isPreview(activity) || activity.hasWindowFocus()) return chain.proceed();
                 KeyguardManager keyguard = (KeyguardManager) chain.getThisObject();
                 KeyguardManager.KeyguardDismissCallback callback = (KeyguardManager.KeyguardDismissCallback) chain.getArg(1);
                 android.view.ViewTreeObserver observer = activity.getWindow().getDecorView().getViewTreeObserver();
@@ -51,7 +52,7 @@ final class WalletPreviewHooks {
             hooks.install(Activity.class.getDeclaredMethod("startActivity", android.content.Intent.class, android.os.Bundle.class), chain -> {
                 Activity from = (Activity) chain.getThisObject();
                 android.content.Intent intent = (android.content.Intent) chain.getArg(0);
-                if (unlocking || intent == null || intent.getComponent() == null
+                if (unlocking || !FeatureConfig.enabled(FeaturePolicy.WALLET) || intent == null || intent.getComponent() == null
                         || !WalletPowerPolicy.WALLET_PACKAGE.equals(intent.getComponent().getPackageName())
                         || !isPreview(from)) return chain.proceed();
                 KeyguardManager keyguard = from.getSystemService(KeyguardManager.class);

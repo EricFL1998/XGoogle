@@ -17,7 +17,7 @@ if [ -f "$backup" ]; then
                 settings put system "${entry#*:}" "$value"
             fi
         done
-        rm -f "$backup"
+        rm -f "$backup" /data/adb/coogle_nav_off
     ) > /dev/null 2>&1 &
 fi
 # User enrollment/model databases are intentionally not erased during uninstall.

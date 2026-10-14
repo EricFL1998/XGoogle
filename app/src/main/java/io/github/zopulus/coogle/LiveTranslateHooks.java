@@ -63,11 +63,14 @@ final class LiveTranslateHooks {
         File cache = dataDir == null ? null : new File(dataDir, "xgoogle_live_translate.cache");
         if (cache != null && cache.isFile()) {
             try {
-                String[] stored = new String(Files.readAllBytes(cache.toPath()), StandardCharsets.UTF_8).split("\n");
+                String[] stored = new String(Files.readAllBytes(cache.toPath()), StandardCharsets.UTF_8).split("\n", -1);
                 if (stored.length == 2 && stored[0].equals(key)) {
                     if (stored[1].isEmpty()) return null;
-                    Class<?> action = Class.forName(stored[1], false, loader);
-                    if (booleanGetter(action, "i") != null && capability(action) != null) {
+                    // A stored class this process cannot load is stale: scan again.
+                    Class<?> action = null;
+                    try { action = Class.forName(stored[1], false, loader); }
+                    catch (ClassNotFoundException | LinkageError stale) { }
+                    if (action != null && booleanGetter(action, "i") != null && capability(action) != null) {
                         hooks.info("LIVE_TRANSLATE cache hit, dex scan skipped");
                         return action;
                     }
@@ -79,7 +82,7 @@ final class LiveTranslateHooks {
         Class<?> action = findAction(loader, apkPath);
         if (cache != null) {
             try {
-                File temporary = new File(dataDir, "xgoogle_live_translate.cache.tmp");
+                File temporary = File.createTempFile("xgoogle_live_translate", ".tmp", new File(dataDir));
                 Files.write(temporary.toPath(), (key + "\n" + (action == null ? "" : action.getName()))
                         .getBytes(StandardCharsets.UTF_8));
                 if (!temporary.renameTo(cache)) temporary.delete();

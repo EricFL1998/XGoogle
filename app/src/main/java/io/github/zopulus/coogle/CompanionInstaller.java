@@ -38,10 +38,25 @@ public final class CompanionInstaller {
     public static void applyHyperOsWalletPower(boolean enabled) throws Exception {
         String saved="/data/adb/coogle_double_click_power_key";
         if (enabled) run("cur=$(settings get system double_click_power_key); "
-                +"[ \"$cur\" = launch_QAW_wallet ] || echo \"$cur\" > "+saved+"; "
+                +"[ \"$cur\" = launch_QAW_wallet ] || echo \"$cur\" > "+saved+" && "
                 +"settings put system double_click_power_key launch_QAW_wallet",20);
+        // Keep the saved choice until it is really back in place.
         else run("prev=$(cat "+saved+" 2>/dev/null); [ -n \"$prev\" ] && [ \"$prev\" != null ] || prev=none; "
-                +"settings put system double_click_power_key \"$prev\"; rm -f "+saved,20);
+                +"settings put system double_click_power_key \"$prev\" && rm -f "+saved,20);
+    }
+    /**
+     * HyperOS: the companion routes the nav-handle long press to Google on every boot. While
+     * Circle to Search is off, leave a marker so it stops, and put the user's own choice back.
+     */
+    public static void applyHyperOsNavigationKey(boolean enabled) throws Exception {
+        String backup="/data/adb/coogle_keys_backup", off="/data/adb/coogle_nav_off";
+        if (enabled) run("rm -f "+off+" && if [ -f "+backup+" ]; then "
+                +"settings put system long_press_home_key launch_google_search; fi",20);
+        else run("touch "+off+" && if [ -f "+backup+" ] && "
+                +"[ \"$(settings get system long_press_home_key)\" = launch_google_search ]; then "
+                +"home=$(sed -n 's/^home=//p' "+backup+"); "
+                +"if [ -z \"$home\" ] || [ \"$home\" = null ]; then settings delete system long_press_home_key; "
+                +"else settings put system long_press_home_key \"$home\"; fi; fi",20);
     }
     private CompanionInstaller() {}
 }

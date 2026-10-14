@@ -33,7 +33,7 @@ import java.util.concurrent.Executors
 
 class MainActivity : ComponentActivity() {
     private val worker = Executors.newSingleThreadExecutor()
-    private val liveKeys = setOf(FeaturePolicy.WALLET, FeaturePolicy.CIRCLE_VIBRATE, FeaturePolicy.HEY_GOOGLE)
+    private val liveKeys = setOf(FeaturePolicy.CIRCLE_VIBRATE, FeaturePolicy.HEY_GOOGLE)
     private val savingKeys = mutableSetOf<String>()
     private var preferences: SharedPreferences? = null
     private var companionCheckedThisResume = false
@@ -174,19 +174,32 @@ class MainActivity : ComponentActivity() {
         val settings = preferences ?: return
         if (!savingKeys.add(key)) return
         val t = texts
+        val hyperOs = SystemCompatibility.isHyperOs()
+        // HyperOS already has a default-wallet action for double-pressing power, and the
+        // companion owns the nav-handle key: change the system first, save only after it worked.
+        val system: ((Boolean) -> Unit)? = when {
+            !hyperOs -> null
+            key == FeaturePolicy.WALLET -> { on -> CompanionInstaller.applyHyperOsWalletPower(on) }
+            key == FeaturePolicy.NAVIGATION && state.companion.installed -> { on -> CompanionInstaller.applyHyperOsNavigationKey(on) }
+            else -> null
+        }
         worker.execute {
             var paymentChanged = false
             val result = runCatching {
                 // The double press opens the default wallet: make sure that is Google before saving.
                 if (key == FeaturePolicy.WALLET && enabled) paymentChanged = WalletPayment(applicationContext).ensureGoogle()
+                system?.let { apply ->
+                    runCatching { apply(enabled) }.onFailure {
+                        throw if (it is RootShell.Failure) it
+                        else IOException(if (key == FeaturePolicy.WALLET) t.errWalletPower else t.errSaveGeneric)
+                    }
+                }
                 val editor = settings.edit().putBoolean(key, enabled)
                 companionInstalled?.let { editor.putBoolean("companion_ready", it) }
-                if (!editor.commit()) throw IOException(t.errSave)
-                // HyperOS already has a default-wallet action for double-pressing power.
-                if (key == FeaturePolicy.WALLET && SystemCompatibility.isHyperOs())
-                    runCatching { CompanionInstaller.applyHyperOsWalletPower(enabled) }.onFailure {
-                        throw if (it is RootShell.Failure) it else IOException(t.errWalletPower)
-                    }
+                if (!editor.commit()) {
+                    system?.let { apply -> runCatching { apply(!enabled) } }
+                    throw IOException(t.errSave)
+                }
             }
             runOnUiThread {
                 if (isDestroyed) return@runOnUiThread
@@ -195,8 +208,8 @@ class MainActivity : ComponentActivity() {
                     state = state.copy(features = state.features + (key to enabled))
                     cacheFeatures(state.features)
                     refreshScopes()
-                    // Most hooks are put in place as their app starts; Wallet and the vibration
-                    // switch are read live, and Hey Google has its own install dialog.
+                    // Most hooks are put in place as their app starts (Wallet's too); the vibration
+                    // switch is read live, and Hey Google has its own install dialog.
                     if (key !in liveKeys) android.widget.Toast.makeText(this, t.restartHint, android.widget.Toast.LENGTH_LONG).show()
                     if (paymentChanged) android.widget.Toast.makeText(this, t.walletDefaultSet, android.widget.Toast.LENGTH_LONG).show()
                 }.onFailure { error(failureText(it, t.errSaveGeneric)) }
@@ -240,9 +253,12 @@ class MainActivity : ComponentActivity() {
         companionCheckedAt = null
         state = state.copy(busy = true, companion = CompanionState.INSTALLING, dialog = DialogKind.NONE)
         val t = texts
+        val navigationOff = state.features[FeaturePolicy.NAVIGATION] == false
         worker.execute {
             val result = runCatching {
                 CompanionInstaller.install(this)
+                // Without this marker the companion's first boot would take the nav handle.
+                if (navigationOff && SystemCompatibility.isHyperOs()) CompanionInstaller.applyHyperOsNavigationKey(false)
                 if (!settings.edit().putBoolean("companion_ready", true).putBoolean(FeaturePolicy.HEY_GOOGLE, true).commit())
                     throw IOException(t.errCompanionSaved)
             }
