@@ -44,6 +44,7 @@ import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.PhotoCamera
 import androidx.compose.material.icons.rounded.RecordVoiceOver
+import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.TouchApp
 import androidx.compose.material.icons.rounded.Translate
@@ -108,7 +109,8 @@ fun MiuixScreen(
     onLanguage: (AppLanguage) -> Unit,
     onLook: (Look) -> Unit,
     onDialogConfirm: () -> Unit,
-    onDialogDismiss: () -> Unit
+    onDialogDismiss: () -> Unit,
+    onRestartApps: () -> Unit
 ) {
     val t = textsFor(state.language)
     val bar = MiuixScrollBehavior()
@@ -209,6 +211,9 @@ fun MiuixScreen(
                         onLook(state.look.copy(blur = it)) }
                 }
                 Group(t.groupOther) {
+                    ArrowPreference(title = t.restartApps, summary = t.restartAppsSummary,
+                        startAction = { RowIcon(Icons.Rounded.RestartAlt) }, onClick = onRestartApps,
+                        enabled = state.connected && !state.restarting)
                     Toggle(Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
                         state.iconHidden, true, onIconVisibility)
                     ArrowPreference(title = t.about, summary = t.aboutSummary(BuildConfig.VERSION_NAME),
@@ -313,6 +318,7 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.DISABLED -> t.disabledTitle
         DialogKind.INSTALLED -> t.installedTitle
         DialogKind.HIDE_ICON -> t.hideIconTitle
+        DialogKind.RESTART -> t.restartTitle
         else -> t.errorTitle
     }
     val message = when (last) {
@@ -321,14 +327,16 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.DISABLED -> t.disabledMessage
         DialogKind.INSTALLED -> t.installedMessage
         DialogKind.HIDE_ICON -> t.hideIconMessage
+        DialogKind.RESTART -> t.restartMessage
         else -> lastText
     }
     val confirm = when (last) {
         DialogKind.INSTALL -> t.install
         DialogKind.HIDE_ICON -> t.hide
+        DialogKind.RESTART -> t.restart
         else -> t.ok
     }
-    val cancellable = last in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON)
+    val cancellable = last in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON, DialogKind.RESTART)
     WindowDialog(show = show, title = title, onDismissRequest = onDismiss) {
         Column {
             Text(message, Modifier.fillMaxWidth().heightIn(max = 420.dp)

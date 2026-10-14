@@ -12,7 +12,7 @@ enum class CompanionState(val installed: Boolean = false) {
     INSTALLING
 }
 
-enum class DialogKind { NONE, STATUS, INSTALL, DISABLED, INSTALLED, HIDE_ICON, ERROR }
+enum class DialogKind { NONE, STATUS, INSTALL, DISABLED, INSTALLED, HIDE_ICON, RESTART, ERROR }
 
 /** What the system reports as the default assistant; the screen words it per language. */
 sealed interface AssistantInfo {
@@ -32,6 +32,8 @@ data class CoogleState(
     val connected: Boolean = false,
     val features: Map<String, Boolean> = featureKeys.associateWith(FeaturePolicy::defaultValue),
     val busy: Boolean = false,
+    /** Root restart of the scope apps is running. */
+    val restarting: Boolean = false,
     val assistant: AssistantInfo = AssistantInfo.Loading,
     val companion: CompanionState = CompanionState.UNKNOWN,
     val iconHidden: Boolean = false,

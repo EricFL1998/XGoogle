@@ -54,10 +54,10 @@ class MainActivity : ComponentActivity() {
             CoogleTheme(state.look) {
                 if (state.look.hyper) MiuixScreen(state, ::changeSetting, ::openAssistant, ::changeIconVisibility,
                     { showDialog(DialogKind.STATUS) }, ::openRepository, ::openTelegram, ::changeLanguage,
-                    ::changeLook, ::confirmDialog, ::dismissDialog)
+                    ::changeLook, ::confirmDialog, ::dismissDialog) { showDialog(DialogKind.RESTART) }
                 else MaterialScreen(state, ::changeSetting, ::openAssistant, ::changeIconVisibility,
                     { showDialog(DialogKind.STATUS) }, ::openRepository, ::openTelegram, ::changeLanguage,
-                    ::changeLook, ::confirmDialog, ::dismissDialog)
+                    ::changeLook, ::confirmDialog, ::dismissDialog) { showDialog(DialogKind.RESTART) }
             }
         }
         SettingsConnection.connect(this)
@@ -152,6 +152,14 @@ class MainActivity : ComponentActivity() {
         if (state.busy || preferences == null || key in savingKeys) return
         if (key == FeaturePolicy.HEY_GOOGLE && enabled) checkCompanion(true)
         else saveSetting(key, enabled)
+        if (enabled) SettingsConnection.requestScopes(this, key) { result ->
+            if (isDestroyed) return@requestScopes
+            when (result) {
+                SettingsConnection.ScopeResult.DENIED -> error(texts.scopeDenied)
+                SettingsConnection.ScopeResult.SYSTEM_MISSING -> error(texts.scopeSystemMissing)
+                else -> Unit
+            }
+        }
     }
 
     private fun saveSetting(key: String, enabled: Boolean, companionInstalled: Boolean? = null) {
@@ -159,14 +167,17 @@ class MainActivity : ComponentActivity() {
         if (!savingKeys.add(key)) return
         val t = texts
         worker.execute {
+            var paymentChanged = false
             val result = runCatching {
+                // The double press opens the default wallet: make sure that is Google before saving.
+                if (key == FeaturePolicy.WALLET && enabled) paymentChanged = WalletPayment(applicationContext).ensureGoogle()
                 val editor = settings.edit().putBoolean(key, enabled)
                 companionInstalled?.let { editor.putBoolean("companion_ready", it) }
                 if (!editor.commit()) throw IOException(t.errSave)
                 // HyperOS already has a default-wallet action for double-pressing power.
                 if (key == FeaturePolicy.WALLET && SystemCompatibility.isHyperOs())
                     runCatching { CompanionInstaller.applyHyperOsWalletPower(enabled) }.onFailure {
-                        throw IOException(t.errWalletPower)
+                        throw if (it is RootShell.Failure) it else IOException(t.errWalletPower)
                     }
             }
             runOnUiThread {
@@ -178,7 +189,8 @@ class MainActivity : ComponentActivity() {
                     // Most hooks are put in place as their app starts; Wallet and the vibration
                     // switch are read live, and Hey Google has its own install dialog.
                     if (key !in liveKeys) android.widget.Toast.makeText(this, t.restartHint, android.widget.Toast.LENGTH_LONG).show()
-                }.onFailure { error(it.message ?: t.errSaveGeneric) }
+                    if (paymentChanged) android.widget.Toast.makeText(this, t.walletDefaultSet, android.widget.Toast.LENGTH_LONG).show()
+                }.onFailure { error(failureText(it, t.errSaveGeneric)) }
             }
         }
     }
@@ -208,7 +220,7 @@ class MainActivity : ComponentActivity() {
                 }.onFailure {
                     companionCheckedAt = null
                     state = state.copy(companion = CompanionState.UNKNOWN)
-                    if (enableAfterCheck) error(texts.errCheckCompanion)
+                    if (enableAfterCheck) error(if (it is RootShell.Failure) failureText(it, texts.errCheckCompanion) else texts.errCheckCompanion)
                 }
             }
         }
@@ -234,7 +246,7 @@ class MainActivity : ComponentActivity() {
                     showDialog(DialogKind.INSTALLED)
                 }.onFailure {
                     state = state.copy(companion = CompanionState.UNKNOWN)
-                    error(it.message ?: t.errCompanionInstall)
+                    error(failureText(it, t.errCompanionInstall))
                 }
             }
         }
@@ -269,7 +281,44 @@ class MainActivity : ComponentActivity() {
         when (dialog) {
             DialogKind.INSTALL -> installCompanion()
             DialogKind.HIDE_ICON -> setIconHidden(true)
+            DialogKind.RESTART -> restartApps()
             else -> Unit
+        }
+    }
+
+    /** Restarts the scope apps with root so most switches apply without a reboot (from Coogle 1.3.3). */
+    private fun restartApps() {
+        if (state.restarting) return
+        val scope = SettingsConnection.currentScope() ?: return
+        state = state.copy(restarting = true)
+        val t = texts
+        worker.execute {
+            val result = runCatching { RootShell.run(ScopeRestart.command(scope, android.os.Process.myUid() / 100000), 30) }
+            runOnUiThread {
+                if (isDestroyed) return@runOnUiThread
+                state = state.copy(restarting = false)
+                result.onSuccess { android.widget.Toast.makeText(this, t.restartDone, android.widget.Toast.LENGTH_LONG).show() }
+                    .onFailure { error(failureText(it, t.errRestart)) }
+            }
+        }
+    }
+
+    /** Words root and Wallet payment problems; other errors keep their own (already translated) text. */
+    private fun failureText(failure: Throwable, fallback: String): String {
+        val t = texts
+        return when (failure) {
+            is RootShell.Failure -> when (failure.reason) {
+                RootShell.Reason.AUTHORIZATION -> t.rootDenied
+                RootShell.Reason.UNAVAILABLE -> t.rootMissing
+                RootShell.Reason.TIMEOUT -> t.rootTimeout
+                else -> fallback + "\n\n" + t.rootFailed
+            }
+            is WalletPayment.Failure -> when (failure.problem) {
+                WalletPayment.Problem.NO_WALLET -> t.errNoWallet
+                WalletPayment.Problem.NO_NFC -> t.errNoNfc
+                else -> t.errWalletPayment
+            }
+            else -> failure.message ?: fallback
         }
     }
 
