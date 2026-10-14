@@ -12,7 +12,9 @@ enum class CompanionState(val installed: Boolean = false) {
     INSTALLING
 }
 
-enum class DialogKind { NONE, STATUS, INSTALL, DISABLED, INSTALLED, HIDE_ICON, RESTART, ERROR }
+enum class DialogKind { NONE, STATUS, INSTALL, DISABLED, INSTALLED, HIDE_ICON, RESTART, UPDATE, ERROR }
+
+enum class UpdateStatus { IDLE, CHECKING, LATEST, AVAILABLE, FAILED }
 
 /** What the system reports as the default assistant; the screen words it per language. */
 sealed interface AssistantInfo {
@@ -34,6 +36,10 @@ data class CoogleState(
     val busy: Boolean = false,
     /** Root restart of the scope apps is running. */
     val restarting: Boolean = false,
+    /** Apps the switched-on features need that are not ticked in LSPosed (labels; "system" for the framework). */
+    val missingScopes: List<String> = emptyList(),
+    val update: UpdateStatus = UpdateStatus.IDLE,
+    val updateVersion: String = "",
     val assistant: AssistantInfo = AssistantInfo.Loading,
     val companion: CompanionState = CompanionState.UNKNOWN,
     val iconHidden: Boolean = false,

@@ -25,6 +25,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.WarningAmber
+import androidx.compose.material.icons.rounded.SystemUpdate
+import androidx.compose.material.icons.rounded.Forum
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import top.yukonga.miuix.kmp.basic.CardDefaults
+import top.yukonga.miuix.kmp.basic.FloatingNavigationBar
+import top.yukonga.miuix.kmp.basic.FloatingNavigationBarItem
 import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material.icons.rounded.CenterFocusStrong
 import androidx.compose.material.icons.rounded.CheckCircle
@@ -110,9 +122,12 @@ fun MiuixScreen(
     onLook: (Look) -> Unit,
     onDialogConfirm: () -> Unit,
     onDialogDismiss: () -> Unit,
-    onRestartApps: () -> Unit
+    onRestartApps: () -> Unit,
+    onCheckUpdates: () -> Unit,
+    onSupport: () -> Unit
 ) {
     val t = textsFor(state.language)
+    var tab by rememberSaveable { mutableIntStateOf(0) }
     val bar = MiuixScrollBehavior()
     // Frosted bar: the list is recorded as a backdrop and blurred behind the top bar.
     val blur = state.look.blur
@@ -121,15 +136,19 @@ fun MiuixScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = "XGoogle",
-                subtitle = t.subtitle,
+                title = if (tab == 0) "XGoogle" else t.tabSettings,
+                subtitle = if (tab == 0) t.subtitle else "XGoogle",
                 modifier = if (blur) Modifier.textureBlur(backdrop, RectangleShape, 25f,
                     colors = BlurColors(blendColors = listOf(BlendColorEntry(surface.copy(alpha = 0.8f))))) else Modifier,
                 color = if (blur) Color.Transparent else surface,
-                navigationIcon = { ThemeButton(state.look, t, onLook) },
-                actions = { LanguageMenu(state.language, t.language, onLanguage) },
                 scrollBehavior = bar
             )
+        },
+        bottomBar = {
+            FloatingNavigationBar {
+                FloatingNavigationBarItem(tab == 0, { tab = 0 }, Icons.Rounded.Home, t.tabHome)
+                FloatingNavigationBarItem(tab == 1, { tab = 1 }, Icons.Rounded.Settings, t.tabSettings)
+            }
         }
     ) { padding ->
         // While connecting, show the cached switches as usable; taps wait for the connection.
@@ -138,10 +157,13 @@ fun MiuixScreen(
             Modifier.fillMaxHeight()
                 .then(if (blur) Modifier.layerBackdrop(backdrop).background(surface) else Modifier)
                 .overScrollVertical().nestedScroll(bar.nestedScrollConnection),
-            contentPadding = PaddingValues(top = padding.calculateTopPadding()),
+            contentPadding = PaddingValues(top = padding.calculateTopPadding(), bottom = padding.calculateBottomPadding()),
             overscrollEffect = null
         ) {
-            item {
+            if (tab == 1) item {
+                SettingsTab(state, t, onIconVisibility, onTelegram, onLanguage, onLook, onCheckUpdates, onSupport)
+                Spacer(Modifier.height(24.dp))
+            } else item {
                 StatusCard(state, t, onStatus)
                 val assistant = when (val info = state.assistant) {
                     AssistantInfo.Loading -> t.assistantReading
@@ -201,75 +223,110 @@ fun MiuixScreen(
                         state.features[FeaturePolicy.GMS] == true, available) { onSetting(FeaturePolicy.GMS, it) }
                     Toggle(Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
                         state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available) { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) }
-                }
-                Group(t.groupLook) {
-                    Toggle(Icons.Rounded.Palette, t.hyperStyle, t.hyperStyleSummary, true, true) {
-                        onLook(state.look.copy(hyper = it)) }
-                    Toggle(Icons.Rounded.Wallpaper, t.monet, t.monetSummary, state.look.monet, true) {
-                        onLook(state.look.copy(monet = it)) }
-                    Toggle(Icons.Rounded.BlurOn, t.blur, t.blurSummary, state.look.blur, true) {
-                        onLook(state.look.copy(blur = it)) }
-                }
-                Group(t.groupOther) {
                     ArrowPreference(title = t.restartApps, summary = t.restartAppsSummary,
                         startAction = { RowIcon(Icons.Rounded.RestartAlt) }, onClick = onRestartApps,
                         enabled = state.connected && !state.restarting)
-                    Toggle(Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
-                        state.iconHidden, true, onIconVisibility)
-                    ArrowPreference(title = t.about, summary = t.aboutSummary(BuildConfig.VERSION_NAME),
-                        startAction = { RowIcon(Icons.Rounded.Info) }, onClick = onTelegram)
                 }
                 Spacer(Modifier.height(24.dp))
-                Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
             }
         }
     }
     CoogleDialog(state, t, onDialogConfirm, onDialogDismiss)
 }
 
+/** KernelSU-style status: green working, yellow missing scopes (listed), red inactive. Opens LSPosed. */
 @Composable
 private fun StatusCard(state: CoogleState, t: Texts, onStatus: () -> Unit) {
     val colors = MiuixTheme.colorScheme
-    val tint = if (state.connected || state.loading) colors.primary else colors.error
-    Card(Modifier.padding(horizontal = 12.dp).padding(top = 12.dp), onClick = onStatus, showIndication = true) {
-        BasicComponent(
-            title = when {
-                state.connected -> t.active
-                state.loading -> t.connecting
-                else -> t.inactive
-            },
-            summary = t.version(BuildConfig.VERSION_NAME) + " · API 102",
-            startAction = {
-                Icon(when {
-                    state.connected -> Icons.Rounded.CheckCircle
-                    state.loading -> Icons.Rounded.HourglassTop
-                    else -> Icons.Rounded.HighlightOff
-                }, null, Modifier.padding(end = 16.dp).size(28.dp), tint = tint)
+    val dark = colors.surface.luminance() < 0.5f
+    val waiting = state.loading && !state.connected
+    val (container, content) = when {
+        waiting -> colors.secondaryContainer to colors.onSecondaryContainer
+        !state.connected -> (if (dark) Color(0xFF5C1A1A) else Color(0xFFFFDAD6)) to (if (dark) Color(0xFFFFDAD6) else Color(0xFF6B0F0F))
+        state.missingScopes.isNotEmpty() -> if (dark) Color(0xFF4A3F00) to Color(0xFFFFE08A) else Color(0xFFFFF0B3) to Color(0xFF574500)
+        else -> if (dark) Color(0xFF1F4D26) to Color(0xFFB9F0C0) else Color(0xFFC9EFCB) to Color(0xFF14501E)
+    }
+    Card(Modifier.padding(horizontal = 12.dp).padding(top = 12.dp), colors = CardDefaults.defaultColors(container, content),
+        onClick = onStatus, showIndication = true) {
+        Row(Modifier.padding(horizontal = 20.dp, vertical = 22.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(when {
+                waiting -> Icons.Rounded.HourglassTop
+                !state.connected -> Icons.Rounded.HighlightOff
+                state.missingScopes.isNotEmpty() -> Icons.Rounded.WarningAmber
+                else -> Icons.Rounded.CheckCircle
+            }, null, Modifier.size(36.dp), tint = content)
+            Spacer(Modifier.width(18.dp))
+            Column(Modifier.weight(1f)) {
+                Text(when {
+                    waiting -> t.connecting
+                    !state.connected -> t.inactive
+                    state.missingScopes.isNotEmpty() -> t.statusIncomplete
+                    else -> t.statusWorking
+                }, color = content, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+                Text(t.version(BuildConfig.VERSION_NAME) + " · API 102", color = content, fontSize = 14.sp,
+                    modifier = Modifier.padding(top = 2.dp))
+                if (state.connected && state.missingScopes.isNotEmpty()) {
+                    Text(t.statusMissingIntro, color = content, fontSize = 14.sp, modifier = Modifier.padding(top = 10.dp))
+                    state.missingScopes.forEach { name ->
+                        Text("• " + (if (name == "system") t.systemFramework else name), color = content, fontSize = 14.sp)
+                    }
+                }
+                Text(t.statusTap, color = content.copy(alpha = 0.75f), fontSize = 12.sp, modifier = Modifier.padding(top = 10.dp))
             }
-        )
+        }
     }
 }
 
-/** Top left: each tap moves the theme on, system → light → dark. */
 @Composable
-private fun ThemeButton(look: Look, t: Texts, onLook: (Look) -> Unit) {
+private fun SettingsTab(state: CoogleState, t: Texts, onIconVisibility: (Boolean) -> Unit, onTelegram: () -> Unit,
+    onLanguage: (AppLanguage) -> Unit, onLook: (Look) -> Unit, onCheckUpdates: () -> Unit, onSupport: () -> Unit) {
+    Spacer(Modifier.height(6.dp))
+    Group(t.groupLook) {
+        LanguageRow(state.language, t, onLanguage)
+        ThemeRow(state.look, t, onLook)
+        Toggle(Icons.Rounded.Palette, t.hyperStyle, t.hyperStyleSummary, true, true) {
+            onLook(state.look.copy(hyper = it)) }
+        Toggle(Icons.Rounded.Wallpaper, t.monet, t.monetSummary, state.look.monet, true) {
+            onLook(state.look.copy(monet = it)) }
+        Toggle(Icons.Rounded.BlurOn, t.blur, t.blurSummary, state.look.blur, true) {
+            onLook(state.look.copy(blur = it)) }
+    }
+    Group(t.groupApp) {
+        ArrowPreference(title = t.checkUpdates, summary = when (state.update) {
+            UpdateStatus.IDLE -> t.version(BuildConfig.VERSION_NAME)
+            UpdateStatus.CHECKING -> t.updateChecking
+            UpdateStatus.LATEST -> t.version(BuildConfig.VERSION_NAME) + " · " + t.updateLatest
+            UpdateStatus.AVAILABLE -> t.updateTitle + ": " + state.updateVersion
+            UpdateStatus.FAILED -> t.updateFailed
+        }, startAction = { RowIcon(Icons.Rounded.SystemUpdate) }, onClick = onCheckUpdates,
+            enabled = state.update != UpdateStatus.CHECKING)
+        ArrowPreference(title = t.support, summary = t.supportSummary,
+            startAction = { RowIcon(Icons.Rounded.Forum) }, onClick = onSupport)
+        Toggle(Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
+            state.iconHidden, true, onIconVisibility)
+        ArrowPreference(title = t.about, summary = t.aboutSummary(BuildConfig.VERSION_NAME),
+            startAction = { RowIcon(Icons.Rounded.Info) }, onClick = onTelegram)
+    }
+}
+
+/** Each tap moves the theme on, system → light → dark. */
+@Composable
+private fun ThemeRow(look: Look, t: Texts, onLook: (Look) -> Unit) {
     val (icon, label) = when (look.theme) {
         1 -> Icons.Rounded.LightMode to t.themeLight
         2 -> Icons.Rounded.DarkMode to t.themeDark
         else -> Icons.Rounded.BrightnessAuto to t.themeSystem
     }
-    IconButton(onClick = { onLook(look.copy(theme = (look.theme + 1) % 3)) }, modifier = Modifier.padding(start = 12.dp)) {
-        Icon(icon, contentDescription = "${t.theme}: $label", tint = MiuixTheme.colorScheme.onSurface)
-    }
+    ArrowPreference(title = t.theme, summary = label, startAction = { RowIcon(icon) },
+        onClick = { onLook(look.copy(theme = (look.theme + 1) % 3)) })
 }
 
 @Composable
-private fun LanguageMenu(current: AppLanguage, label: String, onLanguage: (AppLanguage) -> Unit) {
+private fun LanguageRow(current: AppLanguage, t: Texts, onLanguage: (AppLanguage) -> Unit) {
     var open by remember { mutableStateOf(false) }
     Box {
-        IconButton(onClick = { open = true }, modifier = Modifier.padding(end = 12.dp)) {
-            Icon(Icons.Rounded.Language, contentDescription = label, tint = MiuixTheme.colorScheme.onSurface)
-        }
+        ArrowPreference(title = t.language, summary = current.label,
+            startAction = { RowIcon(Icons.Rounded.Language) }, onClick = { open = true })
         WindowListPopup(show = open, onDismissRequest = { open = false },
             alignment = top.yukonga.miuix.kmp.basic.PopupPositionProvider.Align.End) {
             ListPopupColumn {
@@ -319,6 +376,7 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.INSTALLED -> t.installedTitle
         DialogKind.HIDE_ICON -> t.hideIconTitle
         DialogKind.RESTART -> t.restartTitle
+        DialogKind.UPDATE -> t.updateTitle
         else -> t.errorTitle
     }
     val message = when (last) {
@@ -328,15 +386,17 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.INSTALLED -> t.installedMessage
         DialogKind.HIDE_ICON -> t.hideIconMessage
         DialogKind.RESTART -> t.restartMessage
+        DialogKind.UPDATE -> t.updateMessage(state.updateVersion)
         else -> lastText
     }
     val confirm = when (last) {
         DialogKind.INSTALL -> t.install
         DialogKind.HIDE_ICON -> t.hide
         DialogKind.RESTART -> t.restart
+        DialogKind.UPDATE -> t.download
         else -> t.ok
     }
-    val cancellable = last in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON, DialogKind.RESTART)
+    val cancellable = last in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON, DialogKind.RESTART, DialogKind.UPDATE)
     WindowDialog(show = show, title = title, onDismissRequest = onDismiss) {
         Column {
             Text(message, Modifier.fillMaxWidth().heightIn(max = 420.dp)
