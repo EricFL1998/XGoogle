@@ -35,15 +35,18 @@ final class WalletPayment {
             if (!pm.getApplicationInfo(WalletPowerPolicy.WALLET_PACKAGE, 0).enabled) throw new Failure(Problem.NO_WALLET);
         } catch (PackageManager.NameNotFoundException missing) { throw new Failure(Problem.NO_WALLET); }
         if (!pm.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION)) throw new Failure(Problem.NO_NFC);
-        if (isGoogle(current())) return false;
         RoleManager roles = context.getSystemService(RoleManager.class);
         boolean useRole = roles != null && roles.isRoleAvailable(ROLE_WALLET);
-        String select = useRole ? "cmd role add-role-holder --user " + user + " " + ROLE_WALLET + " " + GMS + " 0"
-                : "settings --user " + user + " put secure " + DEFAULT + " '" + paymentService(pm) + "'";
-        // The role callback runs before NFC updates its setting; wait for it a little.
-        RootShell.run(select + " || exit 1; i=0; while [ \"$i\" -lt 10 ]; do "
-                + "case \"$(settings --user " + user + " get secure " + DEFAULT + ")\" in " + GMS + "/*) exit 0;; esac; "
-                + "i=$((i+1)); sleep 0.2; done; exit 1", 20);
+        boolean roleIsGoogle = !useRole || GMS.equals(RootShell.run("cmd role get-role-holders --user " + user
+                + " " + ROLE_WALLET, 20).trim());
+        if (roleIsGoogle && isGoogle(current())) return false;
+        // HyperOS does not copy the wallet role into the NFC setting (or the other way round),
+        // so set both: the role for the double press, the setting for the tap at the reader.
+        String setting = "case \"$(settings --user " + user + " get secure " + DEFAULT + ")\" in " + GMS + "/*) ;; "
+                + "*) settings --user " + user + " put secure " + DEFAULT + " '" + paymentService(context.getPackageManager()) + "' || exit 1;; esac";
+        RootShell.run((roleIsGoogle ? "" : "cmd role add-role-holder --user " + user + " " + ROLE_WALLET + " " + GMS + " 0 || exit 1; "
+                // The role callback may still update the NFC setting itself; give it a moment.
+                + "sleep 0.5; ") + setting, 20);
         if (!isGoogle(current())) throw new Failure(Problem.FAILED);
         return true;
     }
