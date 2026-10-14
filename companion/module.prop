@@ -1,7 +1,7 @@
 id=coogle_companion
-name=XGoogle ek modülü
+name=XGoogle companion
 version=1.2.6
 versionCode=126
-author=zopulus & Leekinn
-description=[⏳Yeniden başlatma sonrası kontrol edilecek]
+author=Leekin
+description=[⏳Checked after reboot]
 updateJson=https://raw.githubusercontent.com/Leekin2/XGoogle/main/update.json

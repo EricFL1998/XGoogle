@@ -64,7 +64,7 @@ Every feature can be turned on or off on its own; turning one off brings back th
 
 ## Troubleshooting
 
-- **Hey Google does not work:** check the companion module's description in your root manager; it should show "✅Google sistem uygulaması" (Google system app) and "✅Kayıt bileşenleri yüklü" (enrollment components loaded). Make sure Google is the default digital assistant and Voice Match is complete.
+- **Hey Google does not work:** check the companion module's description in your root manager; it should show "✅Google is a system app" and "✅Enrollment components loaded". Make sure Google is the default digital assistant and Voice Match is complete.
 - **The status card is yellow / I reinstalled Wallet or Google:** LSPosed drops a reinstalled app from the scope, and HyperOS may hide LSPosed's *Scope request* notification. The card lists the missing apps; tap it to open LSPosed, tick them in XGoogle's scope, then use *Restart apps*.
 - **No Lens button in the camera:** check that *Google Lens in Camera* is on and the Camera scope is selected in LSPosed, then reboot.
 - **The navigation handle does not open Circle to Search:** XiaoAi must be installed and Circle to Search turned on in XGoogle.
@@ -166,7 +166,7 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 
 ### Sorun giderme
 
-- **Hey Google çalışmıyor:** Root yöneticinizde ek modülün açıklamasına bakın; "✅Google sistem uygulaması" ve "✅Kayıt bileşenleri yüklü" yazmalı. Google'ın varsayılan dijital asistan olduğundan ve Voice Match'in tamamlandığından emin olun.
+- **Hey Google çalışmıyor:** Root yöneticinizde ek modülün açıklamasına bakın; "✅Google is a system app" ve "✅Enrollment components loaded" yazmalı. Google'ın varsayılan dijital asistan olduğundan ve Voice Match'in tamamlandığından emin olun.
 - **Durum kartı sarı / Cüzdan'ı ya da Google'ı yeniden kurdum:** LSPosed yeniden kurulan uygulamayı kapsamdan çıkarır, HyperOS da LSPosed'ın *Kapsam talebi* bildirimini gizleyebilir. Kart eksik uygulamaları listeler; karta dokunup LSPosed'ı açın, XGoogle'ın kapsamında işaretleyin, sonra *Uygulamaları yeniden başlat*'ı kullanın.
 - **Kamerada Lens butonu yok:** *Kamerada Google Lens* açık mı, LSPosed'da Kamera kapsamı seçili mi kontrol edin, sonra yeniden başlatın.
 - **Alt çubuk Circle to Search açmıyor:** XiaoAi kurulu olmalı ve XGoogle'da Circle to Search açık olmalı.
