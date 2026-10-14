@@ -121,7 +121,6 @@ internal object WalletPowerHooks {
             val record = ModernReflect.findClass("com.android.server.wm.ActivityRecord", loader)
             val component = ModernReflect.findField(record, "mActivityComponent")
             val intentField = ModernReflect.findField(record, "intent")
-            val requested = ModernReflect.findField(record, "mShowWhenLocked")
             ModernReflect.findAndHookMethod(record, "canShowWhenLocked", object : ModernMethodHook() {
                 override fun afterHookedMethod(param: MethodHookParam) {
                     if (param.result == true) return
@@ -129,9 +128,9 @@ internal object WalletPowerHooks {
                     if (name.packageName != WalletPowerPolicy.WALLET_PACKAGE) return
                     val action = (intentField.get(param.thisObject) as? android.content.Intent)?.action
                     if (!WalletPowerPolicy.isQuickDrawPreview(name.className, action)) return
-                    // Only when the screen itself asks to show over the lock screen (XGoogle's
-                    // Wallet hook does), and only while the switch is on.
-                    if (requested.getBoolean(param.thisObject) && FeatureConfig.enabled(FeaturePolicy.WALLET)) param.result = true
+                    // Only while the switch is on. Not gated on mShowWhenLocked: with the permission
+                    // off HyperOS never records the screen's own request (XGoogle's Wallet hook makes it).
+                    if (FeatureConfig.enabled(FeaturePolicy.WALLET)) param.result = true
                 }
             })
             HookLog.i("WalletPowerHooks", "Tap-to-pay screen may show over the HyperOS lock screen")

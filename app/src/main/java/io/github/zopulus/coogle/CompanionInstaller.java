@@ -37,12 +37,18 @@ public final class CompanionInstaller {
      */
     public static void applyHyperOsWalletPower(boolean enabled) throws Exception {
         String saved="/data/adb/coogle_double_click_power_key";
+        // HyperOS's own "Show on lock screen" permission (MIUIOP 10020): without it the
+        // tap-to-pay screen opens behind the lock screen. Remember the user's mode as well.
+        String op="com.google.android.apps.walletnfcrel 10020", savedOp="/data/adb/coogle_wallet_lock_op";
         if (enabled) run("cur=$(settings get system double_click_power_key); "
                 +"[ \"$cur\" = launch_QAW_wallet ] || echo \"$cur\" > "+saved+" && "
-                +"settings put system double_click_power_key launch_QAW_wallet",20);
-        // Keep the saved choice until it is really back in place.
+                +"settings put system double_click_power_key launch_QAW_wallet && "
+                +"mode=$(appops get "+op+" | sed -n 's/^MIUIOP(10020): \\([a-z]*\\);.*/\\1/p'); "
+                +"if [ \"$mode\" != allow ]; then echo \"${mode:-default}\" > "+savedOp+" && appops set "+op+" allow; fi",20);
+        // Keep the saved choices until they are really back in place.
         else run("prev=$(cat "+saved+" 2>/dev/null); [ -n \"$prev\" ] && [ \"$prev\" != null ] || prev=none; "
-                +"settings put system double_click_power_key \"$prev\" && rm -f "+saved,20);
+                +"settings put system double_click_power_key \"$prev\" && rm -f "+saved+" && "
+                +"if [ -f "+savedOp+" ]; then appops set "+op+" \"$(cat "+savedOp+")\" && rm -f "+savedOp+"; fi",20);
     }
     /**
      * HyperOS: the companion routes the nav-handle long press to Google on every boot. While
