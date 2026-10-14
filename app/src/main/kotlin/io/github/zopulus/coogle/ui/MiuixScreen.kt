@@ -37,7 +37,9 @@ import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.LockOpen
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.BlurOn
+import androidx.compose.material.icons.rounded.BrightnessAuto
 import androidx.compose.material.icons.rounded.DarkMode
+import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.PhotoCamera
@@ -84,7 +86,6 @@ import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
-import top.yukonga.miuix.kmp.preference.WindowDropdownPreference
 import top.yukonga.miuix.kmp.blur.BlendColorEntry
 import top.yukonga.miuix.kmp.blur.BlurColors
 import top.yukonga.miuix.kmp.blur.layerBackdrop
@@ -123,6 +124,7 @@ fun MiuixScreen(
                 modifier = if (blur) Modifier.textureBlur(backdrop, RectangleShape, 25f,
                     colors = BlurColors(blendColors = listOf(BlendColorEntry(surface.copy(alpha = 0.8f))))) else Modifier,
                 color = if (blur) Color.Transparent else surface,
+                navigationIcon = { ThemeButton(state.look, t, onLook) },
                 actions = { LanguageMenu(state.language, t.language, onLanguage) },
                 scrollBehavior = bar
             )
@@ -201,10 +203,6 @@ fun MiuixScreen(
                 Group(t.groupLook) {
                     Toggle(Icons.Rounded.Palette, t.hyperStyle, t.hyperStyleSummary, true, true) {
                         onLook(state.look.copy(hyper = it)) }
-                    WindowDropdownPreference(items = listOf(t.themeSystem, t.themeLight, t.themeDark),
-                        selectedIndex = state.look.theme, title = t.theme,
-                        startAction = { RowIcon(Icons.Rounded.DarkMode) },
-                        onSelectedIndexChange = { onLook(state.look.copy(theme = it)) })
                     Toggle(Icons.Rounded.Wallpaper, t.monet, t.monetSummary, state.look.monet, true) {
                         onLook(state.look.copy(monet = it)) }
                     Toggle(Icons.Rounded.BlurOn, t.blur, t.blurSummary, state.look.blur, true) {
@@ -244,6 +242,19 @@ private fun StatusCard(state: CoogleState, t: Texts, onStatus: () -> Unit) {
                 }, null, Modifier.padding(end = 16.dp).size(28.dp), tint = tint)
             }
         )
+    }
+}
+
+/** Top left: each tap moves the theme on, system → light → dark. */
+@Composable
+private fun ThemeButton(look: Look, t: Texts, onLook: (Look) -> Unit) {
+    val (icon, label) = when (look.theme) {
+        1 -> Icons.Rounded.LightMode to t.themeLight
+        2 -> Icons.Rounded.DarkMode to t.themeDark
+        else -> Icons.Rounded.BrightnessAuto to t.themeSystem
+    }
+    IconButton(onClick = { onLook(look.copy(theme = (look.theme + 1) % 3)) }, modifier = Modifier.padding(start = 12.dp)) {
+        Icon(icon, contentDescription = "${t.theme}: $label", tint = MiuixTheme.colorScheme.onSurface)
     }
 }
 
