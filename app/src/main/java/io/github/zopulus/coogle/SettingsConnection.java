@@ -78,7 +78,7 @@ final class SettingsConnection {
      */
     static synchronized void requestScopes(Context context, String feature, java.util.function.Consumer<ScopeResult> done) {
         XposedService current = service;
-        if (current == null) return;
+        if (current == null) { Log.i("XGoogle", "Scope check for " + feature + " skipped: LSPosed not connected"); return; }
         android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
         try {
             List<String> scope = current.getScope();
@@ -91,10 +91,17 @@ final class SettingsConnection {
                 catch (android.content.pm.PackageManager.NameNotFoundException notInstalled) { }
             }
             ScopeResult after = systemMissing ? ScopeResult.SYSTEM_MISSING : ScopeResult.OK;
+            Log.i("XGoogle", "Scope check for " + feature + ": missing=" + missing + " systemMissing=" + systemMissing);
             if (missing.isEmpty()) { if (systemMissing) main.post(() -> done.accept(after)); return; }
             current.requestScope(missing, new XposedService.OnScopeEventListener() {
-                @Override public void onScopeRequestApproved(List<String> approved) { main.post(() -> done.accept(after)); }
-                @Override public void onScopeRequestFailed(String message) { main.post(() -> done.accept(ScopeResult.DENIED)); }
+                @Override public void onScopeRequestApproved(List<String> approved) {
+                    Log.i("XGoogle", "Scope request approved: " + approved);
+                    main.post(() -> done.accept(after));
+                }
+                @Override public void onScopeRequestFailed(String message) {
+                    Log.w("XGoogle", "Scope request failed: " + message);
+                    main.post(() -> done.accept(ScopeResult.DENIED));
+                }
             });
         } catch (Throwable t) {
             Log.w("XGoogle", "Scope request failed", t);
