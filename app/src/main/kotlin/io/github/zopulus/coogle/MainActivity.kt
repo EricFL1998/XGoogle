@@ -50,8 +50,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             CoogleTheme {
                 CoogleScreen(state, ::changeSetting, ::openAssistant, ::changeIconVisibility,
-                    { showDialog(DialogKind.STATUS) }, ::openRepository, ::openTelegram, ::changeLanguage,
-                    ::confirmDialog, ::dismissDialog) { showDialog(DialogKind.RESTART) }
+                    ::openModuleManager, ::openRepository, ::openTelegram, ::changeLanguage,
+                    ::confirmDialog, ::dismissDialog, { showDialog(DialogKind.RESTART) }, ::checkUpdates, ::openSupport)
             }
         }
         SettingsConnection.connect(this)
@@ -61,6 +61,7 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         companionCheckedThisResume = false
         state = state.copy(assistant = readAssistant(), iconHidden = iconHidden())
+        refreshScopes()
         if (preferences != null && state.features[FeaturePolicy.HEY_GOOGLE] == true) checkCompanion(false)
     }
 
@@ -77,6 +78,7 @@ class MainActivity : ComponentActivity() {
         preferences = runCatching { service?.getRemotePreferences(FeatureConfig.GROUP) }.getOrNull()
         syncPreferences()
         if (service != null) requestMissingScope(service)
+        refreshScopes()
         if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
             state.features[FeaturePolicy.HEY_GOOGLE] == true) checkCompanion(false)
     }
@@ -142,6 +144,7 @@ class MainActivity : ComponentActivity() {
         else saveSetting(key, enabled)
         if (enabled) SettingsConnection.requestScopes(this, key) { result ->
             if (isDestroyed) return@requestScopes
+            refreshScopes()
             when (result) {
                 SettingsConnection.ScopeResult.DENIED -> error(texts.scopeDenied)
                 SettingsConnection.ScopeResult.SYSTEM_MISSING -> error(texts.scopeSystemMissing)
@@ -174,6 +177,7 @@ class MainActivity : ComponentActivity() {
                 result.onSuccess {
                     state = state.copy(features = state.features + (key to enabled))
                     cacheFeatures(state.features)
+                    refreshScopes()
                     // Most hooks are put in place as their app starts; Wallet and the vibration
                     // switch are read live, and Hey Google has its own install dialog.
                     if (key !in liveKeys) android.widget.Toast.makeText(this, t.restartHint, android.widget.Toast.LENGTH_LONG).show()
@@ -270,8 +274,60 @@ class MainActivity : ComponentActivity() {
             DialogKind.INSTALL -> installCompanion()
             DialogKind.HIDE_ICON -> setIconHidden(true)
             DialogKind.RESTART -> restartApps()
+            DialogKind.UPDATE -> openUrl(UpdateChecker.RELEASES, texts.errRepository)
             else -> Unit
         }
+    }
+
+    /**
+     * HyperOS hides LSPosed's scope request notice, so the status card lists what is missing:
+     * the LSPosed scopes of every switched-on feature that are installed but not ticked.
+     */
+    private fun refreshScopes() {
+        val scope = runCatching { SettingsConnection.currentScope() }.getOrNull()
+        if (scope == null || !state.connected) { state = state.copy(missingScopes = emptyList()); return }
+        val missing = state.features.filterValues { it }.keys.flatMap(FeatureScopes::required).distinct()
+            .filter { it !in scope }
+            .mapNotNull { name ->
+                if (name == FeatureScopes.SYSTEM) name
+                else runCatching { packageManager.getApplicationInfo(name, 0) }.getOrNull()
+                    ?.let { packageManager.getApplicationLabel(it).toString() }
+            }
+        state = state.copy(missingScopes = missing)
+    }
+
+    /** Opens XGoogle's own page (enable switch and scope list) in the LSPosed manager. */
+    private fun openModuleManager() {
+        val user = android.os.Process.myUid() / 100000
+        val module = Intent(Intent.ACTION_MAIN).setComponent(ComponentName("org.lsposed.manager", "org.lsposed.manager.ui.activity.MainActivity"))
+            .setData(Uri.parse("module://$packageName:$user"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        runCatching { startActivity(module) }
+            .recoverCatching { startActivity(packageManager.getLaunchIntentForPackage("org.lsposed.manager")!!) }
+            .onFailure { error(texts.errLsposed) }
+    }
+
+    private fun checkUpdates() {
+        if (state.update == io.github.zopulus.coogle.ui.UpdateStatus.CHECKING) return
+        state = state.copy(update = io.github.zopulus.coogle.ui.UpdateStatus.CHECKING)
+        worker.execute {
+            val result = runCatching { UpdateChecker.latest() }
+            runOnUiThread {
+                if (isDestroyed) return@runOnUiThread
+                result.onSuccess { release ->
+                    if (UpdateChecker.isNewer(release.version, BuildConfig.VERSION_NAME)) {
+                        state = state.copy(update = io.github.zopulus.coogle.ui.UpdateStatus.AVAILABLE,
+                            updateVersion = release.version, dialog = DialogKind.UPDATE)
+                    } else state = state.copy(update = io.github.zopulus.coogle.ui.UpdateStatus.LATEST)
+                }.onFailure { state = state.copy(update = io.github.zopulus.coogle.ui.UpdateStatus.FAILED) }
+            }
+        }
+    }
+
+    private fun openSupport() = openUrl("https://t.me/Xgooogle", texts.errSupport)
+
+    private fun openUrl(url: String, failure: String) {
+        runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.onFailure { error(failure) }
     }
 
     /** Restarts the scope apps with root so most switches apply without a reboot (from Coogle 1.3.3). */

@@ -2,6 +2,8 @@
     <!-- Lets XGoogle (and nothing else) ask SystemUI for the Gemini session from a lock screen shortcut. -->
     <permission android:name="io.github.leekin2.xgoogle.permission.SHOW_ASSISTANT" android:protectionLevel="signature" />
     <uses-permission android:name="io.github.leekin2.xgoogle.permission.SHOW_ASSISTANT" />
+    <!-- Only for "Check for updates" (GitHub releases). -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <queries>
         <intent><action android:name="android.intent.action.ASSIST" /></intent>
         <intent><action android:name="android.service.voice.VoiceInteractionService" /></intent>
@@ -19,6 +21,7 @@
         <package android:name="com.miui.aod" />
         <package android:name="com.miui.securitycore" />
         <package android:name="com.oplus.wallpapers" />
+        <package android:name="org.lsposed.manager" />
         <intent><action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" /></intent>
     </queries>
     <application android:name=".XGoogleApp" android:label="XGoogle" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@style/AppTheme" android:description="@string/module_description" android:allowBackup="false" android:supportsRtl="true">

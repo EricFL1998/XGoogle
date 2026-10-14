@@ -30,6 +30,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.WarningAmber
+import androidx.compose.material.icons.rounded.SystemUpdate
+import androidx.compose.material.icons.rounded.Forum
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.semantics.selected
 import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.HighlightOff
@@ -103,9 +115,12 @@ fun CoogleScreen(
     onLanguage: (AppLanguage) -> Unit,
     onDialogConfirm: () -> Unit,
     onDialogDismiss: () -> Unit,
-    onRestartApps: () -> Unit
+    onRestartApps: () -> Unit,
+    onCheckUpdates: () -> Unit,
+    onSupport: () -> Unit
 ) {
     val t = textsFor(state.language)
+    var tab by rememberSaveable { mutableIntStateOf(0) }
     val bar = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(bar.nestedScrollConnection),
@@ -113,9 +128,8 @@ fun CoogleScreen(
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             LargeFlexibleTopAppBar(
-                title = { Text("XGoogle") },
-                subtitle = { Text(t.subtitle) },
-                actions = { LanguageMenu(state.language, t.language, onLanguage) },
+                title = { Text(if (tab == 0) "XGoogle" else t.tabSettings) },
+                subtitle = { Text(if (tab == 0) t.subtitle else "XGoogle") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer),
@@ -124,124 +138,177 @@ fun CoogleScreen(
             )
         }
     ) { padding ->
-        Column(Modifier.padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
-            Spacer(Modifier.height(12.dp))
-            // Same Surface, ListItem and StatusTag geometry as KernelSU HomeMaterial.
-            val statusColor = if (state.connected || state.loading) MaterialTheme.colorScheme.secondaryContainer
-                else MaterialTheme.colorScheme.errorContainer
-            val statusContentColor = MaterialTheme.colorScheme.contentColorFor(statusColor)
-            Surface(modifier = Modifier.fillMaxWidth(), color = statusColor,
-                contentColor = statusContentColor, shape = MaterialTheme.shapes.large,
-                onClick = onStatus) {
-                ListItem(
-                    leadingContent = {
-                        Icon(when {
-                            state.connected -> Icons.Rounded.CheckCircle
-                            state.loading -> Icons.Rounded.HourglassTop
-                            else -> Icons.Rounded.HighlightOff
-                        }, contentDescription = null)
-                    },
-                    trailingContent = {
-                        Box(Modifier.padding(end = 4.dp).background(
-                            MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))) {
-                            Text("API 102", Modifier.padding(vertical = 2.dp, horizontal = 4.dp),
-                                style = MaterialTheme.typography.labelSmallEmphasized,
-                                color = MaterialTheme.colorScheme.onPrimary)
-                        }
-                    },
-                    overlineContent = null,
-                    supportingContent = {
-                        Text(t.version(BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodyMedium)
-                    },
-                    verticalAlignment = Alignment.CenterVertically,
-                    colors = ListItemDefaults.colors(containerColor = Color.Transparent,
-                        contentColor = statusContentColor, leadingContentColor = statusContentColor,
-                        trailingContentColor = statusContentColor,
-                        supportingContentColor = statusContentColor.copy(alpha = 0.7f)),
-                    elevation = ListItemDefaults.elevation(),
-                    content = {
-                        Text(when {
-                            state.connected -> t.active
-                            state.loading -> t.connecting
-                            else -> t.inactive
-                        }, style = MaterialTheme.typography.titleMediumEmphasized)
-                    }
-                )
-            }
-            // While connecting, show the cached switches as usable; taps wait for the connection.
-            val available = state.connected || state.loading
-            val assistant = when (val info = state.assistant) {
-                AssistantInfo.Loading -> t.assistantReading
-                AssistantInfo.None -> t.assistantNone
-                AssistantInfo.Hidden -> t.assistantTap
-                is AssistantInfo.App -> t.assistantCurrent(info.label)
-            }
-            Group(t.groupAssistant) {
-                SettingRow(0, 2, Icons.Rounded.RecordVoiceOver, t.defaultAssistant, assistant, onClick = onAssistant)
-                ToggleRow(t, 1, 2, Icons.Rounded.Mic, t.heyGoogle, t.companion(state.companion),
-                    checked = state.features[FeaturePolicy.HEY_GOOGLE] == true, enabled = available && !state.busy,
-                    onChange = { onSetting(FeaturePolicy.HEY_GOOGLE, it) })
-            }
-            Group(t.groupSearch) {
-                // Circle to Search's own options fold under it, so the list stays short.
-                var circleOpen by rememberSaveable { mutableStateOf(false) }
-                val extra = if (circleOpen) 2 else 0
-                val count = 3 + extra
-                val circleOn = state.features[FeaturePolicy.NAVIGATION] == true
-                SettingRow(0, count, Icons.Rounded.TouchApp, t.circle, t.circleSummary, { circleOpen = !circleOpen },
-                    modifier = Modifier.semantics { stateDescription = if (circleOn) t.switchOn else t.switchOff }) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        val turn by animateFloatAsState(if (circleOpen) 180f else 0f, label = "circleOptions")
-                        Icon(Icons.Rounded.ExpandMore, t.circleOptions, Modifier.padding(end = 8.dp).rotate(turn))
-                        SettingSwitch(circleOn, available) { onSetting(FeaturePolicy.NAVIGATION, it) }
-                    }
+        Box(Modifier.fillMaxSize()) {
+            // Each tab keeps its own scroll position.
+            key(tab) {
+                Column(Modifier.padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
+                    Spacer(Modifier.height(12.dp))
+                    if (tab == 0) HomeTab(state, t, onSetting, onAssistant, onStatus, onRestartApps)
+                    else SettingsTab(state, t, onIconVisibility, onAbout, onTelegram, onLanguage, onCheckUpdates, onSupport)
+                    // Room for the floating bar.
+                    Spacer(Modifier.height(112.dp))
                 }
-                AnimatedVisibility(circleOpen, enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(), exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()) {
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        ToggleRow(t, 1, count, Icons.Rounded.Translate, t.liveTranslate, t.liveTranslateSummary,
-                            state.features[FeaturePolicy.LIVE_TRANSLATE] == true, available,
-                            { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) })
-                        ToggleRow(t, 2, count, Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
-                            state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available,
-                            { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) })
-                    }
-                }
-                ToggleRow(t, 1 + extra, count, Icons.Rounded.CenterFocusStrong, t.lens, t.lensSummary,
-                    state.features[FeaturePolicy.LENS] == true, available, { onSetting(FeaturePolicy.LENS, it) })
-                ToggleRow(t, 2 + extra, count, Icons.Rounded.PhotoCamera, t.cameraLens, t.cameraLensSummary,
-                    state.features[FeaturePolicy.CAMERA_LENS] == true, available, { onSetting(FeaturePolicy.CAMERA_LENS, it) })
             }
-            Group(t.groupLock) {
-                ToggleRow(t, 0, 2, Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
-                    state.features[FeaturePolicy.QUICK_ENTRIES] == true, available, { onSetting(FeaturePolicy.QUICK_ENTRIES, it) })
-                ToggleRow(t, 1, 2, Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
-                    state.features[FeaturePolicy.WALLET] == true, available, { onSetting(FeaturePolicy.WALLET, it) })
-            }
-            Group(t.groupSystem) {
-                ToggleRow(t, 0, 2, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
-                    state.features[FeaturePolicy.GMS] == true, available, { onSetting(FeaturePolicy.GMS, it) })
-                ToggleRow(t, 1, 2, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
-                    state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available, { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) })
-            }
-            Group(t.groupOther) {
-                SettingRow(0, 3, Icons.Rounded.RestartAlt, t.restartApps, t.restartAppsSummary,
-                    onClick = onRestartApps, enabled = state.connected && !state.restarting)
-                ToggleRow(t, 1, 3, Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
-                    state.iconHidden, true, onIconVisibility)
-                SettingRow(2, 3, Icons.Rounded.Info, t.about, t.aboutSummary(BuildConfig.VERSION_NAME),
-                    onClick = onTelegram)
-            }
-            Spacer(Modifier.height(24.dp))
+            FloatingTabs(t, tab, { tab = it }, Modifier.align(Alignment.BottomCenter))
         }
     }
     CoogleDialog(state, t, onDialogConfirm, onDialogDismiss)
 }
 
 @Composable
-private fun LanguageMenu(current: AppLanguage, label: String, onLanguage: (AppLanguage) -> Unit) {
+private fun FloatingTabs(t: Texts, selected: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
+    Surface(modifier.navigationBarsPadding().padding(bottom = 16.dp), shape = CircleShape,
+        color = MaterialTheme.colorScheme.surfaceContainerHighest, shadowElevation = 6.dp) {
+        Row(Modifier.padding(6.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            listOf(Icons.Rounded.Home to t.tabHome, Icons.Rounded.Settings to t.tabSettings).forEachIndexed { index, (icon, label) ->
+                val active = index == selected
+                Surface(onClick = { onSelect(index) }, shape = CircleShape,
+                    color = if (active) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
+                    contentColor = if (active) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.semantics { this.selected = active }) {
+                    Row(Modifier.padding(horizontal = 20.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(icon, null, Modifier.size(22.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(label, style = MaterialTheme.typography.labelLarge)
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** KernelSU-style status: green working, yellow missing scopes (listed), red inactive. Opens LSPosed. */
+@Composable
+private fun StatusCard(state: CoogleState, t: Texts, onClick: () -> Unit) {
+    val dark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+    val scheme = MaterialTheme.colorScheme
+    val waiting = state.loading && !state.connected
+    val (container, content) = when {
+        waiting -> scheme.secondaryContainer to scheme.onSecondaryContainer
+        !state.connected -> scheme.errorContainer to scheme.onErrorContainer
+        state.missingScopes.isNotEmpty() -> if (dark) Color(0xFF4A3F00) to Color(0xFFFFE08A) else Color(0xFFFFF0B3) to Color(0xFF574500)
+        else -> if (dark) Color(0xFF1F4D26) to Color(0xFFB9F0C0) else Color(0xFFC9EFCB) to Color(0xFF14501E)
+    }
+    Surface(onClick = onClick, modifier = Modifier.fillMaxWidth(), color = container, contentColor = content,
+        shape = MaterialTheme.shapes.extraLarge) {
+        Row(Modifier.padding(horizontal = 24.dp, vertical = 22.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(when {
+                waiting -> Icons.Rounded.HourglassTop
+                !state.connected -> Icons.Rounded.HighlightOff
+                state.missingScopes.isNotEmpty() -> Icons.Rounded.WarningAmber
+                else -> Icons.Rounded.CheckCircle
+            }, null, Modifier.size(36.dp))
+            Spacer(Modifier.width(20.dp))
+            Column(Modifier.weight(1f)) {
+                Text(when {
+                    waiting -> t.connecting
+                    !state.connected -> t.inactive
+                    state.missingScopes.isNotEmpty() -> t.statusIncomplete
+                    else -> t.statusWorking
+                }, style = MaterialTheme.typography.titleLarge)
+                Text("${t.version(BuildConfig.VERSION_NAME)} · API 102", style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 2.dp))
+                if (state.connected && state.missingScopes.isNotEmpty()) {
+                    Text(t.statusMissingIntro, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 10.dp))
+                    state.missingScopes.forEach { name ->
+                        Text("• " + (if (name == "system") t.systemFramework else name), style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+                Text(t.statusTap, style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(top = 10.dp).alpha(0.75f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeTab(state: CoogleState, t: Texts, onSetting: (String, Boolean) -> Unit, onAssistant: () -> Unit,
+    onStatus: () -> Unit, onRestartApps: () -> Unit) {
+    StatusCard(state, t, onStatus)
+    // While connecting, show the cached switches as usable; taps wait for the connection.
+    val available = state.connected || state.loading
+    val assistant = when (val info = state.assistant) {
+        AssistantInfo.Loading -> t.assistantReading
+        AssistantInfo.None -> t.assistantNone
+        AssistantInfo.Hidden -> t.assistantTap
+        is AssistantInfo.App -> t.assistantCurrent(info.label)
+    }
+    Group(t.groupAssistant) {
+        SettingRow(0, 2, Icons.Rounded.RecordVoiceOver, t.defaultAssistant, assistant, onClick = onAssistant)
+        ToggleRow(t, 1, 2, Icons.Rounded.Mic, t.heyGoogle, t.companion(state.companion),
+            checked = state.features[FeaturePolicy.HEY_GOOGLE] == true, enabled = available && !state.busy,
+            onChange = { onSetting(FeaturePolicy.HEY_GOOGLE, it) })
+    }
+    Group(t.groupSearch) {
+        // Circle to Search's own options fold under it, so the list stays short.
+        var circleOpen by rememberSaveable { mutableStateOf(false) }
+        val extra = if (circleOpen) 2 else 0
+        val count = 3 + extra
+        val circleOn = state.features[FeaturePolicy.NAVIGATION] == true
+        SettingRow(0, count, Icons.Rounded.TouchApp, t.circle, t.circleSummary, { circleOpen = !circleOpen },
+            modifier = Modifier.semantics { stateDescription = if (circleOn) t.switchOn else t.switchOff }) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                val turn by animateFloatAsState(if (circleOpen) 180f else 0f, label = "circleOptions")
+                Icon(Icons.Rounded.ExpandMore, t.circleOptions, Modifier.padding(end = 8.dp).rotate(turn))
+                SettingSwitch(circleOn, available) { onSetting(FeaturePolicy.NAVIGATION, it) }
+            }
+        }
+        AnimatedVisibility(circleOpen, enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(), exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()) {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                ToggleRow(t, 1, count, Icons.Rounded.Translate, t.liveTranslate, t.liveTranslateSummary,
+                    state.features[FeaturePolicy.LIVE_TRANSLATE] == true, available,
+                    { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) })
+                ToggleRow(t, 2, count, Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
+                    state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available,
+                    { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) })
+            }
+        }
+        ToggleRow(t, 1 + extra, count, Icons.Rounded.CenterFocusStrong, t.lens, t.lensSummary,
+            state.features[FeaturePolicy.LENS] == true, available, { onSetting(FeaturePolicy.LENS, it) })
+        ToggleRow(t, 2 + extra, count, Icons.Rounded.PhotoCamera, t.cameraLens, t.cameraLensSummary,
+            state.features[FeaturePolicy.CAMERA_LENS] == true, available, { onSetting(FeaturePolicy.CAMERA_LENS, it) })
+    }
+    Group(t.groupLock) {
+        ToggleRow(t, 0, 2, Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
+            state.features[FeaturePolicy.QUICK_ENTRIES] == true, available, { onSetting(FeaturePolicy.QUICK_ENTRIES, it) })
+        ToggleRow(t, 1, 2, Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
+            state.features[FeaturePolicy.WALLET] == true, available, { onSetting(FeaturePolicy.WALLET, it) })
+    }
+    Group(t.groupSystem) {
+        ToggleRow(t, 0, 3, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
+            state.features[FeaturePolicy.GMS] == true, available, { onSetting(FeaturePolicy.GMS, it) })
+        ToggleRow(t, 1, 3, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
+            state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available, { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) })
+        SettingRow(2, 3, Icons.Rounded.RestartAlt, t.restartApps, t.restartAppsSummary,
+            onClick = onRestartApps, enabled = state.connected && !state.restarting)
+    }
+}
+
+@Composable
+private fun SettingsTab(state: CoogleState, t: Texts, onIconVisibility: (Boolean) -> Unit, onAbout: () -> Unit,
+    onTelegram: () -> Unit, onLanguage: (AppLanguage) -> Unit, onCheckUpdates: () -> Unit, onSupport: () -> Unit) {
+    Group(t.groupApp) {
+        LanguageRow(0, 5, state.language, t, onLanguage)
+        SettingRow(1, 5, Icons.Rounded.SystemUpdate, t.checkUpdates, when (state.update) {
+            UpdateStatus.IDLE -> t.version(BuildConfig.VERSION_NAME)
+            UpdateStatus.CHECKING -> t.updateChecking
+            UpdateStatus.LATEST -> t.version(BuildConfig.VERSION_NAME) + " · " + t.updateLatest
+            UpdateStatus.AVAILABLE -> t.updateTitle + ": " + state.updateVersion
+            UpdateStatus.FAILED -> t.updateFailed
+        }, onClick = onCheckUpdates, enabled = state.update != UpdateStatus.CHECKING)
+        SettingRow(2, 5, Icons.Rounded.Forum, t.support, t.supportSummary, onClick = onSupport)
+        ToggleRow(t, 3, 5, Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
+            state.iconHidden, true, onIconVisibility)
+        SettingRow(4, 5, Icons.Rounded.Info, t.about, t.aboutSummary(BuildConfig.VERSION_NAME),
+            onClick = onTelegram)
+    }
+}
+
+@Composable
+private fun LanguageRow(index: Int, count: Int, current: AppLanguage, t: Texts, onLanguage: (AppLanguage) -> Unit) {
     var open by remember { mutableStateOf(false) }
     Box {
-        IconButton(onClick = { open = true }) { Icon(Icons.Rounded.Language, contentDescription = label) }
+        SettingRow(index, count, Icons.Rounded.Language, t.language, current.label, onClick = { open = true })
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             AppLanguage.entries.forEach { language ->
                 DropdownMenuItem(
@@ -325,6 +392,7 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.INSTALLED -> t.installedTitle
         DialogKind.HIDE_ICON -> t.hideIconTitle
         DialogKind.RESTART -> t.restartTitle
+        DialogKind.UPDATE -> t.updateTitle
         else -> t.errorTitle
     }
     val message = when (state.dialog) {
@@ -334,12 +402,14 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.INSTALLED -> t.installedMessage
         DialogKind.HIDE_ICON -> t.hideIconMessage
         DialogKind.RESTART -> t.restartMessage
+        DialogKind.UPDATE -> t.updateMessage(state.updateVersion)
         else -> state.dialogText
     }
     val confirm = when (state.dialog) {
         DialogKind.INSTALL -> t.install
         DialogKind.HIDE_ICON -> t.hide
         DialogKind.RESTART -> t.restart
+        DialogKind.UPDATE -> t.download
         else -> t.ok
     }
     AlertDialog(
@@ -355,7 +425,7 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
             }
         },
         confirmButton = { TextButton(onClick = onConfirm) { Text(confirm) } },
-        dismissButton = if (state.dialog in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON, DialogKind.RESTART)) {
+        dismissButton = if (state.dialog in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON, DialogKind.RESTART, DialogKind.UPDATE)) {
             { TextButton(onClick = onDismiss) { Text(t.cancel) } }
         } else null
     )
