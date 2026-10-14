@@ -1,5 +1,26 @@
 # Değişiklikler / Changelog
 
+## XGoogle 1.2.6
+
+- Altta yüzen Ana sayfa / Ayarlar çubuğu; dil, tema ve görünüm seçenekleri Ayarlar'da.
+  A floating Home / Settings bar; language, theme and look options are in Settings.
+- İsteğe bağlı HyperOS görünümü (Miuix): açık/koyu/sistem tema, duvar kağıdı renkleri, buzlu üst çubuk.
+  Optional HyperOS look (Miuix): light/dark/system theme, wallpaper colors, frosted top bar.
+- Durum kartı: yeşil çalışıyor, sarı LSPosed'de işaretlenmemiş uygulamaları listeler, kırmızı etkin değil; dokununca LSPosed açılır.
+  Status card: green working, yellow lists apps unticked in LSPosed, red inactive; tap to open LSPosed.
+- Bir özelliği açınca gereken uygulamalar LSPosed'dan istenir.
+  Turning a feature on asks LSPosed for the apps it needs.
+- Uygulamaları yeniden başlat: çoğu ayar telefonu yeniden başlatmadan uygulanır.
+  Restart apps: most settings apply without rebooting.
+- Ayarlar: güncelleme kontrolü ve destek grubu (t.me/Xgooogle).
+  Settings: update check and support group (t.me/Xgooogle).
+- Google Cüzdan açılınca Google varsayılan NFC ödeme uygulaması olur.
+  Turning Google Wallet on makes Google the default NFC payment app.
+- Root izni verilmediğinde ya da root bulunamadığında daha anlaşılır mesajlar.
+  Clearer messages when root access is denied or missing.
+- Ek modül 1.2.6: KernelSU NoMount her açılışta kontrol edilir.
+  Companion 1.2.6: KernelSU NoMount is checked on every boot.
+
 ## XGoogle 1.2.5
 
 - Güvenlik düzeltmesi: kilit ekranında Google Cüzdan, doğrulama yapılmadan "Okuyucuya tutun" ekranına ulaşabiliyordu. XGoogle artık Cüzdan'ın doğrulamasını onun yerine cevaplamıyor; Cüzdan parmak izi/şifre istiyor.

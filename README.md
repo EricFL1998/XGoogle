@@ -3,7 +3,7 @@
 **An LSPosed module bringing Google features to the Xiaomi HyperOS 4 China ROM.**
 Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorOS to Xiaomi HyperOS 4.
 
-📥 **Download:** [Latest release](https://github.com/Leekin2/XGoogle/releases/latest) · 💬 **Feedback and complaints:** Telegram [@emcleek](https://t.me/emcleek)
+📥 **Download:** [Latest release](https://github.com/Leekin2/XGoogle/releases/latest) · 💬 **Feedback and complaints:** Telegram [@emcleek](https://t.me/emcleek) · 👥 **Support group:** [Xgoogle for HyperOS](https://t.me/Xgooogle)
 
 [Türkçe aşağıda](#türkçe)
 
@@ -17,10 +17,13 @@ Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorO
 - ✅ **Android Auto:** system app and car projection role
 - ✅ **Removes the GMS China restriction** (Quick Share included)
 - 🧪 **Lock screen shortcuts:** Gemini, Lens/QR, Wallet, Home controls. They open over the lock screen; Wallet asks you to verify when it needs to
-- 🧪 **Double-press power → Google Wallet**, also on the lock screen
+- 🧪 **Double-press power → Google Wallet**, also on the lock screen; Google becomes the default NFC payment app
 - 🧪 **Google Lens button in the camera** (optional), also over the lock screen
 - 🧪 Control center Lens/QR tile
 - 🌐 UI languages: Türkçe, English, Русский, Español, 简体中文
+- 🎨 Two looks: Material, or HyperOS style (light/dark/system theme, wallpaper colors, frosted bar)
+- 🚦 Status card: green when everything works, yellow with the list of apps still unticked in LSPosed, red when inactive
+- 🔄 Restart apps without rebooting, and check for updates from the app
 
 Every feature can be turned on or off on its own; turning one off brings back the stock behavior.
 
@@ -46,10 +49,12 @@ Every feature can be turned on or off on its own; turning one off brings back th
 ## Using the features
 
 - **Lock screen shortcuts:** turn on *Lock screen shortcuts* in XGoogle and reboot. Then pick Gemini, Google Lens, Google Wallet or Home controls for the left or right shortcut in the lock screen editor.
-- **Google Wallet:** turn on *Google Wallet* in XGoogle; double-pressing power is set to Google Wallet. On the lock screen the tap-to-pay screen opens; *Open Wallet* asks for your fingerprint/PIN.
+- **Google Wallet:** turn on *Google Wallet* in XGoogle; double-pressing power is set to Google Wallet and Google becomes the default NFC payment app. On the lock screen the tap-to-pay screen opens; *Open Wallet* asks for your fingerprint/PIN.
 - **Google Lens in Camera:** turn on *Google Lens in Camera*, approve the Camera scope in LSPosed and reboot. The Lens button is in the camera menu (the arrow at the top).
 - **Home controls:** a home with devices must be set up in the Google Home app; otherwise the panel shows "Set up home".
 - **Lens tile:** edit the control center and add the Lens tile.
+- **After changing a setting:** use *Restart apps* (Home → System) instead of rebooting; the system framework still needs a reboot.
+- **Settings tab:** language, look and theme, update check, support group.
 
 ## Updating
 
@@ -60,18 +65,20 @@ Every feature can be turned on or off on its own; turning one off brings back th
 ## Troubleshooting
 
 - **Hey Google does not work:** check the companion module's description in your root manager; it should show "✅Google sistem uygulaması" (Google system app) and "✅Kayıt bileşenleri yüklü" (enrollment components loaded). Make sure Google is the default digital assistant and Voice Match is complete.
-- **I reinstalled Wallet or Google and a feature stopped working:** LSPosed drops a reinstalled app from the scope. Open XGoogle, approve LSPosed's *Scope request* notification and restart the app.
+- **The status card is yellow / I reinstalled Wallet or Google:** LSPosed drops a reinstalled app from the scope, and HyperOS may hide LSPosed's *Scope request* notification. The card lists the missing apps; tap it to open LSPosed, tick them in XGoogle's scope, then use *Restart apps*.
 - **No Lens button in the camera:** check that *Google Lens in Camera* is on and the Camera scope is selected in LSPosed, then reboot.
 - **The navigation handle does not open Circle to Search:** XiaoAi must be installed and Circle to Search turned on in XGoogle.
 - **Still stuck:** message [@emcleek](https://t.me/emcleek) on Telegram, with your LSPosed log if possible.
 
 ## Specs
 
-- **Size:** app ~3.3 MB, companion module ~0.45 MB
+- **Size:** app ~4 MB, companion module ~0.45 MB
 - **RAM:** no extra cost. The Google assistant process uses ~90 MB, as on any Android phone.
 - **Auto-update:** the companion module shows updates in your root manager.
 - **Safe uninstall:** removing the companion module restores your key settings.
 - **Survives cleanup:** HyperOS one-key clean no longer kills the Google assistant.
+- **KernelSU NoMount:** the companion checks the mount mode on every boot.
+- **Internet:** used only when you tap *Check for updates*.
 
 ## Limitations
 
@@ -89,6 +96,7 @@ Thanks — this project is built on their work:
 - [@luckyzyx](https://github.com/luckyzyx) — [LuckyTool](https://github.com/luckyzyx/LuckyTool), code reference
 - [@tiann](https://github.com/tiann) — [KernelSU](https://github.com/tiann/KernelSU), UI design
 - [@LuckyPray](https://github.com/LuckyPray) — [DexKit](https://github.com/LuckyPray/DexKit)
+- [compose-miuix-ui](https://github.com/compose-miuix-ui/miuix) — [Miuix](https://github.com/compose-miuix-ui/miuix), the HyperOS look
 
 This project is not affiliated with Google or Xiaomi; trademarks belong to their owners.
 
@@ -99,7 +107,7 @@ This project is not affiliated with Google or Xiaomi; trademarks belong to their
 **Xiaomi HyperOS 4 Çin ROM'una Google özellikleri getiren LSPosed modülü.**
 [zopulus/Coogle](https://github.com/zopulus/coogle) tabanlıdır; ColorOS yerine Xiaomi HyperOS 4 için uyarlanmıştır.
 
-📥 **İndir:** [Son sürüm](https://github.com/Leekin2/XGoogle/releases/latest) · 💬 **Geri bildirim ve şikayet:** Telegram [@emcleek](https://t.me/emcleek)
+📥 **İndir:** [Son sürüm](https://github.com/Leekin2/XGoogle/releases/latest) · 💬 **Geri bildirim ve şikayet:** Telegram [@emcleek](https://t.me/emcleek) · 👥 **Destek grubu:** [Xgoogle for HyperOS](https://t.me/Xgooogle)
 
 ### Özellikler
 
@@ -111,10 +119,13 @@ This project is not affiliated with Google or Xiaomi; trademarks belong to their
 - ✅ **Android Auto:** sistem uygulaması ve araç projeksiyonu rolü
 - ✅ **GMS Çin kısıtlamasının kaldırılması** (Quick Share dahil)
 - 🧪 **Kilit ekranı kısayolları:** Gemini, Lens/QR, Cüzdan, Ev kontrolleri. Kilit ekranının üstünde açılır; Cüzdan gerektiğinde doğrulama ister
-- 🧪 **Güç tuşuna çift bas → Google Cüzdan**, kilit ekranında da açılır
+- 🧪 **Güç tuşuna çift bas → Google Cüzdan**, kilit ekranında da açılır; Google varsayılan NFC ödeme uygulaması olur
 - 🧪 **Kamerada Google Lens butonu** (isteğe bağlı), kilit ekranında da çalışır
 - 🧪 Kontrol merkezi Lens/QR kutucuğu
 - 🌐 Arayüz dilleri: Türkçe, English, Русский, Español, 简体中文
+- 🎨 İki görünüm: Material ya da HyperOS tarzı (açık/koyu/sistem tema, duvar kağıdı renkleri, buzlu çubuk)
+- 🚦 Durum kartı: her şey çalışıyorsa yeşil, LSPosed'de işaretlenmemiş uygulama varsa listesiyle sarı, etkin değilse kırmızı
+- 🔄 Telefonu yeniden başlatmadan uygulamaları yeniden başlatma ve uygulamadan güncelleme kontrolü
 
 Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem eski haline döner.
 
@@ -140,10 +151,12 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 ### Özellikleri kullanma
 
 - **Kilit ekranı kısayolları:** XGoogle'da *Kilit ekranı kısayolları*'nı açıp yeniden başlatın. Sonra kilit ekranı düzenleyicisinden sol veya sağ kısayola Gemini, Google Lens, Google Cüzdan ya da Ev kontrollerini seçin.
-- **Google Cüzdan:** XGoogle'da *Google Cüzdan*'ı açın; güç tuşuna çift basma Google Cüzdan'a ayarlanır. Kilit ekranında ödeme ekranı açılır, *Cüzdan'ı açın* parmak izi/şifre ister.
+- **Google Cüzdan:** XGoogle'da *Google Cüzdan*'ı açın; güç tuşuna çift basma Google Cüzdan'a ayarlanır ve Google varsayılan NFC ödeme uygulaması olur. Kilit ekranında ödeme ekranı açılır, *Cüzdan'ı açın* parmak izi/şifre ister.
 - **Kamerada Google Lens:** XGoogle'da *Kamerada Google Lens*'i açın, LSPosed'da Kamera kapsamını onaylayıp yeniden başlatın. Lens butonu kamera menüsünde (üstteki ok) çıkar.
 - **Ev kontrolleri:** Google Home uygulamasında bir ev ve cihaz kurulu olmalıdır; yoksa panelde "Ev kurulumu yap" görünür.
 - **Lens kutucuğu:** Kontrol merkezini düzenleyip Lens kutucuğunu ekleyin.
+- **Ayar değiştirdikten sonra:** telefonu yeniden başlatmak yerine *Uygulamaları yeniden başlat*'ı (Ana sayfa → Sistem) kullanın; sistem çerçevesi için yine yeniden başlatma gerekir.
+- **Ayarlar sekmesi:** dil, görünüm ve tema, güncelleme kontrolü, destek grubu.
 
 ### Güncelleme
 
@@ -154,18 +167,20 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 ### Sorun giderme
 
 - **Hey Google çalışmıyor:** Root yöneticinizde ek modülün açıklamasına bakın; "✅Google sistem uygulaması" ve "✅Kayıt bileşenleri yüklü" yazmalı. Google'ın varsayılan dijital asistan olduğundan ve Voice Match'in tamamlandığından emin olun.
-- **Cüzdan'ı ya da Google'ı yeniden kurdum, özellik çalışmıyor:** LSPosed yeniden kurulan uygulamayı kapsamdan çıkarır. XGoogle'ı açın; LSPosed'dan gelen *Kapsam talebi* bildirimini onaylayın ve uygulamayı yeniden başlatın.
+- **Durum kartı sarı / Cüzdan'ı ya da Google'ı yeniden kurdum:** LSPosed yeniden kurulan uygulamayı kapsamdan çıkarır, HyperOS da LSPosed'ın *Kapsam talebi* bildirimini gizleyebilir. Kart eksik uygulamaları listeler; karta dokunup LSPosed'ı açın, XGoogle'ın kapsamında işaretleyin, sonra *Uygulamaları yeniden başlat*'ı kullanın.
 - **Kamerada Lens butonu yok:** *Kamerada Google Lens* açık mı, LSPosed'da Kamera kapsamı seçili mi kontrol edin, sonra yeniden başlatın.
 - **Alt çubuk Circle to Search açmıyor:** XiaoAi kurulu olmalı ve XGoogle'da Circle to Search açık olmalı.
 - **Hâlâ çözülmediyse:** Telegram'dan [@emcleek](https://t.me/emcleek)'e yazın; mümkünse LSPosed kaydını ekleyin.
 
 ### Nitelikler
 
-- **Boyut:** Uygulama ~3,3 MB, ek modül ~0,45 MB
+- **Boyut:** Uygulama ~4 MB, ek modül ~0,45 MB
 - **RAM:** Ek yük yok. Google asistan işlemi ~90 MB kullanır, bu her Android telefonda zaten böyledir.
 - **Otomatik güncelleme:** Ek modül, root yöneticinizde yeni sürüm çıkınca güncelleme bildirir.
 - **Güvenli kaldırma:** Ek modül kaldırılınca değiştirdiği tuş ayarları eski haline döner.
 - **Temizlikten etkilenmez:** HyperOS "tek tuşla temizle" Google asistanını kapatmaz.
+- **KernelSU NoMount:** Ek modül bağlama modunu her açılışta kontrol eder.
+- **İnternet:** Sadece *Güncellemeleri kontrol et*'e dokununca kullanılır.
 
 ### Sınırlamalar
 
@@ -183,5 +198,6 @@ Teşekkürler — bu proje onların emeği üzerine kurulu:
 - [@luckyzyx](https://github.com/luckyzyx) — [LuckyTool](https://github.com/luckyzyx/LuckyTool), kod referansı
 - [@tiann](https://github.com/tiann) — [KernelSU](https://github.com/tiann/KernelSU), arayüz tasarımı
 - [@LuckyPray](https://github.com/LuckyPray) — [DexKit](https://github.com/LuckyPray/DexKit)
+- [compose-miuix-ui](https://github.com/compose-miuix-ui/miuix) — [Miuix](https://github.com/compose-miuix-ui/miuix), HyperOS görünümü
 
 Bu proje Google veya Xiaomi ile bağlantılı değildir; markalar sahiplerine aittir.
