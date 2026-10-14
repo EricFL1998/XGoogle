@@ -36,6 +36,9 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.LockOpen
 import androidx.compose.material.icons.rounded.Mic
+import androidx.compose.material.icons.rounded.BlurOn
+import androidx.compose.material.icons.rounded.DarkMode
+import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.PhotoCamera
 import androidx.compose.material.icons.rounded.RecordVoiceOver
@@ -53,6 +56,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.semantics.Role
@@ -78,6 +84,12 @@ import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
+import top.yukonga.miuix.kmp.preference.WindowDropdownPreference
+import top.yukonga.miuix.kmp.blur.BlendColorEntry
+import top.yukonga.miuix.kmp.blur.BlurColors
+import top.yukonga.miuix.kmp.blur.layerBackdrop
+import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
+import top.yukonga.miuix.kmp.blur.textureBlur
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.overScrollVertical
 import top.yukonga.miuix.kmp.window.WindowDialog
@@ -93,17 +105,24 @@ fun MiuixScreen(
     onAbout: () -> Unit,
     onTelegram: () -> Unit,
     onLanguage: (AppLanguage) -> Unit,
-    onHyperStyle: (Boolean) -> Unit,
+    onLook: (Look) -> Unit,
     onDialogConfirm: () -> Unit,
     onDialogDismiss: () -> Unit
 ) {
     val t = textsFor(state.language)
     val bar = MiuixScrollBehavior()
+    // Frosted bar: the list is recorded as a backdrop and blurred behind the top bar.
+    val blur = state.look.blur
+    val backdrop = rememberLayerBackdrop()
+    val surface = MiuixTheme.colorScheme.surface
     Scaffold(
         topBar = {
             TopAppBar(
                 title = "XGoogle",
                 subtitle = t.subtitle,
+                modifier = if (blur) Modifier.textureBlur(backdrop, RectangleShape, 25f,
+                    colors = BlurColors(blendColors = listOf(BlendColorEntry(surface.copy(alpha = 0.8f))))) else Modifier,
+                color = if (blur) Color.Transparent else surface,
                 actions = { LanguageMenu(state.language, t.language, onLanguage) },
                 scrollBehavior = bar
             )
@@ -112,7 +131,9 @@ fun MiuixScreen(
         // While connecting, show the cached switches as usable; taps wait for the connection.
         val available = state.connected || state.loading
         LazyColumn(
-            Modifier.fillMaxHeight().overScrollVertical().nestedScroll(bar.nestedScrollConnection),
+            Modifier.fillMaxHeight()
+                .then(if (blur) Modifier.layerBackdrop(backdrop).background(surface) else Modifier)
+                .overScrollVertical().nestedScroll(bar.nestedScrollConnection),
             contentPadding = PaddingValues(top = padding.calculateTopPadding()),
             overscrollEffect = null
         ) {
@@ -177,8 +198,19 @@ fun MiuixScreen(
                     Toggle(Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
                         state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available) { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) }
                 }
+                Group(t.groupLook) {
+                    Toggle(Icons.Rounded.Palette, t.hyperStyle, t.hyperStyleSummary, true, true) {
+                        onLook(state.look.copy(hyper = it)) }
+                    WindowDropdownPreference(items = listOf(t.themeSystem, t.themeLight, t.themeDark),
+                        selectedIndex = state.look.theme, title = t.theme,
+                        startAction = { RowIcon(Icons.Rounded.DarkMode) },
+                        onSelectedIndexChange = { onLook(state.look.copy(theme = it)) })
+                    Toggle(Icons.Rounded.Wallpaper, t.monet, t.monetSummary, state.look.monet, true) {
+                        onLook(state.look.copy(monet = it)) }
+                    Toggle(Icons.Rounded.BlurOn, t.blur, t.blurSummary, state.look.blur, true) {
+                        onLook(state.look.copy(blur = it)) }
+                }
                 Group(t.groupOther) {
-                    Toggle(Icons.Rounded.Palette, t.hyperStyle, t.hyperStyleSummary, true, true, onHyperStyle)
                     Toggle(Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
                         state.iconHidden, true, onIconVisibility)
                     ArrowPreference(title = t.about, summary = t.aboutSummary(BuildConfig.VERSION_NAME),

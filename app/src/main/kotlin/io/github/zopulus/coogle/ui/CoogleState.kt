@@ -22,6 +22,12 @@ sealed interface AssistantInfo {
     data class App(val label: String) : AssistantInfo
 }
 
+/**
+ * How the settings screen looks. [hyper] picks the Miuix (HyperOS-style) screen; the other
+ * options only apply to it. [theme]: 0 follows the system, 1 light, 2 dark.
+ */
+data class Look(val hyper: Boolean = false, val theme: Int = 0, val monet: Boolean = false, val blur: Boolean = false)
+
 data class CoogleState(
     val connected: Boolean = false,
     val features: Map<String, Boolean> = featureKeys.associateWith(FeaturePolicy::defaultValue),
@@ -32,8 +38,7 @@ data class CoogleState(
     val dialog: DialogKind = DialogKind.NONE,
     val dialogText: String = "",
     val language: AppLanguage = AppLanguage.TR,
-    /** Miuix (HyperOS-style) screen instead of the Material one. */
-    val hyperStyle: Boolean = false,
+    val look: Look = Look(),
     /** True until the LSPosed service answers, so cached values are shown instead of defaults. */
     val loading: Boolean = true,
 ) {

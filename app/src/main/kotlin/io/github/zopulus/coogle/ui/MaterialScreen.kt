@@ -101,7 +101,7 @@ fun MaterialScreen(
     onAbout: () -> Unit,
     onTelegram: () -> Unit,
     onLanguage: (AppLanguage) -> Unit,
-    onHyperStyle: (Boolean) -> Unit,
+    onLook: (Look) -> Unit,
     onDialogConfirm: () -> Unit,
     onDialogDismiss: () -> Unit
 ) {
@@ -225,7 +225,7 @@ fun MaterialScreen(
             }
             Group(t.groupOther) {
                 ToggleRow(t, 0, 3, Icons.Rounded.Palette, t.hyperStyle, t.hyperStyleSummary,
-                    false, true, onHyperStyle)
+                    false, true, { onLook(state.look.copy(hyper = it)) })
                 ToggleRow(t, 1, 3, Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
                     state.iconHidden, true, onIconVisibility)
                 SettingRow(2, 3, Icons.Rounded.Info, t.about, t.aboutSummary(BuildConfig.VERSION_NAME),
