@@ -36,6 +36,7 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.LockOpen
 import androidx.compose.material.icons.rounded.Mic
+import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.PhotoCamera
 import androidx.compose.material.icons.rounded.RecordVoiceOver
 import androidx.compose.material.icons.rounded.Settings
@@ -83,7 +84,7 @@ import top.yukonga.miuix.kmp.window.WindowDialog
 import top.yukonga.miuix.kmp.window.WindowListPopup
 
 @Composable
-fun CoogleScreen(
+fun MiuixScreen(
     state: CoogleState,
     onSetting: (String, Boolean) -> Unit,
     onAssistant: () -> Unit,
@@ -92,6 +93,7 @@ fun CoogleScreen(
     onAbout: () -> Unit,
     onTelegram: () -> Unit,
     onLanguage: (AppLanguage) -> Unit,
+    onHyperStyle: (Boolean) -> Unit,
     onDialogConfirm: () -> Unit,
     onDialogDismiss: () -> Unit
 ) {
@@ -176,6 +178,7 @@ fun CoogleScreen(
                         state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available) { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) }
                 }
                 Group(t.groupOther) {
+                    Toggle(Icons.Rounded.Palette, t.hyperStyle, t.hyperStyleSummary, true, true, onHyperStyle)
                     Toggle(Icons.Rounded.VisibilityOff, t.hideIcon, t.hideIconSummary,
                         state.iconHidden, true, onIconVisibility)
                     ArrowPreference(title = t.about, summary = t.aboutSummary(BuildConfig.VERSION_NAME),

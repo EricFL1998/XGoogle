@@ -16,7 +16,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
 import io.github.zopulus.coogle.ui.AppLanguage
 import io.github.zopulus.coogle.ui.AssistantInfo
-import io.github.zopulus.coogle.ui.CoogleScreen
+import io.github.zopulus.coogle.ui.MaterialScreen
+import io.github.zopulus.coogle.ui.MiuixScreen
 import io.github.zopulus.coogle.ui.CoogleState
 import io.github.zopulus.coogle.ui.CoogleTheme
 import io.github.zopulus.coogle.ui.CompanionState
@@ -44,14 +45,17 @@ class MainActivity : ComponentActivity() {
         // First run follows the system language; afterwards the user's choice wins.
         val saved = uiPreferences.getString("language", null)
         state = state.copy(language = saved?.let(AppLanguage::of) ?: AppLanguage.forSystem(Locale.getDefault().language),
-            features = cachedFeatures())
+            features = cachedFeatures(), hyperStyle = uiPreferences.getBoolean("hyper_style", false))
         // If LSPosed never answers (module disabled), stop waiting and show the real state.
         window.decorView.postDelayed({ if (!isDestroyed && state.loading) state = state.copy(loading = false) }, 2000)
         setContent {
-            CoogleTheme {
-                CoogleScreen(state, ::changeSetting, ::openAssistant, ::changeIconVisibility,
+            CoogleTheme(state.hyperStyle) {
+                if (state.hyperStyle) MiuixScreen(state, ::changeSetting, ::openAssistant, ::changeIconVisibility,
                     { showDialog(DialogKind.STATUS) }, ::openRepository, ::openTelegram, ::changeLanguage,
-                    ::confirmDialog, ::dismissDialog)
+                    ::changeHyperStyle, ::confirmDialog, ::dismissDialog)
+                else MaterialScreen(state, ::changeSetting, ::openAssistant, ::changeIconVisibility,
+                    { showDialog(DialogKind.STATUS) }, ::openRepository, ::openTelegram, ::changeLanguage,
+                    ::changeHyperStyle, ::confirmDialog, ::dismissDialog)
             }
         }
         SettingsConnection.connect(this)
@@ -113,6 +117,11 @@ class MainActivity : ComponentActivity() {
     private fun changeLanguage(language: AppLanguage) {
         uiPreferences.edit().putString("language", language.code).apply()
         state = state.copy(language = language)
+    }
+
+    private fun changeHyperStyle(enabled: Boolean) {
+        uiPreferences.edit().putBoolean("hyper_style", enabled).apply()
+        state = state.copy(hyperStyle = enabled)
     }
 
     private fun syncPreferences() {

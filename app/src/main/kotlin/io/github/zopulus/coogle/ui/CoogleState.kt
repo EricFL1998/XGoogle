@@ -32,6 +32,8 @@ data class CoogleState(
     val dialog: DialogKind = DialogKind.NONE,
     val dialogText: String = "",
     val language: AppLanguage = AppLanguage.TR,
+    /** Miuix (HyperOS-style) screen instead of the Material one. */
+    val hyperStyle: Boolean = false,
     /** True until the LSPosed service answers, so cached values are shown instead of defaults. */
     val loading: Boolean = true,
 ) {
