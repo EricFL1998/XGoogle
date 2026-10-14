@@ -11,6 +11,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
@@ -51,13 +53,16 @@ class MainActivity : ComponentActivity() {
         // If LSPosed never answers (module disabled), stop waiting and show the real state.
         window.decorView.postDelayed({ if (!isDestroyed && state.loading) state = state.copy(loading = false) }, 2000)
         setContent {
+            var tab by rememberSaveable { mutableIntStateOf(0) }
             CoogleTheme(state.look) {
                 if (state.look.hyper) MiuixScreen(state, ::changeSetting, ::openAssistant, ::changeIconVisibility,
                     ::openModuleManager, ::openRepository, ::openTelegram, ::changeLanguage,
-                    ::changeLook, ::confirmDialog, ::dismissDialog, { showDialog(DialogKind.RESTART) }, ::checkUpdates, ::openSupport)
+                    ::changeLook, ::confirmDialog, ::dismissDialog, { showDialog(DialogKind.RESTART) }, ::checkUpdates, ::openSupport,
+                    tab) { tab = it }
                 else MaterialScreen(state, ::changeSetting, ::openAssistant, ::changeIconVisibility,
                     ::openModuleManager, ::openRepository, ::openTelegram, ::changeLanguage,
-                    ::changeLook, ::confirmDialog, ::dismissDialog, { showDialog(DialogKind.RESTART) }, ::checkUpdates, ::openSupport)
+                    ::changeLook, ::confirmDialog, ::dismissDialog, { showDialog(DialogKind.RESTART) }, ::checkUpdates, ::openSupport,
+                    tab) { tab = it }
             }
         }
         SettingsConnection.connect(this)

@@ -119,10 +119,12 @@ fun MaterialScreen(
     onDialogDismiss: () -> Unit,
     onRestartApps: () -> Unit,
     onCheckUpdates: () -> Unit,
-    onSupport: () -> Unit
+    onSupport: () -> Unit,
+    /** Kept by the caller, so switching between the two looks stays on the same tab. */
+    tab: Int,
+    onTab: (Int) -> Unit
 ) {
     val t = textsFor(state.language)
-    var tab by rememberSaveable { mutableIntStateOf(0) }
     val bar = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(bar.nestedScrollConnection),
@@ -151,7 +153,7 @@ fun MaterialScreen(
                     Spacer(Modifier.height(112.dp))
                 }
             }
-            FloatingTabs(t, tab, { tab = it }, Modifier.align(Alignment.BottomCenter))
+            FloatingTabs(t, tab, onTab, Modifier.align(Alignment.BottomCenter))
         }
     }
     CoogleDialog(state, t, onDialogConfirm, onDialogDismiss)

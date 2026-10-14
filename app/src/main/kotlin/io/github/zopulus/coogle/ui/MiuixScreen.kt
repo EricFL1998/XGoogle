@@ -130,10 +130,12 @@ fun MiuixScreen(
     onDialogDismiss: () -> Unit,
     onRestartApps: () -> Unit,
     onCheckUpdates: () -> Unit,
-    onSupport: () -> Unit
+    onSupport: () -> Unit,
+    /** Kept by the caller, so switching between the two looks stays on the same tab. */
+    tab: Int,
+    onTab: (Int) -> Unit
 ) {
     val t = textsFor(state.language)
-    var tab by rememberSaveable { mutableIntStateOf(0) }
     val bar = MiuixScrollBehavior()
     // Frosted bar: the list is recorded as a backdrop and blurred behind the top bar.
     val blur = state.look.blur
@@ -151,7 +153,7 @@ fun MiuixScreen(
             )
         },
         bottomBar = {
-            FloatingTabs(t, tab) { tab = it }
+            FloatingTabs(t, tab, onTab)
         }
     ) { padding ->
         // While connecting, show the cached switches as usable; taps wait for the connection.
