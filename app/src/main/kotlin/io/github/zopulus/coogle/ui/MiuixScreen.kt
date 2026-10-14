@@ -25,6 +25,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.runtime.key
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.semantics.selected
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.SystemUpdate
@@ -35,8 +43,6 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import top.yukonga.miuix.kmp.basic.CardDefaults
-import top.yukonga.miuix.kmp.basic.FloatingNavigationBar
-import top.yukonga.miuix.kmp.basic.FloatingNavigationBarItem
 import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material.icons.rounded.CenterFocusStrong
 import androidx.compose.material.icons.rounded.CheckCircle
@@ -145,93 +151,115 @@ fun MiuixScreen(
             )
         },
         bottomBar = {
-            FloatingNavigationBar {
-                FloatingNavigationBarItem(tab == 0, { tab = 0 }, Icons.Rounded.Home, t.tabHome)
-                FloatingNavigationBarItem(tab == 1, { tab = 1 }, Icons.Rounded.Settings, t.tabSettings)
-            }
+            FloatingTabs(t, tab) { tab = it }
         }
     ) { padding ->
         // While connecting, show the cached switches as usable; taps wait for the connection.
         val available = state.connected || state.loading
-        LazyColumn(
-            Modifier.fillMaxHeight()
-                .then(if (blur) Modifier.layerBackdrop(backdrop).background(surface) else Modifier)
-                .overScrollVertical().nestedScroll(bar.nestedScrollConnection),
-            contentPadding = PaddingValues(top = padding.calculateTopPadding(), bottom = padding.calculateBottomPadding()),
-            overscrollEffect = null
-        ) {
-            if (tab == 1) item {
-                SettingsTab(state, t, onIconVisibility, onTelegram, onLanguage, onLook, onCheckUpdates, onSupport)
-                Spacer(Modifier.height(24.dp))
-            } else item {
-                StatusCard(state, t, onStatus)
-                val assistant = when (val info = state.assistant) {
-                    AssistantInfo.Loading -> t.assistantReading
-                    AssistantInfo.None -> t.assistantNone
-                    AssistantInfo.Hidden -> t.assistantTap
-                    is AssistantInfo.App -> t.assistantCurrent(info.label)
-                }
-                Group(t.groupAssistant) {
-                    ArrowPreference(title = t.defaultAssistant, summary = assistant,
-                        startAction = { RowIcon(Icons.Rounded.RecordVoiceOver) }, onClick = onAssistant)
-                    Toggle(Icons.Rounded.Mic, t.heyGoogle, t.companion(state.companion),
-                        state.features[FeaturePolicy.HEY_GOOGLE] == true, available && !state.busy,
-                    ) { onSetting(FeaturePolicy.HEY_GOOGLE, it) }
-                }
-                Group(t.groupSearch) {
-                    // Circle to Search's own options fold under it, so the list stays short.
-                    var circleOpen by rememberSaveable { mutableStateOf(false) }
-                    val circleOn = state.features[FeaturePolicy.NAVIGATION] == true
-                    val turn by animateFloatAsState(if (circleOpen) 180f else 0f, label = "circleOptions")
-                    BasicComponent(
-                        modifier = Modifier.semantics { stateDescription = if (circleOn) t.switchOn else t.switchOff },
-                        title = t.circle, summary = t.circleSummary,
-                        startAction = { RowIcon(Icons.Rounded.TouchApp) },
-                        endActions = {
-                            Icon(Icons.Rounded.ExpandMore, t.circleOptions,
-                                Modifier.padding(end = 8.dp).rotate(turn),
-                                tint = MiuixTheme.colorScheme.onSurfaceVariantActions)
-                            Switch(circleOn, { onSetting(FeaturePolicy.NAVIGATION, it) }, enabled = available)
-                        },
-                        onClick = { circleOpen = !circleOpen }
-                    )
-                    AnimatedVisibility(circleOpen,
-                        enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
-                        exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()) {
-                        Column {
-                            Toggle(Icons.Rounded.Translate, t.liveTranslate, t.liveTranslateSummary,
-                                state.features[FeaturePolicy.LIVE_TRANSLATE] == true, available
-                            ) { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) }
-                            Toggle(Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
-                                state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available
-                            ) { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) }
-                        }
+        // Switching tabs starts the new tab at its top.
+        key(tab) {
+            LazyColumn(
+                Modifier.fillMaxHeight()
+                    .then(if (blur) Modifier.layerBackdrop(backdrop).background(surface) else Modifier)
+                    .overScrollVertical().nestedScroll(bar.nestedScrollConnection),
+                contentPadding = PaddingValues(top = padding.calculateTopPadding(), bottom = padding.calculateBottomPadding()),
+                overscrollEffect = null
+            ) {
+                if (tab == 1) item {
+                    SettingsTab(state, t, onIconVisibility, onTelegram, onLanguage, onLook, onCheckUpdates, onSupport)
+                    Spacer(Modifier.height(24.dp))
+                } else item {
+                    StatusCard(state, t, onStatus)
+                    val assistant = when (val info = state.assistant) {
+                        AssistantInfo.Loading -> t.assistantReading
+                        AssistantInfo.None -> t.assistantNone
+                        AssistantInfo.Hidden -> t.assistantTap
+                        is AssistantInfo.App -> t.assistantCurrent(info.label)
                     }
-                    Toggle(Icons.Rounded.CenterFocusStrong, t.lens, t.lensSummary,
-                        state.features[FeaturePolicy.LENS] == true, available) { onSetting(FeaturePolicy.LENS, it) }
-                    Toggle(Icons.Rounded.PhotoCamera, t.cameraLens, t.cameraLensSummary,
-                        state.features[FeaturePolicy.CAMERA_LENS] == true, available) { onSetting(FeaturePolicy.CAMERA_LENS, it) }
+                    Group(t.groupAssistant) {
+                        ArrowPreference(title = t.defaultAssistant, summary = assistant,
+                            startAction = { RowIcon(Icons.Rounded.RecordVoiceOver) }, onClick = onAssistant)
+                        Toggle(Icons.Rounded.Mic, t.heyGoogle, t.companion(state.companion),
+                            state.features[FeaturePolicy.HEY_GOOGLE] == true, available && !state.busy,
+                        ) { onSetting(FeaturePolicy.HEY_GOOGLE, it) }
+                    }
+                    Group(t.groupSearch) {
+                        // Circle to Search's own options fold under it, so the list stays short.
+                        var circleOpen by rememberSaveable { mutableStateOf(false) }
+                        val circleOn = state.features[FeaturePolicy.NAVIGATION] == true
+                        val turn by animateFloatAsState(if (circleOpen) 180f else 0f, label = "circleOptions")
+                        BasicComponent(
+                            modifier = Modifier.semantics { stateDescription = if (circleOn) t.switchOn else t.switchOff },
+                            title = t.circle, summary = t.circleSummary,
+                            startAction = { RowIcon(Icons.Rounded.TouchApp) },
+                            endActions = {
+                                Icon(Icons.Rounded.ExpandMore, t.circleOptions,
+                                    Modifier.padding(end = 8.dp).rotate(turn),
+                                    tint = MiuixTheme.colorScheme.onSurfaceVariantActions)
+                                Switch(circleOn, { onSetting(FeaturePolicy.NAVIGATION, it) }, enabled = available)
+                            },
+                            onClick = { circleOpen = !circleOpen }
+                        )
+                        AnimatedVisibility(circleOpen,
+                            enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()) {
+                            Column {
+                                Toggle(Icons.Rounded.Translate, t.liveTranslate, t.liveTranslateSummary,
+                                    state.features[FeaturePolicy.LIVE_TRANSLATE] == true, available
+                                ) { onSetting(FeaturePolicy.LIVE_TRANSLATE, it) }
+                                Toggle(Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
+                                    state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available
+                                ) { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) }
+                            }
+                        }
+                        Toggle(Icons.Rounded.CenterFocusStrong, t.lens, t.lensSummary,
+                            state.features[FeaturePolicy.LENS] == true, available) { onSetting(FeaturePolicy.LENS, it) }
+                        Toggle(Icons.Rounded.PhotoCamera, t.cameraLens, t.cameraLensSummary,
+                            state.features[FeaturePolicy.CAMERA_LENS] == true, available) { onSetting(FeaturePolicy.CAMERA_LENS, it) }
+                    }
+                    Group(t.groupLock) {
+                        Toggle(Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
+                            state.features[FeaturePolicy.QUICK_ENTRIES] == true, available) { onSetting(FeaturePolicy.QUICK_ENTRIES, it) }
+                        Toggle(Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
+                            state.features[FeaturePolicy.WALLET] == true, available) { onSetting(FeaturePolicy.WALLET, it) }
+                    }
+                    Group(t.groupSystem) {
+                        Toggle(Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
+                            state.features[FeaturePolicy.GMS] == true, available) { onSetting(FeaturePolicy.GMS, it) }
+                        Toggle(Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
+                            state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available) { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) }
+                        ArrowPreference(title = t.restartApps, summary = t.restartAppsSummary,
+                            startAction = { RowIcon(Icons.Rounded.RestartAlt) }, onClick = onRestartApps,
+                            enabled = state.connected && !state.restarting)
+                    }
+                    Spacer(Modifier.height(24.dp))
                 }
-                Group(t.groupLock) {
-                    Toggle(Icons.Rounded.DashboardCustomize, t.lockShortcuts, t.lockShortcutsSummary,
-                        state.features[FeaturePolicy.QUICK_ENTRIES] == true, available) { onSetting(FeaturePolicy.QUICK_ENTRIES, it) }
-                    Toggle(Icons.Rounded.AccountBalanceWallet, t.wallet, t.walletSummary,
-                        state.features[FeaturePolicy.WALLET] == true, available) { onSetting(FeaturePolicy.WALLET, it) }
-                }
-                Group(t.groupSystem) {
-                    Toggle(Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
-                        state.features[FeaturePolicy.GMS] == true, available) { onSetting(FeaturePolicy.GMS, it) }
-                    Toggle(Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
-                        state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available) { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) }
-                    ArrowPreference(title = t.restartApps, summary = t.restartAppsSummary,
-                        startAction = { RowIcon(Icons.Rounded.RestartAlt) }, onClick = onRestartApps,
-                        enabled = state.connected && !state.restarting)
-                }
-                Spacer(Modifier.height(24.dp))
             }
         }
     }
     CoogleDialog(state, t, onDialogConfirm, onDialogDismiss)
+}
+
+/** Floating Home/Settings bar; Miuix's own floating bar shows icons only, so labels are drawn here. */
+@Composable
+private fun FloatingTabs(t: Texts, selected: Int, onSelect: (Int) -> Unit) {
+    val colors = MiuixTheme.colorScheme
+    Box(Modifier.fillMaxWidth().navigationBarsPadding().padding(bottom = 16.dp), contentAlignment = Alignment.Center) {
+        Row(Modifier.shadow(8.dp, CircleShape).clip(CircleShape).background(colors.surfaceContainerHigh).padding(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            listOf(Icons.Rounded.Home to t.tabHome, Icons.Rounded.Settings to t.tabSettings).forEachIndexed { index, (icon, label) ->
+                val active = index == selected
+                val tint = if (active) colors.onPrimary else colors.onSurfaceVariantSummary
+                Row(Modifier.clip(CircleShape).background(if (active) colors.primary else Color.Transparent)
+                    .clickable { onSelect(index) }.semantics { this.selected = active }
+                    .padding(horizontal = 20.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(icon, null, Modifier.size(22.dp), tint = tint)
+                    Spacer(Modifier.width(8.dp))
+                    Text(label, color = tint, fontSize = 15.sp, fontWeight = FontWeight.Medium)
+                }
+            }
+        }
+    }
 }
 
 /** KernelSU-style status: green working, yellow missing scopes (listed), red inactive. Opens LSPosed. */
