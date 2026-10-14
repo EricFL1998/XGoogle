@@ -296,7 +296,10 @@ class MainActivity : ComponentActivity() {
         state = state.copy(missingScopes = missing)
     }
 
-    /** Opens XGoogle's own page (enable switch and scope list) in the LSPosed manager. */
+    /**
+     * Opens LSPosed, asking for XGoogle's page (enable switch and scope list). LSPosed builds that
+     * ignore outside links (2.2.1 on HyperOS) just open their main screen.
+     */
     private fun openModuleManager() {
         val user = android.os.Process.myUid() / 100000
         val module = Intent(Intent.ACTION_MAIN).setComponent(ComponentName("org.lsposed.manager", "org.lsposed.manager.ui.activity.MainActivity"))

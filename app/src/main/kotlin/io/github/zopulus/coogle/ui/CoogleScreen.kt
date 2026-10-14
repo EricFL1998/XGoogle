@@ -139,7 +139,7 @@ fun CoogleScreen(
         }
     ) { padding ->
         Box(Modifier.fillMaxSize()) {
-            // Each tab keeps its own scroll position.
+            // Switching tabs starts the new tab at its top.
             key(tab) {
                 Column(Modifier.padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
                     Spacer(Modifier.height(12.dp))
