@@ -1,6 +1,6 @@
 # Değişiklikler / Changelog
 
-## XGoogle 1.2.7
+## XGoogle 1.3
 
 - Quick Share kutucuğu kontrol merkezine eklenebilir (GMS kısıtlaması kaldırılmışken).
   The Quick Share tile can be added to the control center (with the GMS restriction removed).
@@ -16,8 +16,8 @@
   Turning Circle to Search off gives the nav handle long press back to your own choice, kept after reboot.
 - Düzeltmeler: açılışta asistan onarımı yalnızca Google seçiliyken çalışır; canlı çeviri desteklenmeyen Google sürümlerinde tekrar tekrar tarama yapmaz; Uygulamaları yeniden başlat hataları bildirir; Cüzdan anahtarı hata olursa ayarları geri alır.
   Fixes: the boot assistant repair runs only when Google is the assistant; live translate no longer rescans unsupported Google versions; Restart apps reports failures; the Wallet switch undoes its changes if something fails.
-- Ek modül 1.2.7.
-  Companion 1.2.7.
+- Ek modül 1.3.
+  Companion 1.3.
 
 ## XGoogle 1.2.6
 
