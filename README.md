@@ -11,6 +11,7 @@ Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorO
 
 - ✅ **Long-press power → Gemini / Google Assistant**
 - ✅ **Long-press the navigation handle → Circle to Search**
+- ✅ **Swipe in from the side and hold → Circle to Search** (needs XiaoAi, see below)
 - ✅ **"Hey Google"** voice activation, also with the screen off
 - ✅ **Live translate:** in Circle to Search, tap Translate and keep translating as you scroll
 - ✅ **Google Lens:** Talk and Create included; keeps working after Google app updates
@@ -46,6 +47,8 @@ Every feature can be turned on or off on its own; turning one off brings back th
 6. Reboot, then complete **Voice Match** in the Google app.
 
 > ℹ️ **XiaoAi is optional.** The launcher still hands the navigation handle long press to XiaoAi, but XGoogle answers it in the system and opens Circle to Search directly, so it works with XiaoAi removed too. If you reinstall XiaoAi later, tick it again in LSPosed.
+>
+> The **side swipe-and-hold** is different: HyperOS offers it only while XiaoAi is installed. Keep XiaoAi, tick it in LSPosed and set the side swipe-and-hold to XiaoAi's ball in the navigation gesture settings; XGoogle then opens Circle to Search instead of the ball.
 
 ## Using the features
 
@@ -70,6 +73,8 @@ Every feature can be turned on or off on its own; turning one off brings back th
 - **No Lens button in the camera:** check that *Google Lens in Camera* is on and the Camera scope is selected in LSPosed, then reboot.
 - **The navigation handle does not open Circle to Search:** Circle to Search must be on in XGoogle, the companion module installed, and the phone rebooted after updating XGoogle.
 - **Navigation handle hidden:** HyperOS ignores the long press when the handle is hidden, so Circle to Search needs the handle shown. With 3-button navigation, long-press Home.
+- **Side swipe-and-hold shows XiaoAi's ball:** update XGoogle and tick XiaoAi in LSPosed, then use *Restart apps*. Without XiaoAi installed HyperOS turns this gesture off.
+- **Bootloop or missing features with Mountify:** Mountify can hide the ROM's own system files. Switch the metamodule to Hybrid Mount.
 - **Still stuck:** message [@emcleek](https://t.me/emcleek) on Telegram, with your LSPosed log if possible.
 
 ## Specs
@@ -115,6 +120,7 @@ This project is not affiliated with Google or Xiaomi; trademarks belong to their
 
 - ✅ **Güç tuşuna basılı tut → Gemini / Google Asistan**
 - ✅ **Alt çubuğa basılı tut → Circle to Search**
+- ✅ **Kenardan içeri kaydırıp tut → Circle to Search** (XiaoAi gerekir, aşağıya bakın)
 - ✅ **"Hey Google"** sesli uyandırma, ekran kapalıyken de
 - ✅ **Canlı çeviri:** Circle to Search'te Çevir'e basıp kaydırınca çeviri devam eder
 - ✅ **Google Lens:** Konuş ve Oluştur dahil; Google güncellense de çalışmaya devam eder
@@ -150,6 +156,8 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 6. Telefonu yeniden başlatın. Ardından Google uygulamasından **Voice Match**'i tamamlayın.
 
 > ℹ️ **XiaoAi isteğe bağlı.** Başlatıcı alt çubuğa uzun basmayı hâlâ XiaoAi'ye gönderir, ama XGoogle bunu sistemde yakalayıp Circle to Search'ü doğrudan açar; XiaoAi kaldırılmışken de çalışır. XiaoAi'yi sonra yeniden kurarsanız LSPosed'de tekrar işaretleyin.
+>
+> **Kenardan kaydırıp tutma** farklıdır: HyperOS bu hareketi yalnızca XiaoAi kuruluyken sunar. XiaoAi'yi tutun, LSPosed'de işaretleyin ve gezinme hareketi ayarlarında kenardan kaydırıp tutmayı XiaoAi topuna ayarlayın; XGoogle topun yerine Circle to Search'ü açar.
 
 ### Özellikleri kullanma
 
@@ -174,6 +182,8 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 - **Kamerada Lens butonu yok:** *Kamerada Google Lens* açık mı, LSPosed'da Kamera kapsamı seçili mi kontrol edin, sonra yeniden başlatın.
 - **Alt çubuk Circle to Search açmıyor:** XGoogle'da Circle to Search açık, ek modül kurulu olmalı; XGoogle'ı güncelledikten sonra telefonu yeniden başlatın.
 - **Alt çubuk gizli:** HyperOS, çubuk gizliyken uzun basmayı hiç işlemez; Circle to Search için çubuk görünür olmalı. 3 tuşlu gezinmede Ana Sayfa tuşuna uzun basın.
+- **Kenardan kaydırıp tutunca XiaoAi topu çıkıyor:** XGoogle'ı güncelleyin ve LSPosed'de XiaoAi'yi işaretleyin, sonra *Uygulamaları yeniden başlat*'ı kullanın. XiaoAi kurulu değilse HyperOS bu hareketi kapatır.
+- **Mountify ile açılmama ya da eksik özellik:** Mountify ROM'un kendi sistem dosyalarını gizleyebilir. Metamodülü Hybrid Mount'a çevirin.
 - **Hâlâ çözülmediyse:** Telegram'dan [@emcleek](https://t.me/emcleek)'e yazın; mümkünse LSPosed kaydını ekleyin.
 
 ### Nitelikler
