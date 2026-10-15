@@ -11,7 +11,8 @@ final class FeatureScopes {
         return switch (feature) {
             case FeaturePolicy.HEY_GOOGLE -> List.of(SYSTEM, GOOGLE);
             case FeaturePolicy.NAVIGATION -> List.of(SYSTEM, SYSTEM_UI, "com.android.launcher", "com.miui.voiceassist", GOOGLE);
-            case FeaturePolicy.CIRCLE_VIBRATE -> List.of("com.miui.voiceassist");
+            // The tick comes from the system now; XiaoAi only sends it when it is the one answering.
+            case FeaturePolicy.CIRCLE_VIBRATE -> List.of(SYSTEM);
             case FeaturePolicy.GOOGLE_ENTRY -> List.of("com.android.settings");
             case FeaturePolicy.GMS -> List.of(SYSTEM, SYSTEM_UI);
             case FeaturePolicy.LENS, FeaturePolicy.LIVE_TRANSLATE -> List.of(GOOGLE);

@@ -38,7 +38,7 @@ Every feature can be turned on or off on its own; turning one off brings back th
 
 1. Download and install the **XGoogle APK** from the [latest release](https://github.com/Leekin2/XGoogle/releases/latest).
 2. Enable **XGoogle** in **LSPosed → Modules** and select all recommended scopes:
-   System Framework, System UI, Settings, Google, XiaoAi (`com.miui.voiceassist`), Always-on display (`com.miui.aod`), Security (`com.miui.securitycore`), Google Wallet. Add Camera too if you want the camera Lens button.
+   System Framework, System UI, Settings, Google, XiaoAi (`com.miui.voiceassist`, only if you keep XiaoAi), Always-on display (`com.miui.aod`), Security (`com.miui.securitycore`), Google Wallet. Add Camera too if you want the camera Lens button.
 3. Grant XGoogle **root access** in your root manager.
 4. **Settings → Apps → Default apps → Digital assistant** → choose **Google**.
 5. Open XGoogle and turn on **Hey Google** and **Remove GMS restriction**. Circle to Search, Lens and live translate are on by default.
@@ -142,7 +142,7 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 
 1. [Son sürüm](https://github.com/Leekin2/XGoogle/releases/latest) sayfasından **XGoogle APK**'sını indirip kurun.
 2. **LSPosed → Modüller → XGoogle**'ı etkinleştirin ve önerilen kapsamların hepsini seçin:
-   Sistem Çerçevesi, Sistem Arayüzü, Ayarlar, Google, XiaoAi (`com.miui.voiceassist`), Her Zaman Açık Ekran (`com.miui.aod`), Güvenlik (`com.miui.securitycore`), Google Cüzdan. Kameradaki Lens butonunu kullanacaksanız Kamera'yı da seçin.
+   Sistem Çerçevesi, Sistem Arayüzü, Ayarlar, Google, XiaoAi (`com.miui.voiceassist`, yalnızca XiaoAi'yi tutuyorsanız), Her Zaman Açık Ekran (`com.miui.aod`), Güvenlik (`com.miui.securitycore`), Google Cüzdan. Kameradaki Lens butonunu kullanacaksanız Kamera'yı da seçin.
 3. Root yöneticinizde XGoogle'a **root izni** verin.
 4. **Ayarlar → Uygulamalar → Varsayılan uygulamalar → Dijital asistan** → **Google** seçin.
 5. XGoogle'ı açın ve **Hey Google**'ı ve **GMS kısıtlamasını kaldır**'ı açın. Circle to Search, Lens ve canlı çeviri varsayılan olarak açıktır.

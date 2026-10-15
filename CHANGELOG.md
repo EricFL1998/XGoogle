@@ -2,8 +2,10 @@
 
 ## XGoogle 1.3
 
-- Alt çubuğa basılı tutunca Circle to Search daha hızlı açılır: artık XiaoAi'nin başlamasını beklemiyor (XiaoAi kapalıyken yaklaşık 0,4 sn daha hızlı).
-  Circle to Search opens faster from the navigation handle: it no longer waits for XiaoAi to start (about 0.4 s faster when XiaoAi is not running).
+- ⚠️ XiaoAi'ye artık gerek yok: kaldırılabilir. Tutulacaksa LSPosed'de işaretli kalsın (yedek olarak çalışır).
+  ⚠️ XiaoAi is no longer needed: it can be uninstalled. If you keep it, leave it ticked in LSPosed (it stays as a fallback).
+- Alt çubuktan Circle to Search daha hızlı açılır: dokunuştan ekrana yaklaşık 0,45 sn (XiaoAi kapalıyken önceden yaklaşık 1 sn). XiaoAi'nin başlamasını beklemiyor.
+  Circle to Search opens faster from the navigation handle: about 0.45 s from touch to screen (about 1 s before when XiaoAi was not running). It no longer waits for XiaoAi to start.
 - Quick Share kutucuğu kontrol merkezine eklenebilir (GMS kısıtlaması kaldırılmışken).
   The Quick Share tile can be added to the control center (with the GMS restriction removed).
 - Kilit ekranında güç tuşuna çift basınca Google Cüzdan yeniden açılıyor; doğrulama yine isteniyor.
