@@ -16,7 +16,6 @@ import java.util.Set;
 import org.luckypray.dexkit.DexKitBridge;
 import org.luckypray.dexkit.query.FindMethod;
 import org.luckypray.dexkit.query.matchers.MethodMatcher;
-import org.luckypray.dexkit.query.matchers.MethodsMatcher;
 import org.luckypray.dexkit.result.MethodData;
 import org.luckypray.dexkit.wrap.DexMethod;
 
@@ -70,7 +69,6 @@ final class AppDexTargets implements AutoCloseable {
         }
         List<Method> methods = switch (feature) {
             case FeaturePolicy.LENS -> findLens();
-            case FeaturePolicy.WALLET -> findWallet();
             default -> throw new IllegalArgumentException("Unsupported dynamic feature");
         };
         if (methods.isEmpty()) {
@@ -91,10 +89,6 @@ final class AppDexTargets implements AutoCloseable {
         if (methods.size() < 2 || methods.size() > 514) return false;
         if (FeaturePolicy.LENS.equals(feature)) {
             return LensBinding.isPair(methods.get(0), methods.get(1));
-        }
-        if (FeaturePolicy.WALLET.equals(feature)) {
-            try { return methods.size() == 2 && WalletPreviewBinding.bind(methods.get(0), methods.get(1).getDeclaringClass()) != null; }
-            catch (IllegalAccessException invalid) { return false; }
         }
         return false;
     }
@@ -139,42 +133,6 @@ final class AppDexTargets implements AutoCloseable {
             frontier = next;
         }
         return result;
-    }
-
-    private List<Method> findWallet() throws ReflectiveOperationException {
-        Map<String, MethodData> units = new LinkedHashMap<>();
-        for (MethodData method : bridge.findMethod(FindMethod.create().matcher(MethodMatcher.create()
-                .name("toString").returnType("java.lang.String").paramCount(0).usingStrings(List.of("kotlin.Unit")))))
-            units.put(method.getClassName(), method);
-        List<Method> found = null;
-        List<MethodData> frontier = new ArrayList<>(bridge.findMethod(FindMethod.create().matcher(MethodMatcher.create()
-                .invokeMethods(MethodsMatcher.create().add(MethodMatcher.create()
-                        .declaredClass("android.app.KeyguardManager").name("requestDismissKeyguard")
-                        .paramTypes("android.app.Activity", "android.app.KeyguardManager$KeyguardDismissCallback"))))));
-        Set<String> visited = new LinkedHashSet<>();
-        // D8 may place the framework call in a synthetic API outline; follow its callers too.
-        for (int depth = 0; depth < 3; depth++) {
-            List<MethodData> next = new ArrayList<>();
-            for (MethodData method : frontier) {
-                if (!visited.add(method.getDescriptor())) continue;
-                if (visited.size() > 256) return List.of();
-                next.addAll(method.getCallers());
-                if (!method.isMethod() || !method.getReturnTypeName().equals("java.lang.Object")
-                        || !method.getParamTypeNames().equals(List.of("java.lang.Object"))) continue;
-                Method invoke = method.getMethodInstance(loader);
-                for (var used : method.getUsingFields()) {
-                    var field = used.getField();
-                    MethodData unit = units.get(field.getTypeName());
-                    if (unit == null || !Modifier.isStatic(field.getModifiers())) continue;
-                    Method unitMethod = unit.getMethodInstance(loader);
-                    if (WalletPreviewBinding.bind(invoke, unitMethod.getDeclaringClass()) == null) continue;
-                    if (found != null && !found.get(0).equals(invoke)) return List.of();
-                    found = List.of(invoke, unitMethod);
-                }
-            }
-            frontier = next;
-        }
-        return found == null ? List.of() : found;
     }
 
     private static void loadNative() {
