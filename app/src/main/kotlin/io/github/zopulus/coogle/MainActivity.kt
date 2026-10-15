@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
     private var preferences: SharedPreferences? = null
     private var companionCheckedThisResume = false
     private var companionCheckedAt: Long? = null
+    private var companionUpdateOffered = false
     private var state by mutableStateOf(CoogleState())
     private val texts get() = textsFor(state.language)
     private val uiPreferences by lazy { getSharedPreferences("xgoogle_ui", MODE_PRIVATE) }
@@ -73,7 +74,7 @@ class MainActivity : ComponentActivity() {
         companionCheckedThisResume = false
         state = state.copy(assistant = readAssistant(), iconHidden = iconHidden())
         refreshScopes()
-        if (preferences != null && state.features[FeaturePolicy.HEY_GOOGLE] == true) checkCompanion(false)
+        if (preferences != null && usesCompanion()) checkCompanion(false)
     }
 
     override fun onDestroy() {
@@ -90,8 +91,7 @@ class MainActivity : ComponentActivity() {
         syncPreferences()
         if (service != null) requestMissingScope(service)
         refreshScopes()
-        if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
-            state.features[FeaturePolicy.HEY_GOOGLE] == true) checkCompanion(false)
+        if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && usesCompanion()) checkCompanion(false)
     }
 
     /**
@@ -159,6 +159,9 @@ class MainActivity : ComponentActivity() {
         if (state.busy || preferences == null || key in savingKeys) return
         if (key == FeaturePolicy.HEY_GOOGLE && enabled) checkCompanion(true)
         else saveSetting(key, enabled)
+        // On HyperOS the navigation handle and live translate reach Google through the companion.
+        if (enabled && key in COMPANION_FEATURES && state.companion == CompanionState.MISSING && SystemCompatibility.isHyperOs())
+            showDialog(DialogKind.COMPANION_OFFER)
         if (enabled) SettingsConnection.requestScopes(this, key) { result ->
             if (isDestroyed) return@requestScopes
             refreshScopes()
@@ -225,7 +228,7 @@ class MainActivity : ComponentActivity() {
         companionCheckedThisResume = true
         state = state.copy(busy = true, companion = CompanionState.CHECKING)
         worker.execute {
-            val result = runCatching { CompanionState.valueOf(CompanionInstaller.check()) }
+            val result = runCatching { CompanionState.valueOf(CompanionInstaller.check(this)) }
             runOnUiThread {
                 if (isDestroyed) return@runOnUiThread
                 state = state.copy(busy = false)
@@ -233,12 +236,22 @@ class MainActivity : ComponentActivity() {
                     companionCheckedAt = SystemClock.elapsedRealtime()
                     state = state.copy(companion = installed)
                     if (enableAfterCheck) when (installed) {
-                        CompanionState.READY, CompanionState.PENDING -> saveSetting(FeaturePolicy.HEY_GOOGLE, true, true)
+                        CompanionState.READY, CompanionState.PENDING, CompanionState.OUTDATED -> saveSetting(FeaturePolicy.HEY_GOOGLE, true, true)
                         CompanionState.DISABLED -> showDialog(DialogKind.DISABLED)
                         else -> showDialog(DialogKind.INSTALL)
                     }
                     else if (!installed.installed && state.features[FeaturePolicy.HEY_GOOGLE] == true)
                         saveSetting(FeaturePolicy.HEY_GOOGLE, false, false)
+                    if (enableAfterCheck || state.dialog != DialogKind.NONE) return@onSuccess
+                    // Offer each once: an update per app run, the install once per phone.
+                    if (installed == CompanionState.OUTDATED && !companionUpdateOffered) {
+                        companionUpdateOffered = true
+                        showDialog(DialogKind.COMPANION_UPDATE)
+                    } else if (installed == CompanionState.MISSING && SystemCompatibility.isHyperOs()
+                        && !uiPreferences.getBoolean("companion_offered", false)) {
+                        uiPreferences.edit().putBoolean("companion_offered", true).apply()
+                        showDialog(DialogKind.COMPANION_OFFER)
+                    }
                 }.onFailure {
                     companionCheckedAt = null
                     state = state.copy(companion = CompanionState.UNKNOWN)
@@ -248,7 +261,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun installCompanion() {
+    /** Hey Google turns itself on with the install; an update or the Circle to Search offer leaves it as it is. */
+    private fun installCompanion(enableHeyGoogle: Boolean = true) {
         val settings = preferences ?: return
         companionCheckedAt = null
         state = state.copy(busy = true, companion = CompanionState.INSTALLING, dialog = DialogKind.NONE)
@@ -259,7 +273,9 @@ class MainActivity : ComponentActivity() {
                 CompanionInstaller.install(this)
                 // Without this marker the companion's first boot would take the nav handle.
                 if (navigationOff && SystemCompatibility.isHyperOs()) CompanionInstaller.applyHyperOsNavigationKey(false)
-                if (!settings.edit().putBoolean("companion_ready", true).putBoolean(FeaturePolicy.HEY_GOOGLE, true).commit())
+                val editor = settings.edit().putBoolean("companion_ready", true)
+                if (enableHeyGoogle) editor.putBoolean(FeaturePolicy.HEY_GOOGLE, true)
+                if (!editor.commit())
                     throw IOException(t.errCompanionSaved)
             }
             runOnUiThread {
@@ -268,7 +284,7 @@ class MainActivity : ComponentActivity() {
                 syncPreferences()
                 result.onSuccess {
                     state = state.copy(companion = CompanionState.PENDING)
-                    showDialog(DialogKind.INSTALLED)
+                    showDialog(if (enableHeyGoogle) DialogKind.INSTALLED else DialogKind.COMPANION_DONE)
                 }.onFailure {
                     state = state.copy(companion = CompanionState.UNKNOWN)
                     error(failureText(it, t.errCompanionInstall))
@@ -305,6 +321,7 @@ class MainActivity : ComponentActivity() {
         dismissDialog()
         when (dialog) {
             DialogKind.INSTALL -> installCompanion()
+            DialogKind.COMPANION_UPDATE, DialogKind.COMPANION_OFFER -> installCompanion(false)
             DialogKind.HIDE_ICON -> setIconHidden(true)
             DialogKind.RESTART -> restartApps()
             DialogKind.UPDATE -> openUrl(UpdateChecker.RELEASES, texts.errRepository)
@@ -333,7 +350,15 @@ class MainActivity : ComponentActivity() {
      * Opens LSPosed, asking for XGoogle's page (enable switch and scope list). LSPosed builds that
      * ignore outside links (2.2.1 on HyperOS) just open their main screen.
      */
+    private fun usesCompanion() = state.features[FeaturePolicy.HEY_GOOGLE] == true ||
+        (SystemCompatibility.isHyperOs() && COMPANION_FEATURES.any { state.features[it] == true })
+
+    /** The status card: an outdated companion is updated from here, everything else is in LSPosed. */
     private fun openModuleManager() {
+        if (state.missingScopes.isEmpty() && state.companion == CompanionState.OUTDATED) {
+            showDialog(DialogKind.COMPANION_UPDATE)
+            return
+        }
         val user = android.os.Process.myUid() / 100000
         val module = Intent(Intent.ACTION_MAIN).setComponent(ComponentName("org.lsposed.manager", "org.lsposed.manager.ui.activity.MainActivity"))
             .setData(Uri.parse("module://$packageName:$user"))
@@ -415,3 +440,6 @@ class MainActivity : ComponentActivity() {
     }
 
 }
+
+/** HyperOS features that reach Google through the companion module, besides Hey Google. */
+private val COMPANION_FEATURES = setOf(FeaturePolicy.NAVIGATION, FeaturePolicy.LIVE_TRANSLATE)

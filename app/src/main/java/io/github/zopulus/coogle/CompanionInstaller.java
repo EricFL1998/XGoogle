@@ -9,17 +9,34 @@ import static io.github.zopulus.coogle.RootShell.run;
 /** Root is used only after the user asks to check/install the companion. */
 public final class CompanionInstaller {
     private static final String DIR="/data/adb/modules/coogle_companion";
-    public static String check() throws Exception {
+    /** MISSING, DISABLED, PENDING, READY, or OUTDATED when the installed one is older than the bundled one. */
+    public static String check(Context context) throws Exception {
         String output = run("d="+DIR+"; u=/data/adb/modules_update/coogle_companion; "
                 +"if [ -f \"$u/module.prop\" ]; then "
                 +"if [ -f \"$u/disable\" ] || [ -f \"$u/remove\" ]; then echo DISABLED; else echo PENDING; fi; "
                 +"elif [ ! -f \"$d/module.prop\" ]; then echo MISSING; "
                 +"elif [ -f \"$d/disable\" ] || [ -f \"$d/remove\" ]; then echo DISABLED; "
-                +"else echo READY; fi",20).trim();
-        String state = output.substring(output.lastIndexOf('\n') + 1).trim();
+                +"else echo \"READY $(sed -n 's/^versionCode=//p' \"$d/module.prop\")\"; fi",20).trim();
+        String[] last = output.substring(output.lastIndexOf('\n') + 1).trim().split(" ");
+        String state = last[0];
         if (!java.util.Set.of("MISSING", "DISABLED", "PENDING", "READY").contains(state))
             throw new java.io.IOException("Ek modül durumu okunamadı");
+        if ("READY".equals(state) && last.length > 1) {
+            try { if (Integer.parseInt(last[1].trim()) < bundledVersion(context)) return "OUTDATED"; }
+            catch (NumberFormatException unreadable) { /* an unreadable version is not reported as outdated */ }
+        }
         return state;
+    }
+    /** versionCode of the companion module packed into the APK. */
+    static int bundledVersion(Context context) throws java.io.IOException {
+        try (java.util.zip.ZipInputStream zip = new java.util.zip.ZipInputStream(context.getAssets().open("coogle-companion.zip"))) {
+            for (java.util.zip.ZipEntry entry; (entry = zip.getNextEntry()) != null; ) {
+                if (!"module.prop".equals(entry.getName())) continue;
+                for (String line : new String(zip.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).split("\n"))
+                    if (line.startsWith("versionCode=")) return Integer.parseInt(line.substring(12).trim());
+            }
+        }
+        throw new java.io.IOException("Bundled companion version missing");
     }
     public static void install(Context context) throws Exception {
         Path zip=context.getCacheDir().toPath().resolve("coogle-companion.zip");

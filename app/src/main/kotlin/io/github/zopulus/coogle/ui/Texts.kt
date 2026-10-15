@@ -80,6 +80,12 @@ class Texts(
     val disabledMessage: String,
     val installedTitle: String,
     val installedMessage: String,
+    val companionUpdateTitle: String,
+    val companionUpdateMessage: String,
+    val companionOfferTitle: String,
+    val companionOfferMessage: String,
+    val companionDoneMessage: String,
+    val update: String,
     val hideIconTitle: String,
     val hideIconMessage: String,
     val errorTitle: String,
@@ -198,6 +204,7 @@ private val TR = Texts(
             CompanionState.DISABLED -> "Ek modül: devre dışı"
             CompanionState.READY -> "Ek modül: kurulu ve etkin"
             CompanionState.PENDING -> "Ek modül: kuruldu, yeniden başlatma bekleniyor"
+            CompanionState.OUTDATED -> "Ek modül: güncelleme var"
             CompanionState.INSTALLING -> "Ek modül: kuruluyor…"
         }
     },
@@ -209,6 +216,12 @@ private val TR = Texts(
     disabledMessage = "SukiSU/KernelSU'da XGoogle ek modülünü etkinleştirin, ardından Hey Google'ı yeniden açın.",
     installedTitle = "Kurulum tamamlandı",
     installedMessage = "XGoogle ek modülü kuruldu ve Hey Google açıldı.\n\nTelefonu yeniden başlatın, ardından Google ayarlarından Voice Match'i tamamlayın.",
+    companionUpdateTitle = "Ek modülü güncelle",
+    companionUpdateMessage = "Kurulu ek modül eski. XGoogle'ın içindeki yeni sürümü kurmak Root izni ister; ardından telefonu yeniden başlatın.",
+    companionOfferTitle = "Ek modül önerilir",
+    companionOfferMessage = "HyperOS'ta alt çubuktan Circle to Search ve canlı çeviri XGoogle ek modülüyle çalışır. Ek modül kurulsun mu? Kurulum Root izni ister; ardından telefonu yeniden başlatın.",
+    companionDoneMessage = "XGoogle ek modülü kuruldu. Telefonu yeniden başlatın.",
+    update = "Güncelle",
     hideIconTitle = "Ana ekran simgesi gizlensin mi?",
     hideIconMessage = "Gizlendikten sonra uygulamayı LSPosed'deki XGoogle modül ayarlarından açabilirsiniz.",
     errorTitle = "İşlem tamamlanamadı",
@@ -327,6 +340,7 @@ private val EN = Texts(
             CompanionState.DISABLED -> "Companion module: disabled"
             CompanionState.READY -> "Companion module: installed and enabled"
             CompanionState.PENDING -> "Companion module: installed, reboot pending"
+            CompanionState.OUTDATED -> "Companion module: update available"
             CompanionState.INSTALLING -> "Companion module: installing…"
         }
     },
@@ -338,6 +352,12 @@ private val EN = Texts(
     disabledMessage = "Enable the XGoogle companion module in SukiSU/KernelSU, then turn Hey Google on again.",
     installedTitle = "Installation complete",
     installedMessage = "The XGoogle companion module is installed and Hey Google is on.\n\nReboot the phone, then complete Voice Match in Google settings.",
+    companionUpdateTitle = "Update companion module",
+    companionUpdateMessage = "The installed companion module is out of date. Installing the version inside XGoogle asks for root access; reboot the phone afterwards.",
+    companionOfferTitle = "Companion module recommended",
+    companionOfferMessage = "On HyperOS, Circle to Search from the navigation handle and live translate work through the XGoogle companion module. Install it now? Installing asks for root access; reboot the phone afterwards.",
+    companionDoneMessage = "The XGoogle companion module is installed. Reboot the phone.",
+    update = "Update",
     hideIconTitle = "Hide the home screen icon?",
     hideIconMessage = "Once hidden, you can still open the app from XGoogle's module settings in LSPosed.",
     errorTitle = "Could not complete",
@@ -456,6 +476,7 @@ private val RU = Texts(
             CompanionState.DISABLED -> "Доп. модуль: отключён"
             CompanionState.READY -> "Доп. модуль: установлен и включён"
             CompanionState.PENDING -> "Доп. модуль: установлен, требуется перезагрузка"
+            CompanionState.OUTDATED -> "Доп. модуль: доступно обновление"
             CompanionState.INSTALLING -> "Доп. модуль: установка…"
         }
     },
@@ -467,6 +488,12 @@ private val RU = Texts(
     disabledMessage = "Включите дополнительный модуль XGoogle в SukiSU/KernelSU, затем снова включите «Окей, Google».",
     installedTitle = "Установка завершена",
     installedMessage = "Дополнительный модуль XGoogle установлен, «Окей, Google» включён.\n\nПерезагрузите телефон, затем настройте Voice Match в настройках Google.",
+    companionUpdateTitle = "Обновить доп. модуль",
+    companionUpdateMessage = "Установленный дополнительный модуль устарел. Установка версии из XGoogle запросит root-доступ; затем перезагрузите телефон.",
+    companionOfferTitle = "Рекомендуется доп. модуль",
+    companionOfferMessage = "В HyperOS «Обвести и найти» с панели навигации и живой перевод работают через дополнительный модуль XGoogle. Установить его? Установка запросит root-доступ; затем перезагрузите телефон.",
+    companionDoneMessage = "Дополнительный модуль XGoogle установлен. Перезагрузите телефон.",
+    update = "Обновить",
     hideIconTitle = "Скрыть значок на рабочем столе?",
     hideIconMessage = "После скрытия приложение можно открыть из настроек модуля XGoogle в LSPosed.",
     errorTitle = "Не удалось выполнить",
@@ -585,6 +612,7 @@ private val ES = Texts(
             CompanionState.DISABLED -> "Módulo complementario: desactivado"
             CompanionState.READY -> "Módulo complementario: instalado y activo"
             CompanionState.PENDING -> "Módulo complementario: instalado, reinicio pendiente"
+            CompanionState.OUTDATED -> "Módulo complementario: actualización disponible"
             CompanionState.INSTALLING -> "Módulo complementario: instalando…"
         }
     },
@@ -596,6 +624,12 @@ private val ES = Texts(
     disabledMessage = "Activa el módulo complementario de XGoogle en SukiSU/KernelSU y vuelve a activar Hey Google.",
     installedTitle = "Instalación completada",
     installedMessage = "El módulo complementario de XGoogle está instalado y Hey Google activado.\n\nReinicia el teléfono y completa Voice Match en los ajustes de Google.",
+    companionUpdateTitle = "Actualizar módulo complementario",
+    companionUpdateMessage = "El módulo complementario instalado está desactualizado. Instalar la versión incluida en XGoogle pide acceso root; después reinicia el teléfono.",
+    companionOfferTitle = "Módulo complementario recomendado",
+    companionOfferMessage = "En HyperOS, Circle to Search desde la barra de navegación y la traducción en vivo funcionan con el módulo complementario de XGoogle. ¿Instalarlo ahora? La instalación pide acceso root; después reinicia el teléfono.",
+    companionDoneMessage = "El módulo complementario de XGoogle está instalado. Reinicia el teléfono.",
+    update = "Actualizar",
     hideIconTitle = "¿Ocultar el icono de inicio?",
     hideIconMessage = "Una vez oculto, puedes abrir la app desde los ajustes del módulo XGoogle en LSPosed.",
     errorTitle = "No se pudo completar",
@@ -714,6 +748,7 @@ private val ZH = Texts(
             CompanionState.DISABLED -> "附属模块：已禁用"
             CompanionState.READY -> "附属模块：已安装并启用"
             CompanionState.PENDING -> "附属模块：已安装，待重启"
+            CompanionState.OUTDATED -> "附属模块：有可用更新"
             CompanionState.INSTALLING -> "附属模块：正在安装…"
         }
     },
@@ -725,6 +760,12 @@ private val ZH = Texts(
     disabledMessage = "请在 SukiSU/KernelSU 中启用 XGoogle 附属模块，然后重新开启 Hey Google。",
     installedTitle = "安装完成",
     installedMessage = "XGoogle 附属模块已安装，Hey Google 已开启。\n\n请重启手机，再在 Google 设置中完成 Voice Match。",
+    companionUpdateTitle = "更新附属模块",
+    companionUpdateMessage = "已安装的附属模块版本较旧。安装 XGoogle 内置的新版本会请求 Root 授权，完成后请重启手机。",
+    companionOfferTitle = "建议安装附属模块",
+    companionOfferMessage = "在 HyperOS 上，通过导航条使用圈选即搜和实时翻译需要 XGoogle 附属模块。现在安装吗？安装会请求 Root 授权，完成后请重启手机。",
+    companionDoneMessage = "XGoogle 附属模块已安装，请重启手机。",
+    update = "更新",
     hideIconTitle = "隐藏桌面图标？",
     hideIconMessage = "隐藏后，仍可从 LSPosed 的 XGoogle 模块设置入口打开应用。",
     errorTitle = "操作未完成",

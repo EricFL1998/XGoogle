@@ -207,10 +207,12 @@ private fun StatusCard(state: CoogleState, t: Texts, onClick: () -> Unit) {
     val dark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
     val scheme = MaterialTheme.colorScheme
     val waiting = state.loading && !state.connected
+    val outdated = state.companion == CompanionState.OUTDATED
+    val warn = state.missingScopes.isNotEmpty() || outdated
     val (container, content) = when {
         waiting -> scheme.secondaryContainer to scheme.onSecondaryContainer
         !state.connected -> scheme.errorContainer to scheme.onErrorContainer
-        state.missingScopes.isNotEmpty() -> if (dark) Color(0xFF4A3F00) to Color(0xFFFFE08A) else Color(0xFFFFF0B3) to Color(0xFF574500)
+        warn -> if (dark) Color(0xFF4A3F00) to Color(0xFFFFE08A) else Color(0xFFFFF0B3) to Color(0xFF574500)
         else -> if (dark) Color(0xFF1F4D26) to Color(0xFFB9F0C0) else Color(0xFFC9EFCB) to Color(0xFF14501E)
     }
     Surface(onClick = onClick, modifier = Modifier.fillMaxWidth(), color = container, contentColor = content,
@@ -219,7 +221,7 @@ private fun StatusCard(state: CoogleState, t: Texts, onClick: () -> Unit) {
             Icon(when {
                 waiting -> Icons.Rounded.HourglassTop
                 !state.connected -> Icons.Rounded.HighlightOff
-                state.missingScopes.isNotEmpty() -> Icons.Rounded.WarningAmber
+                warn -> Icons.Rounded.WarningAmber
                 else -> Icons.Rounded.CheckCircle
             }, null, Modifier.size(36.dp))
             Spacer(Modifier.width(20.dp))
@@ -228,6 +230,7 @@ private fun StatusCard(state: CoogleState, t: Texts, onClick: () -> Unit) {
                     waiting -> t.connecting
                     !state.connected -> t.inactive
                     state.missingScopes.isNotEmpty() -> t.statusIncomplete
+                    outdated -> t.companion(CompanionState.OUTDATED)
                     else -> t.statusWorking
                 }, style = MaterialTheme.typography.titleLarge)
                 Text("${t.version(BuildConfig.VERSION_NAME)} · API 102", style = MaterialTheme.typography.bodyMedium,
@@ -238,7 +241,7 @@ private fun StatusCard(state: CoogleState, t: Texts, onClick: () -> Unit) {
                         Text("• " + (if (name == "system") t.systemFramework else name), style = MaterialTheme.typography.bodyMedium)
                     }
                 }
-                Text(t.statusTap, style = MaterialTheme.typography.labelMedium,
+                Text(if (outdated && state.missingScopes.isEmpty()) t.companionUpdateTitle else t.statusTap, style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.padding(top = 10.dp).alpha(0.75f))
             }
         }
@@ -424,6 +427,9 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.HIDE_ICON -> t.hideIconTitle
         DialogKind.RESTART -> t.restartTitle
         DialogKind.UPDATE -> t.updateTitle
+        DialogKind.COMPANION_UPDATE -> t.companionUpdateTitle
+        DialogKind.COMPANION_OFFER -> t.companionOfferTitle
+        DialogKind.COMPANION_DONE -> t.installedTitle
         else -> t.errorTitle
     }
     val message = when (state.dialog) {
@@ -434,6 +440,9 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.HIDE_ICON -> t.hideIconMessage
         DialogKind.RESTART -> t.restartMessage
         DialogKind.UPDATE -> t.updateMessage(state.updateVersion)
+        DialogKind.COMPANION_UPDATE -> t.companionUpdateMessage
+        DialogKind.COMPANION_OFFER -> t.companionOfferMessage
+        DialogKind.COMPANION_DONE -> t.companionDoneMessage
         else -> state.dialogText
     }
     val confirm = when (state.dialog) {
@@ -441,12 +450,15 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.HIDE_ICON -> t.hide
         DialogKind.RESTART -> t.restart
         DialogKind.UPDATE -> t.download
+        DialogKind.COMPANION_UPDATE -> t.update
+        DialogKind.COMPANION_OFFER -> t.install
         else -> t.ok
     }
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = MaterialTheme.shapes.extraLarge,
-        icon = { Icon(if (state.dialog in setOf(DialogKind.INSTALL, DialogKind.INSTALLED, DialogKind.DISABLED))
+        icon = { Icon(if (state.dialog in setOf(DialogKind.INSTALL, DialogKind.INSTALLED, DialogKind.DISABLED,
+            DialogKind.COMPANION_UPDATE, DialogKind.COMPANION_OFFER, DialogKind.COMPANION_DONE))
             Icons.Rounded.Extension else if (state.dialog == DialogKind.HIDE_ICON) Icons.Rounded.VisibilityOff
             else if (state.dialog == DialogKind.RESTART) Icons.Rounded.RestartAlt else Icons.Rounded.Info, null) },
         title = { Text(title) },
@@ -456,7 +468,8 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
             }
         },
         confirmButton = { TextButton(onClick = onConfirm) { Text(confirm) } },
-        dismissButton = if (state.dialog in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON, DialogKind.RESTART, DialogKind.UPDATE)) {
+        dismissButton = if (state.dialog in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON, DialogKind.RESTART, DialogKind.UPDATE,
+        DialogKind.COMPANION_UPDATE, DialogKind.COMPANION_OFFER)) {
             { TextButton(onClick = onDismiss) { Text(t.cancel) } }
         } else null
     )

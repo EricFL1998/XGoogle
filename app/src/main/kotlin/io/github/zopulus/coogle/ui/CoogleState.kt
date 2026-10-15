@@ -9,10 +9,12 @@ enum class CompanionState(val installed: Boolean = false) {
     DISABLED,
     READY(true),
     PENDING(true),
+    /** Installed, older than the one inside XGoogle. */
+    OUTDATED(true),
     INSTALLING
 }
 
-enum class DialogKind { NONE, STATUS, INSTALL, DISABLED, INSTALLED, HIDE_ICON, RESTART, UPDATE, ERROR }
+enum class DialogKind { NONE, STATUS, INSTALL, DISABLED, INSTALLED, HIDE_ICON, RESTART, UPDATE, COMPANION_UPDATE, COMPANION_OFFER, COMPANION_DONE, ERROR }
 
 enum class UpdateStatus { IDLE, CHECKING, LATEST, AVAILABLE, FAILED }
 

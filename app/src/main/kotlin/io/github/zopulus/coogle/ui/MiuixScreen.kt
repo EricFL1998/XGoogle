@@ -277,10 +277,12 @@ private fun StatusCard(state: CoogleState, t: Texts, onStatus: () -> Unit) {
     val colors = MiuixTheme.colorScheme
     val dark = colors.surface.luminance() < 0.5f
     val waiting = state.loading && !state.connected
+    val outdated = state.companion == CompanionState.OUTDATED
+    val warn = state.missingScopes.isNotEmpty() || outdated
     val (container, content) = when {
         waiting -> colors.secondaryContainer to colors.onSecondaryContainer
         !state.connected -> (if (dark) Color(0xFF5C1A1A) else Color(0xFFFFDAD6)) to (if (dark) Color(0xFFFFDAD6) else Color(0xFF6B0F0F))
-        state.missingScopes.isNotEmpty() -> if (dark) Color(0xFF4A3F00) to Color(0xFFFFE08A) else Color(0xFFFFF0B3) to Color(0xFF574500)
+        warn -> if (dark) Color(0xFF4A3F00) to Color(0xFFFFE08A) else Color(0xFFFFF0B3) to Color(0xFF574500)
         else -> if (dark) Color(0xFF1F4D26) to Color(0xFFB9F0C0) else Color(0xFFC9EFCB) to Color(0xFF14501E)
     }
     Card(Modifier.padding(horizontal = 12.dp).padding(top = 12.dp), colors = CardDefaults.defaultColors(container, content),
@@ -289,7 +291,7 @@ private fun StatusCard(state: CoogleState, t: Texts, onStatus: () -> Unit) {
             Icon(when {
                 waiting -> Icons.Rounded.HourglassTop
                 !state.connected -> Icons.Rounded.HighlightOff
-                state.missingScopes.isNotEmpty() -> Icons.Rounded.WarningAmber
+                warn -> Icons.Rounded.WarningAmber
                 else -> Icons.Rounded.CheckCircle
             }, null, Modifier.size(36.dp), tint = content)
             Spacer(Modifier.width(18.dp))
@@ -298,6 +300,7 @@ private fun StatusCard(state: CoogleState, t: Texts, onStatus: () -> Unit) {
                     waiting -> t.connecting
                     !state.connected -> t.inactive
                     state.missingScopes.isNotEmpty() -> t.statusIncomplete
+                    outdated -> t.companion(CompanionState.OUTDATED)
                     else -> t.statusWorking
                 }, color = content, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
                 Text(t.version(BuildConfig.VERSION_NAME) + " · API 102", color = content, fontSize = 14.sp,
@@ -308,7 +311,7 @@ private fun StatusCard(state: CoogleState, t: Texts, onStatus: () -> Unit) {
                         Text("• " + (if (name == "system") t.systemFramework else name), color = content, fontSize = 14.sp)
                     }
                 }
-                Text(t.statusTap, color = content.copy(alpha = 0.75f), fontSize = 12.sp, modifier = Modifier.padding(top = 10.dp))
+                Text(if (outdated && state.missingScopes.isEmpty()) t.companionUpdateTitle else t.statusTap, color = content.copy(alpha = 0.75f), fontSize = 12.sp, modifier = Modifier.padding(top = 10.dp))
             }
         }
     }
@@ -414,6 +417,9 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.HIDE_ICON -> t.hideIconTitle
         DialogKind.RESTART -> t.restartTitle
         DialogKind.UPDATE -> t.updateTitle
+        DialogKind.COMPANION_UPDATE -> t.companionUpdateTitle
+        DialogKind.COMPANION_OFFER -> t.companionOfferTitle
+        DialogKind.COMPANION_DONE -> t.installedTitle
         else -> t.errorTitle
     }
     val message = when (last) {
@@ -424,6 +430,9 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.HIDE_ICON -> t.hideIconMessage
         DialogKind.RESTART -> t.restartMessage
         DialogKind.UPDATE -> t.updateMessage(state.updateVersion)
+        DialogKind.COMPANION_UPDATE -> t.companionUpdateMessage
+        DialogKind.COMPANION_OFFER -> t.companionOfferMessage
+        DialogKind.COMPANION_DONE -> t.companionDoneMessage
         else -> lastText
     }
     val confirm = when (last) {
@@ -431,9 +440,12 @@ private fun CoogleDialog(state: CoogleState, t: Texts, onConfirm: () -> Unit, on
         DialogKind.HIDE_ICON -> t.hide
         DialogKind.RESTART -> t.restart
         DialogKind.UPDATE -> t.download
+        DialogKind.COMPANION_UPDATE -> t.update
+        DialogKind.COMPANION_OFFER -> t.install
         else -> t.ok
     }
-    val cancellable = last in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON, DialogKind.RESTART, DialogKind.UPDATE)
+    val cancellable = last in setOf(DialogKind.INSTALL, DialogKind.HIDE_ICON, DialogKind.RESTART, DialogKind.UPDATE,
+        DialogKind.COMPANION_UPDATE, DialogKind.COMPANION_OFFER)
     WindowDialog(show = show, title = title, onDismissRequest = onDismiss) {
         Column {
             Text(message, Modifier.fillMaxWidth().heightIn(max = 420.dp)

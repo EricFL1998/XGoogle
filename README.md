@@ -41,7 +41,8 @@ Every feature can be turned on or off on its own; turning one off brings back th
    System Framework, System UI, Settings, Google, XiaoAi (`com.miui.voiceassist`), Always-on display (`com.miui.aod`), Security (`com.miui.securitycore`), Google Wallet. Add Camera too if you want the camera Lens button.
 3. Grant XGoogle **root access** in your root manager.
 4. **Settings → Apps → Default apps → Digital assistant** → choose **Google**.
-5. Open XGoogle and turn on **Hey Google** (the companion module installs automatically) and **Remove GMS restriction**. Circle to Search, Lens and live translate are on by default.
+5. Open XGoogle and turn on **Hey Google** and **Remove GMS restriction**. Circle to Search, Lens and live translate are on by default.
+   The **companion module** is needed for Hey Google, for Circle to Search from the navigation handle and for live translate: XGoogle offers to install it (with Hey Google it installs automatically).
 6. Reboot, then complete **Voice Match** in the Google app.
 
 > ⚠️ **Do not remove XiaoAi.** On HyperOS 4 the navigation handle gesture reaches Circle to Search through XiaoAi.
@@ -59,7 +60,7 @@ Every feature can be turned on or off on its own; turning one off brings back th
 ## Updating
 
 1. Install the new APK over the current one.
-2. If the companion module changed, your root manager offers the update; install it.
+2. If the companion module changed, XGoogle shows "Companion module: update available" (the status card turns yellow) and your root manager offers the update; install it from either.
 3. Reboot.
 
 ## Troubleshooting
@@ -68,6 +69,7 @@ Every feature can be turned on or off on its own; turning one off brings back th
 - **The status card is yellow / I reinstalled Wallet or Google:** LSPosed drops a reinstalled app from the scope, and HyperOS may hide LSPosed's *Scope request* notification. The card lists the missing apps; tap it to open LSPosed, tick them in XGoogle's scope, then use *Restart apps*.
 - **No Lens button in the camera:** check that *Google Lens in Camera* is on and the Camera scope is selected in LSPosed, then reboot.
 - **The navigation handle does not open Circle to Search:** XiaoAi must be installed and Circle to Search turned on in XGoogle.
+- **Navigation handle hidden:** HyperOS ignores the long press when the handle is hidden, so Circle to Search needs the handle shown. With 3-button navigation, long-press Home.
 - **Still stuck:** message [@emcleek](https://t.me/emcleek) on Telegram, with your LSPosed log if possible.
 
 ## Specs
@@ -143,7 +145,8 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
    Sistem Çerçevesi, Sistem Arayüzü, Ayarlar, Google, XiaoAi (`com.miui.voiceassist`), Her Zaman Açık Ekran (`com.miui.aod`), Güvenlik (`com.miui.securitycore`), Google Cüzdan. Kameradaki Lens butonunu kullanacaksanız Kamera'yı da seçin.
 3. Root yöneticinizde XGoogle'a **root izni** verin.
 4. **Ayarlar → Uygulamalar → Varsayılan uygulamalar → Dijital asistan** → **Google** seçin.
-5. XGoogle'ı açın ve **Hey Google**'ı (ek modül otomatik kurulur) ve **GMS kısıtlamasını kaldır**'ı açın. Circle to Search, Lens ve canlı çeviri varsayılan olarak açıktır.
+5. XGoogle'ı açın ve **Hey Google**'ı ve **GMS kısıtlamasını kaldır**'ı açın. Circle to Search, Lens ve canlı çeviri varsayılan olarak açıktır.
+   **Ek modül** Hey Google, alt çubuktan Circle to Search ve canlı çeviri için gereklidir: XGoogle kurmayı önerir (Hey Google açılınca otomatik kurulur).
 6. Telefonu yeniden başlatın. Ardından Google uygulamasından **Voice Match**'i tamamlayın.
 
 > ⚠️ **XiaoAi'yi kaldırmayın.** HyperOS 4'te alt çubuk hareketi XiaoAi üzerinden Circle to Search'e yönlendirilir.
@@ -161,7 +164,7 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 ### Güncelleme
 
 1. Yeni APK'yı mevcut sürümün üstüne kurun.
-2. Ek modül değiştiyse root yöneticiniz güncellemeyi kendisi gösterir; güncelleyin.
+2. Ek modül değiştiyse XGoogle "Ek modül: güncelleme var" der (durum kartı sarı olur) ve root yöneticiniz de güncellemeyi gösterir; ikisinden biriyle güncelleyin.
 3. Telefonu yeniden başlatın.
 
 ### Sorun giderme
@@ -170,6 +173,7 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 - **Durum kartı sarı / Cüzdan'ı ya da Google'ı yeniden kurdum:** LSPosed yeniden kurulan uygulamayı kapsamdan çıkarır, HyperOS da LSPosed'ın *Kapsam talebi* bildirimini gizleyebilir. Kart eksik uygulamaları listeler; karta dokunup LSPosed'ı açın, XGoogle'ın kapsamında işaretleyin, sonra *Uygulamaları yeniden başlat*'ı kullanın.
 - **Kamerada Lens butonu yok:** *Kamerada Google Lens* açık mı, LSPosed'da Kamera kapsamı seçili mi kontrol edin, sonra yeniden başlatın.
 - **Alt çubuk Circle to Search açmıyor:** XiaoAi kurulu olmalı ve XGoogle'da Circle to Search açık olmalı.
+- **Alt çubuk gizli:** HyperOS, çubuk gizliyken uzun basmayı hiç işlemez; Circle to Search için çubuk görünür olmalı. 3 tuşlu gezinmede Ana Sayfa tuşuna uzun basın.
 - **Hâlâ çözülmediyse:** Telegram'dan [@emcleek](https://t.me/emcleek)'e yazın; mümkünse LSPosed kaydını ekleyin.
 
 ### Nitelikler

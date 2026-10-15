@@ -6,6 +6,10 @@
   The Quick Share tile can be added to the control center (with the GMS restriction removed).
 - Kilit ekranında güç tuşuna çift basınca Google Cüzdan yeniden açılıyor; doğrulama yine isteniyor.
   Double-pressing power on the lock screen opens Google Wallet again; it still asks you to verify.
+- Ek modül eskiyse XGoogle "Ek modül: güncelleme var" der ve tek dokunuşla günceller (durum kartı sarı olur).
+  When the companion module is out of date, XGoogle says "Companion module: update available" and updates it with one tap (the status card turns yellow).
+- Ek modül yalnızca Hey Google için değil: alt çubuktan Circle to Search ve canlı çeviri için de kurulması önerilir.
+  The companion module is not only for Hey Google: XGoogle also offers it for Circle to Search from the navigation handle and live translate.
 - Altta yüzen çubuk da buzlu cam görünümünde (her iki görünümde).
   The floating bar is frosted glass too (in both looks).
 - Circle to Search kapatılınca alt çubuğa basılı tutma eski seçiminize döner ve açılışta korunur.
