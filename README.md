@@ -45,7 +45,7 @@ Every feature can be turned on or off on its own; turning one off brings back th
    The **companion module** is needed for Hey Google, for Circle to Search from the navigation handle and for live translate: XGoogle offers to install it (with Hey Google it installs automatically).
 6. Reboot, then complete **Voice Match** in the Google app.
 
-> ⚠️ **Do not remove XiaoAi.** On HyperOS 4 the navigation handle gesture reaches Circle to Search through XiaoAi.
+> ℹ️ **XiaoAi is optional.** The launcher still hands the navigation handle long press to XiaoAi, but XGoogle answers it in the system and opens Circle to Search directly, so it works with XiaoAi removed too. If you reinstall XiaoAi later, tick it again in LSPosed.
 
 ## Using the features
 
@@ -68,7 +68,7 @@ Every feature can be turned on or off on its own; turning one off brings back th
 - **Hey Google does not work:** check the companion module's description in your root manager; it should show "✅Google is a system app" and "✅Enrollment components loaded". Make sure Google is the default digital assistant and Voice Match is complete.
 - **The status card is yellow / I reinstalled Wallet or Google:** LSPosed drops a reinstalled app from the scope, and HyperOS may hide LSPosed's *Scope request* notification. The card lists the missing apps; tap it to open LSPosed, tick them in XGoogle's scope, then use *Restart apps*.
 - **No Lens button in the camera:** check that *Google Lens in Camera* is on and the Camera scope is selected in LSPosed, then reboot.
-- **The navigation handle does not open Circle to Search:** XiaoAi must be installed and Circle to Search turned on in XGoogle.
+- **The navigation handle does not open Circle to Search:** Circle to Search must be on in XGoogle, the companion module installed, and the phone rebooted after updating XGoogle.
 - **Navigation handle hidden:** HyperOS ignores the long press when the handle is hidden, so Circle to Search needs the handle shown. With 3-button navigation, long-press Home.
 - **Still stuck:** message [@emcleek](https://t.me/emcleek) on Telegram, with your LSPosed log if possible.
 
@@ -149,7 +149,7 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
    **Ek modül** Hey Google, alt çubuktan Circle to Search ve canlı çeviri için gereklidir: XGoogle kurmayı önerir (Hey Google açılınca otomatik kurulur).
 6. Telefonu yeniden başlatın. Ardından Google uygulamasından **Voice Match**'i tamamlayın.
 
-> ⚠️ **XiaoAi'yi kaldırmayın.** HyperOS 4'te alt çubuk hareketi XiaoAi üzerinden Circle to Search'e yönlendirilir.
+> ℹ️ **XiaoAi isteğe bağlı.** Başlatıcı alt çubuğa uzun basmayı hâlâ XiaoAi'ye gönderir, ama XGoogle bunu sistemde yakalayıp Circle to Search'ü doğrudan açar; XiaoAi kaldırılmışken de çalışır. XiaoAi'yi sonra yeniden kurarsanız LSPosed'de tekrar işaretleyin.
 
 ### Özellikleri kullanma
 
@@ -172,7 +172,7 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 - **Hey Google çalışmıyor:** Root yöneticinizde ek modülün açıklamasına bakın; "✅Google is a system app" ve "✅Enrollment components loaded" yazmalı. Google'ın varsayılan dijital asistan olduğundan ve Voice Match'in tamamlandığından emin olun.
 - **Durum kartı sarı / Cüzdan'ı ya da Google'ı yeniden kurdum:** LSPosed yeniden kurulan uygulamayı kapsamdan çıkarır, HyperOS da LSPosed'ın *Kapsam talebi* bildirimini gizleyebilir. Kart eksik uygulamaları listeler; karta dokunup LSPosed'ı açın, XGoogle'ın kapsamında işaretleyin, sonra *Uygulamaları yeniden başlat*'ı kullanın.
 - **Kamerada Lens butonu yok:** *Kamerada Google Lens* açık mı, LSPosed'da Kamera kapsamı seçili mi kontrol edin, sonra yeniden başlatın.
-- **Alt çubuk Circle to Search açmıyor:** XiaoAi kurulu olmalı ve XGoogle'da Circle to Search açık olmalı.
+- **Alt çubuk Circle to Search açmıyor:** XGoogle'da Circle to Search açık, ek modül kurulu olmalı; XGoogle'ı güncelledikten sonra telefonu yeniden başlatın.
 - **Alt çubuk gizli:** HyperOS, çubuk gizliyken uzun basmayı hiç işlemez; Circle to Search için çubuk görünür olmalı. 3 tuşlu gezinmede Ana Sayfa tuşuna uzun basın.
 - **Hâlâ çözülmediyse:** Telegram'dan [@emcleek](https://t.me/emcleek)'e yazın; mümkünse LSPosed kaydını ekleyin.
 
