@@ -20,7 +20,7 @@ Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorO
 - 🧪 **Lock screen shortcuts:** Gemini, Lens/QR, Wallet, Home controls. They open over the lock screen; Wallet asks you to verify when it needs to
 - 🧪 **Double-press power → Google Wallet**, also on the lock screen; Google becomes the default NFC payment app
 - 🧪 **Google Lens button in the camera** (optional), also over the lock screen
-- 🧪 Control center Lens/QR tile
+- 🧪 Control center Lens/QR and Circle to Search tiles
 - 🌐 UI languages: Türkçe, English, Русский, Español, 简体中文
 - 🎨 Two looks: Material, or HyperOS style (light/dark/system theme, wallpaper colors, frosted bar)
 - 🚦 Status card: green when everything works, yellow with the list of apps still unticked in LSPosed, red when inactive
@@ -56,7 +56,7 @@ Every feature can be turned on or off on its own; turning one off brings back th
 - **Google Wallet:** turn on *Google Wallet* in XGoogle; double-pressing power is set to Google Wallet and Google becomes the default NFC payment app. On the lock screen the tap-to-pay screen opens; *Open Wallet* asks for your fingerprint/PIN.
 - **Google Lens in Camera:** turn on *Google Lens in Camera*, approve the Camera scope in LSPosed and reboot. The Lens button is in the camera menu (the arrow at the top).
 - **Home controls:** a home with devices must be set up in the Google Home app; otherwise the panel shows "Set up home".
-- **Lens tile:** edit the control center and add the Lens tile.
+- **Lens and Circle to Search tiles:** edit the control center and add them. The Circle to Search tile closes the control center and searches the app below.
 - **After changing a setting:** use *Restart apps* (Home → System) instead of rebooting; the system framework still needs a reboot.
 - **Settings tab:** language, look and theme, update check, support group.
 
@@ -129,7 +129,7 @@ This project is not affiliated with Google or Xiaomi; trademarks belong to their
 - 🧪 **Kilit ekranı kısayolları:** Gemini, Lens/QR, Cüzdan, Ev kontrolleri. Kilit ekranının üstünde açılır; Cüzdan gerektiğinde doğrulama ister
 - 🧪 **Güç tuşuna çift bas → Google Cüzdan**, kilit ekranında da açılır; Google varsayılan NFC ödeme uygulaması olur
 - 🧪 **Kamerada Google Lens butonu** (isteğe bağlı), kilit ekranında da çalışır
-- 🧪 Kontrol merkezi Lens/QR kutucuğu
+- 🧪 Kontrol merkezi Lens/QR ve Circle to Search kutucukları
 - 🌐 Arayüz dilleri: Türkçe, English, Русский, Español, 简体中文
 - 🎨 İki görünüm: Material ya da HyperOS tarzı (açık/koyu/sistem tema, duvar kağıdı renkleri, buzlu çubuk)
 - 🚦 Durum kartı: her şey çalışıyorsa yeşil, LSPosed'de işaretlenmemiş uygulama varsa listesiyle sarı, etkin değilse kırmızı
@@ -165,7 +165,7 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 - **Google Cüzdan:** XGoogle'da *Google Cüzdan*'ı açın; güç tuşuna çift basma Google Cüzdan'a ayarlanır ve Google varsayılan NFC ödeme uygulaması olur. Kilit ekranında ödeme ekranı açılır, *Cüzdan'ı açın* parmak izi/şifre ister.
 - **Kamerada Google Lens:** XGoogle'da *Kamerada Google Lens*'i açın, LSPosed'da Kamera kapsamını onaylayıp yeniden başlatın. Lens butonu kamera menüsünde (üstteki ok) çıkar.
 - **Ev kontrolleri:** Google Home uygulamasında bir ev ve cihaz kurulu olmalıdır; yoksa panelde "Ev kurulumu yap" görünür.
-- **Lens kutucuğu:** Kontrol merkezini düzenleyip Lens kutucuğunu ekleyin.
+- **Lens ve Circle to Search kutucukları:** Kontrol merkezini düzenleyip ekleyin. Circle to Search kutucuğu kontrol merkezini kapatıp alttaki uygulamada arama yapar.
 - **Ayar değiştirdikten sonra:** telefonu yeniden başlatmak yerine *Uygulamaları yeniden başlat*'ı (Ana sayfa → Sistem) kullanın; sistem çerçevesi için yine yeniden başlatma gerekir.
 - **Ayarlar sekmesi:** dil, görünüm ve tema, güncelleme kontrolü, destek grubu.
 

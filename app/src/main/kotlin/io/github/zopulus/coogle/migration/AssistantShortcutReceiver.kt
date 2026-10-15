@@ -11,11 +11,15 @@ import io.github.zopulus.coogle.migration.AssistantRuntime.log
 /**
  * The lock screen Assistant shortcut should open Gemini like a long press of the power key does.
  * Only the system can start that assistant session; XGoogle's shortcut screen asks SystemUI for
- * it with this broadcast, which only apps signed like XGoogle may send.
+ * it with this broadcast, which only apps signed like XGoogle may send. The Circle to Search tile
+ * asks the same way: SystemUI closes the control center first, so the search sees the app below.
  */
 internal object AssistantShortcutReceiver {
     const val ACTION = "io.github.leekin2.xgoogle.SHOW_ASSISTANT"
+    const val CIRCLE_ACTION = "io.github.leekin2.xgoogle.CIRCLE_TO_SEARCH"
     const val PERMISSION = "io.github.leekin2.xgoogle.permission.SHOW_ASSISTANT"
+    /** Long enough for the control center to finish closing before the screen is captured. */
+    private const val CIRCLE_DELAY_MS = 400L
     private const val SHOW_SOURCE_ASSIST_GESTURE = 4
 
     fun install() {
@@ -26,11 +30,23 @@ internal object AssistantShortcutReceiver {
                 val context = Class.forName("android.app.ActivityThread").getMethod("currentApplication").invoke(null) as Context
                 context.registerReceiver(object : BroadcastReceiver() {
                     override fun onReceive(c: Context, intent: Intent) {
-                        resultCode = if (showAssistant()) 1 else 0
+                        resultCode = if (intent.action == CIRCLE_ACTION) circleToSearch(c) else if (showAssistant()) 1 else 0
                     }
-                }, IntentFilter(ACTION), PERMISSION, null, Context.RECEIVER_EXPORTED)
+                }, IntentFilter(ACTION).apply { addAction(CIRCLE_ACTION) }, PERMISSION, null, Context.RECEIVER_EXPORTED)
             }.onFailure { installedHooks.remove(key); log("Assistant shortcut receiver unavailable", it) }
         }
+    }
+
+    private fun circleToSearch(context: Context): Int {
+        if (!LspConfig.isAssistantNativeCircleEnabledXposed()) return 0
+        runCatching {
+            val statusBar = context.getSystemService("statusbar")
+            statusBar.javaClass.getMethod("collapsePanels").invoke(statusBar)
+        }.onFailure { log("Control center not collapsed", it) }
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            ContextualSearchHooks.triggerCircleToSearchC17()
+        }, CIRCLE_DELAY_MS)
+        return 1
     }
 
     private fun showAssistant(): Boolean = runCatching {
