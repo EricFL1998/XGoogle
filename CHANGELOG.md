@@ -1,5 +1,16 @@
 # Değişiklikler / Changelog
 
+## XGoogle 1.3.1
+
+- Kenardan içeri kaydırıp tutunca XiaoAi topu yerine yeniden Circle to Search açılır. HyperOS bu hareketi yalnızca XiaoAi kuruluyken sunar: XiaoAi kurulu ve LSPosed'de işaretli olmalı, hareket XiaoAi topuna ayarlı olmalı.
+  Swiping in from the side and holding opens Circle to Search again instead of XiaoAi's ball. HyperOS offers this gesture only while XiaoAi is installed: keep XiaoAi ticked in LSPosed and set the gesture to XiaoAi's ball.
+- Kontrol merkezine Circle to Search kutucuğu: kontrol merkezini kapatıp alttaki uygulamada arama yapar.
+  Circle to Search tile for the control center: it closes the control center and searches the app below.
+- Ek modül artık /system/etc ve /system/framework'e dosya koymuyor (Circle to Search, canlı çeviri ve Hey Google dosyaları /product altında). Mountify'da görülen açılmama ve eksik canlı çeviri sorunlarını önler.
+  The companion no longer puts files in /system/etc or /system/framework (the Circle to Search, live translate and Hey Google files are under /product). This avoids the bootloop and missing live translate seen with Mountify.
+- Ek modül 1.3.1.
+  Companion 1.3.1.
+
 ## XGoogle 1.3
 
 - ⚠️ XiaoAi'ye artık gerek yok: kaldırılabilir. Tutulacaksa LSPosed'de işaretli kalsın (yedek olarak çalışır).
