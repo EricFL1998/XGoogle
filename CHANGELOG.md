@@ -2,6 +2,8 @@
 
 ## XGoogle 1.3
 
+- Alt çubuğa basılı tutunca Circle to Search daha hızlı açılır: artık XiaoAi'nin başlamasını beklemiyor (XiaoAi kapalıyken yaklaşık 0,4 sn daha hızlı).
+  Circle to Search opens faster from the navigation handle: it no longer waits for XiaoAi to start (about 0.4 s faster when XiaoAi is not running).
 - Quick Share kutucuğu kontrol merkezine eklenebilir (GMS kısıtlaması kaldırılmışken).
   The Quick Share tile can be added to the control center (with the GMS restriction removed).
 - Kilit ekranında güç tuşuna çift basınca Google Cüzdan yeniden açılıyor; doğrulama yine isteniyor.

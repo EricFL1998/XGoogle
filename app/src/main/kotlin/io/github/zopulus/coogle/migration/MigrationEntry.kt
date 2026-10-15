@@ -68,5 +68,6 @@ object MigrationEntry {
         AssistantHooker.hook("system", loader)
         OkGoogleHotwordCompatibilityHooker.hookSystemServer(loader)
         HomeControlsHooks.hookSystem(loader)
+        XiaoAiNavRedirectHooks.hookSystem(loader)
     }
 }
