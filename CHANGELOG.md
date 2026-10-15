@@ -1,5 +1,20 @@
 # Değişiklikler / Changelog
 
+## XGoogle 1.2.7
+
+- Quick Share kutucuğu kontrol merkezine eklenebilir (GMS kısıtlaması kaldırılmışken).
+  The Quick Share tile can be added to the control center (with the GMS restriction removed).
+- Kilit ekranında güç tuşuna çift basınca Google Cüzdan yeniden açılıyor; doğrulama yine isteniyor.
+  Double-pressing power on the lock screen opens Google Wallet again; it still asks you to verify.
+- Altta yüzen çubuk da buzlu cam görünümünde (her iki görünümde).
+  The floating bar is frosted glass too (in both looks).
+- Circle to Search kapatılınca alt çubuğa basılı tutma eski seçiminize döner ve açılışta korunur.
+  Turning Circle to Search off gives the nav handle long press back to your own choice, kept after reboot.
+- Düzeltmeler: açılışta asistan onarımı yalnızca Google seçiliyken çalışır; canlı çeviri desteklenmeyen Google sürümlerinde tekrar tekrar tarama yapmaz; Uygulamaları yeniden başlat hataları bildirir; Cüzdan anahtarı hata olursa ayarları geri alır.
+  Fixes: the boot assistant repair runs only when Google is the assistant; live translate no longer rescans unsupported Google versions; Restart apps reports failures; the Wallet switch undoes its changes if something fails.
+- Ek modül 1.2.7.
+  Companion 1.2.7.
+
 ## XGoogle 1.2.6
 
 - Altta yüzen Ana sayfa / Ayarlar çubuğu; dil, tema ve görünüm seçenekleri Ayarlar'da.

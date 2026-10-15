@@ -13,7 +13,7 @@ final class FeatureScopes {
             case FeaturePolicy.NAVIGATION -> List.of(SYSTEM, SYSTEM_UI, "com.android.launcher", "com.miui.voiceassist", GOOGLE);
             case FeaturePolicy.CIRCLE_VIBRATE -> List.of("com.miui.voiceassist");
             case FeaturePolicy.GOOGLE_ENTRY -> List.of("com.android.settings");
-            case FeaturePolicy.GMS -> List.of(SYSTEM);
+            case FeaturePolicy.GMS -> List.of(SYSTEM, SYSTEM_UI);
             case FeaturePolicy.LENS, FeaturePolicy.LIVE_TRANSLATE -> List.of(GOOGLE);
             case FeaturePolicy.CAMERA_LENS -> List.of(GOOGLE, "com.android.camera");
             case FeaturePolicy.WALLET -> List.of(SYSTEM, SYSTEM_UI, "com.miui.securitycore", "com.google.android.apps.walletnfcrel");

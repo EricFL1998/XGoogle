@@ -18,6 +18,7 @@ object MigrationEntry {
         if (packageName == "com.android.systemui") WalletPowerHooks.hookSystemUi(loader)
         if (packageName == "com.android.systemui") wakeModuleApp()
         if (packageName == "com.android.systemui") AssistantShortcutReceiver.install()
+        if (packageName == "com.android.systemui" && FeatureConfig.enabled(FeaturePolicy.GMS)) QuickShareTileHooks.install(loader)
         if (packageName == PowerKeyWalletOption.PACKAGE) {
             PowerKeyWalletOption.install(loader)
             return
