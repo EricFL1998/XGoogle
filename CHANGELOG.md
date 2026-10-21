@@ -14,6 +14,10 @@
   Google Play services can always reach the network (optional): Battery and performance and the system no longer cut GMS off in the background, so notifications are not delayed. Ported from HyperOS_FCM_Live. Tick the system framework and Battery and performance in LSPosed.
 - Quick Share'de "İndirilenleri görüntüle" düzeltmesi (isteğe bağlı): HyperOS'un indirme yöneticisi yerine seçim ekranı açılır, Dosya Yöneticisi seçilebilir. Yeniden başlatma gerekir.
   Quick Share "View downloads" fix (optional): a chooser opens instead of HyperOS's download manager, so File Manager can be picked. Needs a reboot.
+- Android 16 (HyperOS 3): alt çubuktan Circle to Search ContextualSearchConfig olmadan da açılır.
+  Android 16 (HyperOS 3): Circle to Search opens from the navigation handle without ContextualSearchConfig too.
+- Ek modül 1.3.2: Android 15'te de kurulabilir (önceden Android 16 gerekiyordu).
+  Companion 1.3.2: installs on Android 15 too (Android 16 was required before).
 
 ## XGoogle 1.3.1
 
