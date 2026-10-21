@@ -11,6 +11,9 @@ public final class FeaturePolicyTest {
             if (!FeaturePolicy.effective(key, true, false)) throw new AssertionError("Unrelated companion requirement");
             if (FeaturePolicy.effective(key, false, true)) throw new AssertionError("Disabled integration active");
         }
+        // 1.3.1 sent the long press and the side hold to Circle to Search and left the double tap to XiaoAi.
+        if (!FeaturePolicy.defaultValue(FeaturePolicy.CIRCLE_LONG_PRESS) || !FeaturePolicy.defaultValue(FeaturePolicy.CIRCLE_SIDE_HOLD)
+                || FeaturePolicy.defaultValue(FeaturePolicy.CIRCLE_DOUBLE_TAP)) throw new AssertionError("Gesture defaults changed");
         System.out.println("PASS: feature defaults and companion requirement");
     }
 }

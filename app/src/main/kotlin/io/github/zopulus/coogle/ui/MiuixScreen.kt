@@ -36,6 +36,9 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.semantics.selected
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Gesture
+import androidx.compose.material.icons.rounded.PanTool
+import androidx.compose.material.icons.rounded.Swipe
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Forum
@@ -214,6 +217,16 @@ fun MiuixScreen(
                                 Toggle(Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
                                     state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available
                                 ) { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) }
+                                // Each gesture picks Circle to Search (on) or the XiaoAi function set in the system (off).
+                                Toggle(Icons.Rounded.PanTool, t.circleLongPress, t.circleGestureSummary,
+                                    state.features[FeaturePolicy.CIRCLE_LONG_PRESS] == true, available && circleOn
+                                ) { onSetting(FeaturePolicy.CIRCLE_LONG_PRESS, it) }
+                                Toggle(Icons.Rounded.Swipe, t.circleSideHold, t.circleGestureSummary,
+                                    state.features[FeaturePolicy.CIRCLE_SIDE_HOLD] == true, available && circleOn
+                                ) { onSetting(FeaturePolicy.CIRCLE_SIDE_HOLD, it) }
+                                Toggle(Icons.Rounded.Gesture, t.circleDoubleTap, t.circleGestureSummary,
+                                    state.features[FeaturePolicy.CIRCLE_DOUBLE_TAP] == true, available && circleOn
+                                ) { onSetting(FeaturePolicy.CIRCLE_DOUBLE_TAP, it) }
                             }
                         }
                         Toggle(Icons.Rounded.CenterFocusStrong, t.lens, t.lensSummary,

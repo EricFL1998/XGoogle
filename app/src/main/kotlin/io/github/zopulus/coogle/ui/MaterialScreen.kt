@@ -40,6 +40,9 @@ import top.yukonga.miuix.kmp.blur.textureBlur
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Gesture
+import androidx.compose.material.icons.rounded.PanTool
+import androidx.compose.material.icons.rounded.Swipe
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Forum
@@ -269,7 +272,7 @@ private fun HomeTab(state: CoogleState, t: Texts, onSetting: (String, Boolean) -
     Group(t.groupSearch) {
         // Circle to Search's own options fold under it, so the list stays short.
         var circleOpen by rememberSaveable { mutableStateOf(false) }
-        val extra = if (circleOpen) 2 else 0
+        val extra = if (circleOpen) 5 else 0
         val count = 3 + extra
         val circleOn = state.features[FeaturePolicy.NAVIGATION] == true
         SettingRow(0, count, Icons.Rounded.TouchApp, t.circle, t.circleSummary, { circleOpen = !circleOpen },
@@ -288,6 +291,16 @@ private fun HomeTab(state: CoogleState, t: Texts, onSetting: (String, Boolean) -
                 ToggleRow(t, 2, count, Icons.Rounded.Vibration, t.circleVibrate, t.circleVibrateSummary,
                     state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available,
                     { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) })
+                // Each gesture picks Circle to Search (on) or the XiaoAi function set in the system (off).
+                ToggleRow(t, 3, count, Icons.Rounded.PanTool, t.circleLongPress, t.circleGestureSummary,
+                    state.features[FeaturePolicy.CIRCLE_LONG_PRESS] == true, available && circleOn,
+                    { onSetting(FeaturePolicy.CIRCLE_LONG_PRESS, it) })
+                ToggleRow(t, 4, count, Icons.Rounded.Swipe, t.circleSideHold, t.circleGestureSummary,
+                    state.features[FeaturePolicy.CIRCLE_SIDE_HOLD] == true, available && circleOn,
+                    { onSetting(FeaturePolicy.CIRCLE_SIDE_HOLD, it) })
+                ToggleRow(t, 5, count, Icons.Rounded.Gesture, t.circleDoubleTap, t.circleGestureSummary,
+                    state.features[FeaturePolicy.CIRCLE_DOUBLE_TAP] == true, available && circleOn,
+                    { onSetting(FeaturePolicy.CIRCLE_DOUBLE_TAP, it) })
             }
         }
         ToggleRow(t, 1 + extra, count, Icons.Rounded.CenterFocusStrong, t.lens, t.lensSummary,

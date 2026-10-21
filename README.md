@@ -12,6 +12,7 @@ Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorO
 - ✅ **Long-press power → Gemini / Google Assistant**
 - ✅ **Long-press the navigation handle → Circle to Search**
 - ✅ **Swipe in from the side and hold → Circle to Search** (needs XiaoAi, see below)
+- ✅ **Gestures are optional:** for the nav-handle hold, the side swipe-and-hold and the double tap you choose Circle to Search or XiaoAi (the function set in the system)
 - ✅ **"Hey Google"** voice activation, also with the screen off
 - ✅ **Live translate:** in Circle to Search, tap Translate and keep translating as you scroll
 - ✅ **Google Lens:** Talk and Create included; keeps working after Google app updates
@@ -58,6 +59,7 @@ Every feature can be turned on or off on its own; turning one off brings back th
 - **Home controls:** a home with devices must be set up in the Google Home app; otherwise the panel shows "Set up home".
 - **Lens and Circle to Search tiles:** edit the control center and add them. The Circle to Search tile closes the control center and searches the app below.
 - **After changing a setting:** use *Restart apps* (Home → System) instead of rebooting; the system framework still needs a reboot.
+- **Gestures:** open the Circle to Search options (the arrow next to its switch). Each gesture's switch on opens Circle to Search; off leaves it to XiaoAi, so screen recognition or XiaoAi's ball work as set in Navigation → Quick functions. By default the hold and the side swipe-and-hold open Circle to Search and the double tap stays with XiaoAi.
 - **Settings tab:** language, look and theme, update check, support group.
 
 ## Updating
@@ -121,6 +123,7 @@ This project is not affiliated with Google or Xiaomi; trademarks belong to their
 - ✅ **Güç tuşuna basılı tut → Gemini / Google Asistan**
 - ✅ **Alt çubuğa basılı tut → Circle to Search**
 - ✅ **Kenardan içeri kaydırıp tut → Circle to Search** (XiaoAi gerekir, aşağıya bakın)
+- ✅ **Hareketler tercihe bağlı:** alt çubuğa basılı tutma, kenardan kaydırıp tutma ve çift dokunma için Circle to Search ya da XiaoAi (sistemde seçili işlev) seçilir
 - ✅ **"Hey Google"** sesli uyandırma, ekran kapalıyken de
 - ✅ **Canlı çeviri:** Circle to Search'te Çevir'e basıp kaydırınca çeviri devam eder
 - ✅ **Google Lens:** Konuş ve Oluştur dahil; Google güncellense de çalışmaya devam eder
@@ -167,6 +170,7 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 - **Ev kontrolleri:** Google Home uygulamasında bir ev ve cihaz kurulu olmalıdır; yoksa panelde "Ev kurulumu yap" görünür.
 - **Lens ve Circle to Search kutucukları:** Kontrol merkezini düzenleyip ekleyin. Circle to Search kutucuğu kontrol merkezini kapatıp alttaki uygulamada arama yapar.
 - **Ayar değiştirdikten sonra:** telefonu yeniden başlatmak yerine *Uygulamaları yeniden başlat*'ı (Ana sayfa → Sistem) kullanın; sistem çerçevesi için yine yeniden başlatma gerekir.
+- **Hareketler:** Circle to Search seçeneklerini açın (anahtarının yanındaki ok). Bir hareketin anahtarı açıksa Circle to Search açılır; kapalıysa hareket XiaoAi'ye kalır, ekran tanıma ya da XiaoAi topu Gezinme → Hızlı işlevler'deki gibi çalışır. Varsayılan: basılı tutma ve kenardan kaydırıp tutma Circle to Search, çift dokunma XiaoAi.
 - **Ayarlar sekmesi:** dil, görünüm ve tema, güncelleme kontrolü, destek grubu.
 
 ### Güncelleme

@@ -3,6 +3,8 @@ package io.github.zopulus.coogle.migration
 import android.content.ComponentName
 import android.content.Intent
 import android.os.SystemClock
+import io.github.zopulus.coogle.FeatureConfig
+import io.github.zopulus.coogle.FeaturePolicy
 import io.github.zopulus.coogle.migration.compat.ModernHookBridge as XposedBridge
 import io.github.zopulus.coogle.migration.compat.ModernMethodHook as XC_MethodHook
 import io.github.zopulus.coogle.migration.compat.ModernReflect as XposedHelpers
@@ -12,9 +14,9 @@ import io.github.zopulus.coogle.migration.AssistantRuntime.installedHooks
 
 /**
  * HyperOS 4: the native (Rust) launcher hands the nav-handle long press to XiaoAi's
- * VoiceService as ACTION_ASSIST. Answer it with Circle to Search instead. The side swipe-and-hold
- * (when set to XiaoAi's intent ball) reaches XiaoAi the same way and opens Circle to Search too;
- * the double tap keeps XiaoAi.
+ * VoiceService as ACTION_ASSIST, like the double tap and the side swipe-and-hold. Each gesture has its
+ * own setting: on answers it with Circle to Search, off leaves it untouched to XiaoAi (screen
+ * recognition, the intent ball or whatever the system sets). A request without a trigger stays with XiaoAi.
  */
 internal object XiaoAiNavRedirectHooks {
     const val XIAOAI_PACKAGE = "com.miui.voiceassist"
@@ -22,6 +24,7 @@ internal object XiaoAiNavRedirectHooks {
     /** The launcher names the gesture: NavLongPress, NavDoubleClick or SideSlideHold. */
     private const val TRIGGER_TYPE = "triggerType"
     private const val LONG_PRESS = "NavLongPress"
+    private const val DOUBLE_TAP = "NavDoubleClick"
     private const val SIDE_HOLD = "SideSlideHold"
     /** The side hold sends the ball press, then its release or cancel under the same trigger. */
     private const val FUNCTION_KEY = "voice_assist_function_key"
@@ -35,11 +38,18 @@ internal object XiaoAiNavRedirectHooks {
 
     private enum class Route { OPEN, SWALLOW }
 
-    /** OPEN for a gesture Circle to Search answers, SWALLOW for the side hold's release and cancel. */
-    private fun route(intent: Intent, nullTrigger: Boolean): Route? = when (intent.getStringExtra(TRIGGER_TYPE)) {
-        LONG_PRESS -> Route.OPEN
-        SIDE_HOLD -> if (intent.getStringExtra(FUNCTION_KEY).let { it == null || it == BALL_PRESS }) Route.OPEN else Route.SWALLOW
-        null -> if (nullTrigger) Route.OPEN else null
+    /**
+     * OPEN for a gesture set to Circle to Search, SWALLOW for the side hold's release and cancel,
+     * null to leave the request to XiaoAi.
+     */
+    private fun route(intent: Intent): Route? = when (intent.getStringExtra(TRIGGER_TYPE)) {
+        LONG_PRESS -> if (FeatureConfig.enabled(FeaturePolicy.CIRCLE_LONG_PRESS)) Route.OPEN else null
+        DOUBLE_TAP -> if (FeatureConfig.enabled(FeaturePolicy.CIRCLE_DOUBLE_TAP)) Route.OPEN else null
+        SIDE_HOLD -> when {
+            !FeatureConfig.enabled(FeaturePolicy.CIRCLE_SIDE_HOLD) -> null
+            intent.getStringExtra(FUNCTION_KEY).let { it == null || it == BALL_PRESS } -> Route.OPEN
+            else -> Route.SWALLOW
+        }
         else -> null
     }
 
@@ -51,7 +61,7 @@ internal object XiaoAiNavRedirectHooks {
     private fun tick(context: android.content.Context?) {
         context ?: return
         runCatching {
-            val always = io.github.zopulus.coogle.FeatureConfig.enabled(io.github.zopulus.coogle.FeaturePolicy.CIRCLE_VIBRATE)
+            val always = FeatureConfig.enabled(FeaturePolicy.CIRCLE_VIBRATE)
             if (!always && android.provider.Settings.System.getInt(context.contentResolver,
                     android.provider.Settings.System.HAPTIC_FEEDBACK_ENABLED, 1) == 0) return
             val vibrator = context.getSystemService(android.os.VibratorManager::class.java)?.defaultVibrator ?: return
@@ -82,8 +92,8 @@ internal object XiaoAiNavRedirectHooks {
                                 if (!LspConfig.isAssistantNativeCircleEnabledXposed()) return
                                 val intent = param.args.firstOrNull() as? Intent ?: return
                                 if (intent.action != Intent.ACTION_ASSIST) return
-                                // The long press and the side hold; the double tap opens XiaoAi as before.
-                                val route = route(intent, nullTrigger = true) ?: return
+                                // Only the gestures set to Circle to Search; XiaoAi keeps the rest.
+                                val route = route(intent) ?: return
                                 // The launcher can deliver the same press twice.
                                 val now = SystemClock.elapsedRealtime()
                                 if (route == Route.SWALLOW || now - lastRedirectAt < 1000) {
@@ -130,9 +140,9 @@ internal object XiaoAiNavRedirectHooks {
                             val intent = param.args[index] as? Intent ?: return
                             if (intent.action != Intent.ACTION_ASSIST || intent.component != VOICE_SERVICE) return
                             if (!LspConfig.isAssistantNativeCircleEnabledXposed()) return
-                            // Only the launcher's nav-handle long press and side hold; XiaoAi keeps everything else.
+                            // Only the launcher's gestures set to Circle to Search; XiaoAi keeps everything else.
                             val route = runCatching {
-                                if (intent.getStringExtra(TRIGGER_FROM) == LAUNCHER) route(intent, nullTrigger = false) else null
+                                if (intent.getStringExtra(TRIGGER_FROM) == LAUNCHER) route(intent) else null
                             }.getOrNull() ?: return
                             // The launcher sends the same press twice.
                             val now = SystemClock.elapsedRealtime()

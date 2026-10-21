@@ -1,5 +1,10 @@
 # Değişiklikler / Changelog
 
+## XGoogle 1.3.2
+
+- Hareketler artık tercihe bağlı: alt çubuğa basılı tutma, kenardan kaydırıp tutma ve çift dokunma için ayrı ayrı Circle to Search ya da XiaoAi seçilir (Circle to Search seçenekleri). Kapalı olan hareket XiaoAi'nin kendi işlevini açar (ekran tanıma, XiaoAi topu). Varsayılanlar 1.3.1 ile aynı.
+  Gestures are now optional: choose Circle to Search or XiaoAi separately for the nav-handle hold, the side swipe-and-hold and the double tap (Circle to Search options). A gesture switched off opens XiaoAi's own function (screen recognition, XiaoAi's ball). Defaults are the same as 1.3.1.
+
 ## XGoogle 1.3.1
 
 - Kenardan içeri kaydırıp tutunca XiaoAi topu yerine yeniden Circle to Search açılır. HyperOS bu hareketi yalnızca XiaoAi kuruluyken sunar: XiaoAi kurulu ve LSPosed'de işaretli olmalı, hareket XiaoAi topuna ayarlı olmalı.
