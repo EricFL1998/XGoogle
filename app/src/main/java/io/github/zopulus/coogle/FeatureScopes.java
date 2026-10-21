@@ -2,7 +2,11 @@ package io.github.zopulus.coogle;
 
 import java.util.List;
 
-/** The LSPosed scopes each switch works in on HyperOS (all of them are in scope.list). */
+/**
+ * The LSPosed scopes each switch works in on HyperOS. The default features' apps are recommended in
+ * scope.list; the optional ones (Timeline, passkeys, GMS online) are asked for when switched on, so
+ * LSPosed does not tick Maps, Security or PowerKeeper for everyone.
+ */
 final class FeatureScopes {
     static final String SYSTEM = "system";
     private static final String GOOGLE = "com.google.android.googlequicksearchbox";

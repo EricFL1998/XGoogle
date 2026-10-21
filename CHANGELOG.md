@@ -18,6 +18,8 @@
   Android 16 (HyperOS 3): Circle to Search opens from the navigation handle without ContextualSearchConfig too.
 - Google 17.68: Lens'te Konuş ve Oluştur yeniden görünür ([Coogle](https://github.com/zopulus/coogle) 1.3.5'ten).
   Google 17.68: Lens Talk and Create are back (from [Coogle](https://github.com/zopulus/coogle) 1.3.5).
+- Yeni isteğe bağlı özelliklerin uygulamaları (Haritalar, Google Play Hizmetleri, GSF, Güvenlik, Tarayıcı, Pil ve performans) LSPosed'de herkese otomatik işaretlenmez; özellik açılınca istenir, durum kartı eksikleri gösterir.
+  The new optional features' apps (Maps, Google Play services, GSF, Security, Scanner, Battery and performance) are no longer ticked for everyone in LSPosed; they are asked for when the feature is switched on, and the status card lists what is missing.
 - Ek modül 1.3.2: Android 15'te de kurulabilir (önceden Android 16 gerekiyordu).
   Companion 1.3.2: installs on Android 15 too (Android 16 was required before).
 
