@@ -41,7 +41,6 @@ import androidx.compose.material.icons.rounded.PanTool
 import androidx.compose.material.icons.rounded.Swipe
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.material.icons.rounded.Key
-import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Forum
@@ -246,8 +245,6 @@ fun MiuixScreen(
                     Group(t.groupSystem) {
                         Toggle(Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
                             state.features[FeaturePolicy.GMS] == true, available) { onSetting(FeaturePolicy.GMS, it) }
-                        Toggle(Icons.Rounded.Download, t.quickShareDownloads, t.quickShareDownloadsSummary,
-                            state.features[FeaturePolicy.QUICK_SHARE_DOWNLOADS] == true, available) { onSetting(FeaturePolicy.QUICK_SHARE_DOWNLOADS, it) }
                         Toggle(Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
                             state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available) { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) }
                         Toggle(Icons.Rounded.Timeline, t.timeline, t.timelineSummary,

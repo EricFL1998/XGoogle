@@ -84,7 +84,7 @@ internal object QuickShareTileHooks {
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val index = param.args.indexOfFirst { it is Intent }
                     val intent = param.args.getOrNull(index) as? Intent ?: return
-                    if (intent.action != VIEW_DOWNLOADS || !FeatureConfig.enabled(FeaturePolicy.QUICK_SHARE_DOWNLOADS)) return
+                    if (intent.action != VIEW_DOWNLOADS || !FeatureConfig.enabled(FeaturePolicy.GMS)) return
                     intent.setPackage(null)
                     param.args[index] = Intent.createChooser(intent, null)
                 }

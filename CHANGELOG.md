@@ -10,8 +10,8 @@
   Google Maps Timeline (optional, in the System section): Google Play services and Maps see a US carrier so location history can be turned on. Tick Google Play services, Google Services Framework and Maps in LSPosed.
 - Geçiş anahtarları ve şifre yöneticisi (isteğe bağlı): Çin ROM'unda Google geçiş anahtarları ve otomatik doldurma çalışır. HyperPasskey'den uyarlandı; ikisini birlikte açmayın. LSPosed'de sistem çerçevesi, Ayarlar, Güvenlik ve Tarayıcı işaretlenmeli.
   Passkeys and password manager (optional): Google passkeys and autofill work on the China ROM. Ported from HyperPasskey; do not use both. Tick the system framework, Settings, Security and Scanner in LSPosed.
-- Quick Share'de "İndirilenleri görüntüle" düzeltmesi (isteğe bağlı): HyperOS'un indirme yöneticisi yerine seçim ekranı açılır, Dosya Yöneticisi seçilebilir. Yeniden başlatma gerekir.
-  Quick Share "View downloads" fix (optional): a chooser opens instead of HyperOS's download manager, so File Manager can be picked. Needs a reboot.
+- Quick Share'de "İndirilenleri görüntüle" artık HyperOS'un indirme yöneticisi yerine seçim ekranını açar, Dosya Yöneticisi seçilebilir. GMS kısıtlaması kaldırılmışken kendiliğinden çalışır; yeniden başlatma gerekir.
+  Quick Share "View downloads" now opens a chooser instead of HyperOS's download manager, so File Manager can be picked. It works by itself with the GMS restriction removed; needs a reboot.
 - Android 16 (HyperOS 3): alt çubuktan Circle to Search ContextualSearchConfig olmadan da açılır.
   Android 16 (HyperOS 3): Circle to Search opens from the navigation handle without ContextualSearchConfig too.
 - Google 17.68: Lens'te Konuş ve Oluştur yeniden görünür ([Coogle](https://github.com/zopulus/coogle) 1.3.5'ten).
