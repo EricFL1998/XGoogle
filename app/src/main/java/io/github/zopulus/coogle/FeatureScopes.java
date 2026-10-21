@@ -17,6 +17,7 @@ final class FeatureScopes {
             case FeaturePolicy.CIRCLE_LONG_PRESS, FeaturePolicy.CIRCLE_SIDE_HOLD, FeaturePolicy.CIRCLE_DOUBLE_TAP -> List.of();
             case FeaturePolicy.TIMELINE -> List.of(TimelineHooks.GMS, TimelineHooks.GSF, TimelineHooks.MAPS);
             case FeaturePolicy.PASSKEY -> List.of(SYSTEM, PasskeyHooks.SETTINGS, PasskeyHooks.SECURITY, PasskeyHooks.SCANNER);
+            case FeaturePolicy.GMS_NETWORK -> List.of(SYSTEM, GmsNetworkHooks.POWER_KEEPER);
             case FeaturePolicy.GOOGLE_ENTRY -> List.of("com.android.settings");
             case FeaturePolicy.GMS -> List.of(SYSTEM, SYSTEM_UI);
             case FeaturePolicy.LENS, FeaturePolicy.LIVE_TRANSLATE -> List.of(GOOGLE);

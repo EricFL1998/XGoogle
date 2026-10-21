@@ -12,6 +12,8 @@ WgsRegions holds Hong Kong, Macao and Taiwan boundaries from that project's gene
 https://www.openstreetmap.org/copyright), relations 20044132, 1867188 and 449220 via Nominatim.
 PasskeyHooks and FinalFields are ported from Howard20181/HyperPasskey (GPL-3.0,
 https://github.com/Howard20181/HyperPasskey).
+GmsNetworkHooks is ported from Howard20181/HyperOS_FCM_Live (GPL-3.0,
+https://github.com/Howard20181/HyperOS_FCM_Live).
 The app icon uses the Xiaomi "mi" logo, a trademark of Xiaomi; XGoogle is not affiliated with Xiaomi or Google.
 
 Notices for the original Coogle follow.

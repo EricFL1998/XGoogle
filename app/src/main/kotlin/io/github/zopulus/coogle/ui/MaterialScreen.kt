@@ -45,6 +45,7 @@ import androidx.compose.material.icons.rounded.PanTool
 import androidx.compose.material.icons.rounded.Swipe
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.material.icons.rounded.Key
+import androidx.compose.material.icons.rounded.CloudDone
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Forum
@@ -317,15 +318,17 @@ private fun HomeTab(state: CoogleState, t: Texts, onSetting: (String, Boolean) -
             state.features[FeaturePolicy.WALLET] == true, available, { onSetting(FeaturePolicy.WALLET, it) })
     }
     Group(t.groupSystem) {
-        ToggleRow(t, 0, 5, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
+        ToggleRow(t, 0, 6, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
             state.features[FeaturePolicy.GMS] == true, available, { onSetting(FeaturePolicy.GMS, it) })
-        ToggleRow(t, 1, 5, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
+        ToggleRow(t, 1, 6, Icons.Rounded.CloudDone, t.gmsNetwork, t.gmsNetworkSummary,
+            state.features[FeaturePolicy.GMS_NETWORK] == true, available, { onSetting(FeaturePolicy.GMS_NETWORK, it) })
+        ToggleRow(t, 2, 6, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
             state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available, { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) })
-        ToggleRow(t, 2, 5, Icons.Rounded.Timeline, t.timeline, t.timelineSummary,
+        ToggleRow(t, 3, 6, Icons.Rounded.Timeline, t.timeline, t.timelineSummary,
             state.features[FeaturePolicy.TIMELINE] == true, available, { onSetting(FeaturePolicy.TIMELINE, it) })
-        ToggleRow(t, 3, 5, Icons.Rounded.Key, t.passkey, t.passkeySummary,
+        ToggleRow(t, 4, 6, Icons.Rounded.Key, t.passkey, t.passkeySummary,
             state.features[FeaturePolicy.PASSKEY] == true, available, { onSetting(FeaturePolicy.PASSKEY, it) })
-        SettingRow(4, 5, Icons.Rounded.RestartAlt, t.restartApps, t.restartAppsSummary,
+        SettingRow(5, 6, Icons.Rounded.RestartAlt, t.restartApps, t.restartAppsSummary,
             onClick = onRestartApps, enabled = state.connected && !state.restarting)
     }
 }

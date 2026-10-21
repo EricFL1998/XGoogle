@@ -10,6 +10,8 @@
   Google Maps Timeline (optional, in the System section): Google Play services and Maps see a US carrier so location history can be turned on. Tick Google Play services, Google Services Framework and Maps in LSPosed.
 - Geçiş anahtarları ve şifre yöneticisi (isteğe bağlı): Çin ROM'unda Google geçiş anahtarları ve otomatik doldurma çalışır. HyperPasskey'den uyarlandı; ikisini birlikte açmayın. LSPosed'de sistem çerçevesi, Ayarlar, Güvenlik ve Tarayıcı işaretlenmeli.
   Passkeys and password manager (optional): Google passkeys and autofill work on the China ROM. Ported from HyperPasskey; do not use both. Tick the system framework, Settings, Security and Scanner in LSPosed.
+- Google Play Hizmetleri her zaman internete bağlanabilir (isteğe bağlı): Pil ve performans ve sistem GMS'in arka planda ağını kesmez, bildirimler gecikmez. HyperOS_FCM_Live'dan uyarlandı. LSPosed'de sistem çerçevesi ve Pil ve performans işaretlenmeli.
+  Google Play services can always reach the network (optional): Battery and performance and the system no longer cut GMS off in the background, so notifications are not delayed. Ported from HyperOS_FCM_Live. Tick the system framework and Battery and performance in LSPosed.
 
 ## XGoogle 1.3.1
 
