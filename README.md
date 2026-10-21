@@ -18,6 +18,7 @@ Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorO
 - ✅ **Google Lens:** Talk and Create included; keeps working after Google app updates
 - ✅ **Android Auto:** system app and car projection role
 - ✅ **Removes the GMS China restriction** (Quick Share included, with its control center tile)
+- 🧪 **Google Maps Timeline** (optional): Google Play services and Maps see a US carrier so location history can be turned on; on the mainland the map stays aligned. Spoofing the carrier may break Google's terms; use at your own risk
 - 🧪 **Lock screen shortcuts:** Gemini, Lens/QR, Wallet, Home controls. They open over the lock screen; Wallet asks you to verify when it needs to
 - 🧪 **Double-press power → Google Wallet**, also on the lock screen; Google becomes the default NFC payment app
 - 🧪 **Google Lens button in the camera** (optional), also over the lock screen
@@ -130,6 +131,7 @@ This project is not affiliated with Google or Xiaomi; trademarks belong to their
 - ✅ **Google Lens:** Konuş ve Oluştur dahil; Google güncellense de çalışmaya devam eder
 - ✅ **Android Auto:** sistem uygulaması ve araç projeksiyonu rolü
 - ✅ **GMS Çin kısıtlamasının kaldırılması** (Quick Share ve kontrol merkezi kutucuğu dahil)
+- 🧪 **Google Haritalar Zaman Çizelgesi** (isteğe bağlı): Google Play Hizmetleri ve Haritalar ABD operatörü görür, konum geçmişi açılabilir; Çin anakarasında harita kaymaz. Operatörü taklit etmek Google koşullarına aykırı olabilir, risk size aittir
 - 🧪 **Kilit ekranı kısayolları:** Gemini, Lens/QR, Cüzdan, Ev kontrolleri. Kilit ekranının üstünde açılır; Cüzdan gerektiğinde doğrulama ister
 - 🧪 **Güç tuşuna çift bas → Google Cüzdan**, kilit ekranında da açılır; Google varsayılan NFC ödeme uygulaması olur
 - 🧪 **Kamerada Google Lens butonu** (isteğe bağlı), kilit ekranında da çalışır

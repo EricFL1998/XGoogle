@@ -43,6 +43,7 @@ import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Gesture
 import androidx.compose.material.icons.rounded.PanTool
 import androidx.compose.material.icons.rounded.Swipe
+import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Forum
@@ -315,11 +316,13 @@ private fun HomeTab(state: CoogleState, t: Texts, onSetting: (String, Boolean) -
             state.features[FeaturePolicy.WALLET] == true, available, { onSetting(FeaturePolicy.WALLET, it) })
     }
     Group(t.groupSystem) {
-        ToggleRow(t, 0, 3, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
+        ToggleRow(t, 0, 4, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
             state.features[FeaturePolicy.GMS] == true, available, { onSetting(FeaturePolicy.GMS, it) })
-        ToggleRow(t, 1, 3, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
+        ToggleRow(t, 1, 4, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
             state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available, { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) })
-        SettingRow(2, 3, Icons.Rounded.RestartAlt, t.restartApps, t.restartAppsSummary,
+        ToggleRow(t, 2, 4, Icons.Rounded.Timeline, t.timeline, t.timelineSummary,
+            state.features[FeaturePolicy.TIMELINE] == true, available, { onSetting(FeaturePolicy.TIMELINE, it) })
+        SettingRow(3, 4, Icons.Rounded.RestartAlt, t.restartApps, t.restartAppsSummary,
             onClick = onRestartApps, enabled = state.connected && !state.restarting)
     }
 }

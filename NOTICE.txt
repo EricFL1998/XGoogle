@@ -5,6 +5,11 @@ AppDexTargets, LensBinding and WalletPreviewBinding/Hooks and the companion's No
 come from Coogle 1.3.2-1.3.3 (zopulus; NoMount fix by Andrea-lyz), adapted for XGoogle.
 DexKit (https://github.com/LuckyPray/DexKit) is an Apache-2.0 dependency.
 Miuix (https://github.com/compose-miuix-ui/miuix) is an Apache-2.0 dependency used for the optional HyperOS-style settings screen.
+Google Maps Timeline (TimelineHooks, Gcj02) follows the idea of SherlockChiang/ReLocationReportEnabler (MIT,
+https://github.com/SherlockChiang/ReLocationReportEnabler), written anew for XGoogle.
+WgsRegions holds Hong Kong, Macao and Taiwan boundaries from that project's generated data:
+(c) OpenStreetMap contributors, Open Database License 1.0 (https://opendatacommons.org/licenses/odbl/1-0/,
+https://www.openstreetmap.org/copyright), relations 20044132, 1867188 and 449220 via Nominatim.
 The app icon uses the Xiaomi "mi" logo, a trademark of Xiaomi; XGoogle is not affiliated with Xiaomi or Google.
 
 Notices for the original Coogle follow.
