@@ -18,14 +18,21 @@ final class TimelineHooks {
     static final String MAPS = "com.google.android.apps.maps";
     private static final String ISO = "us", SUBSCRIPTION_ISO = "US", MCC_MNC = "310030", MCC = "310", MNC = "030";
     private static final ThreadLocal<boolean[]> READING = ThreadLocal.withInitial(() -> new boolean[1]);
+    /** GMS and GSF can share a process; the carrier hooks go in once per process. */
+    private static boolean carrierDone;
 
     static boolean handles(String packageName) {
         return GMS.equals(packageName) || GSF.equals(packageName) || MAPS.equals(packageName);
     }
 
     static void install(HookInstaller hooks, ClassLoader loader, String packageName) {
-        int telephony = spoofTelephony(hooks);
-        hooks.info("TIMELINE " + packageName + ": US carrier reported through " + telephony + " method(s)");
+        synchronized (TimelineHooks.class) {
+            if (!carrierDone) {
+                carrierDone = true;
+                int telephony = spoofTelephony(hooks);
+                hooks.info("TIMELINE " + packageName + ": US carrier reported through " + telephony + " method(s)");
+            }
+        }
         if (!MAPS.equals(packageName)) return;
         try {
             hooks.install(Location.class.getMethod("getLatitude"), chain -> shifted(chain.proceed(), (Location) chain.getThisObject(), 0));

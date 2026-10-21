@@ -24,9 +24,12 @@ final class FinalFields {
             if (!Modifier.isStatic(field.getModifiers())) throw refused;
         }
         field.get(null); // initializes the class and resolves the field before its offset is read
-        long offset = ((Number) getInt.invoke(unsafe(), field, offsetOfOffset())).longValue();
-        if (field.getType() == boolean.class) putBoolean.invoke(unsafe(), field.getDeclaringClass(), offset, value);
-        else putObject.invoke(unsafe(), field.getDeclaringClass(), offset, value);
+        // unsafe() fills the Method fields; call it before reading them.
+        Object u = unsafe();
+        long at = offsetOfOffset();
+        long offset = ((Number) getInt.invoke(u, field, at)).longValue();
+        if (field.getType() == boolean.class) putBoolean.invoke(u, field.getDeclaringClass(), offset, value);
+        else putObject.invoke(u, field.getDeclaringClass(), offset, value);
     }
 
     private static synchronized Object unsafe() throws ReflectiveOperationException {

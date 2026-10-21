@@ -154,12 +154,16 @@ final class PasskeyHooks {
     private static Object asGlobal(Field international, io.github.libxposed.api.XposedInterface.Chain chain) throws Throwable {
         GLOBAL.lock();
         try {
-            boolean outer = GLOBAL.getHoldCount() == 1, before = international.getBoolean(null);
-            if (outer && !before) FinalFields.set(international, null, true);
+            boolean outer = GLOBAL.getHoldCount() == 1, changed = false;
+            // If the flag cannot be written the picker still runs, only as on the China ROM.
+            if (outer && !international.getBoolean(null)) {
+                try { FinalFields.set(international, null, true); changed = true; }
+                catch (ReflectiveOperationException | RuntimeException refused) { }
+            }
             try {
                 return chain.proceed();
             } finally {
-                if (outer && !before) FinalFields.set(international, null, false);
+                if (changed) FinalFields.set(international, null, false);
             }
         } finally {
             GLOBAL.unlock();

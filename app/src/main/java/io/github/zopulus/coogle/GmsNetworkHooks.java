@@ -228,16 +228,21 @@ final class GmsNetworkHooks {
             hooks.install(constructor, c -> {
                 Object result = c.proceed();
                 // Built once at boot, before settings may be readable; the hook only exists while the switch is on.
-                if (list.get(c.getThisObject()) instanceof Collection<?> values) values.remove(GMS);
+                if (list.get(c.getThisObject()) instanceof Collection<?> values) {
+                    try { values.remove(GMS); } catch (UnsupportedOperationException readOnly) { }
+                }
                 return result;
             });
             hooks.deoptimize(constructor);
         }
     }
 
+    /** Adds when missing; a read-only list is left as it is. */
     @SuppressWarnings("unchecked")
     private static void addTo(Collection<?> values, String value) {
-        if (!values.contains(value)) ((Collection<Object>) values).add(value);
+        try {
+            if (!values.contains(value)) ((Collection<Object>) values).add(value);
+        } catch (UnsupportedOperationException readOnly) { }
     }
 
     private GmsNetworkHooks() { }
