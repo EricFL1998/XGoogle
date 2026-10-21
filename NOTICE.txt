@@ -2,7 +2,7 @@ XGoogle is distributed under GPL-3.0; see LICENSE.
 XGoogle is a fork of Coogle 1.2 by zopulus (https://github.com/zopulus/coogle),
 modified by Leekinn for Xiaomi HyperOS 4. See CHANGELOG.md for the changes.
 AppDexTargets, LensBinding and WalletPreviewBinding/Hooks and the companion's NoMount check
-come from Coogle 1.3.2-1.3.3 (zopulus; NoMount fix by Andrea-lyz), adapted for XGoogle.
+come from Coogle 1.3.2-1.3.5 (zopulus; NoMount fix by Andrea-lyz), adapted for XGoogle.
 DexKit (https://github.com/LuckyPray/DexKit) is an Apache-2.0 dependency.
 Miuix (https://github.com/compose-miuix-ui/miuix) is an Apache-2.0 dependency used for the optional HyperOS-style settings screen.
 Google Maps Timeline (TimelineHooks, Gcj02) follows the idea of SherlockChiang/ReLocationReportEnabler (MIT,

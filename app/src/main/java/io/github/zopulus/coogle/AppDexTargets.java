@@ -48,7 +48,9 @@ final class AppDexTargets implements AutoCloseable {
     }
 
     List<Method> resolve(String feature) throws ReflectiveOperationException {
-        String cacheKey = feature;
+        // A revised Lens locator must not reuse the old one's miss for the same Google APK.
+        String cacheKey = FeaturePolicy.LENS.equals(feature) ? feature + ".controllers-v2" : feature;
+        if (!cacheKey.equals(feature) && stored.remove(feature) != null) dirty = true;
         String saved = stored.getProperty(cacheKey);
         if (saved != null) {
             if (saved.isEmpty()) return List.of();

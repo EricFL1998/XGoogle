@@ -28,9 +28,7 @@ final class LensBinding {
                     if (create != null && !create.equals(method)) return null;
                     create = method;
                 }
-                if (p.length == 6 && !p[0].isPrimitive() && !p[1].isPrimitive() && !p[2].isPrimitive()
-                        && p[3] == boolean.class && p[4] == boolean.class && !p[5].isPrimitive()
-                        && hasModeGetter(owner)) {
+                if (isTalkConstructor(p) && hasModeGetter(owner)) {
                     if (talk != null && !talk.equals(method)) return null;
                     talk = method;
                 }
@@ -44,6 +42,14 @@ final class LensBinding {
         return method.getParameterCount() == 0 && method.getReturnType() == boolean.class
                 && !Modifier.isStatic(flags) && !Modifier.isAbstract(flags) && !Modifier.isNative(flags)
                 && !method.isSynthetic();
+    }
+
+    /** Three references, the flags, one reference: Google 17.67 has two flags, 17.68 six (Coogle 1.3.5). */
+    private static boolean isTalkConstructor(Class<?>[] p) {
+        if ((p.length != 6 && p.length != 10) || p[0].isPrimitive() || p[1].isPrimitive()
+                || p[2].isPrimitive() || p[p.length - 1].isPrimitive()) return false;
+        for (int i = 3; i < p.length - 1; i++) if (p[i] != boolean.class) return false;
+        return true;
     }
 
     private static boolean hasModeGetter(Class<?> owner) {

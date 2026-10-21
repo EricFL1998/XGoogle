@@ -16,6 +16,8 @@
   Quick Share "View downloads" fix (optional): a chooser opens instead of HyperOS's download manager, so File Manager can be picked. Needs a reboot.
 - Android 16 (HyperOS 3): alt çubuktan Circle to Search ContextualSearchConfig olmadan da açılır.
   Android 16 (HyperOS 3): Circle to Search opens from the navigation handle without ContextualSearchConfig too.
+- Google 17.68: Lens'te Konuş ve Oluştur yeniden görünür ([Coogle](https://github.com/zopulus/coogle) 1.3.5'ten).
+  Google 17.68: Lens Talk and Create are back (from [Coogle](https://github.com/zopulus/coogle) 1.3.5).
 - Ek modül 1.3.2: Android 15'te de kurulabilir (önceden Android 16 gerekiyordu).
   Companion 1.3.2: installs on Android 15 too (Android 16 was required before).
 
