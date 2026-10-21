@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/KernelSU-Modules/tools/main/schemas/module.schema.json
+# KernelSU Modules listing of the XGoogle companion module (the zip attached to each release).
+schemaVersion: 1
+id: xgoogle_companion
+name: XGoogle companion
+summary: Companion for the XGoogle LSPosed module on the Xiaomi HyperOS China ROM. Hey Google, Circle to Search from the navigation handle, live translate and Android Auto.
+description: companion/README.md
+license: GPL-3.0-only
+homepage: https://github.com/Leekin2/XGoogle
+support: https://t.me/Xgooogle
+tags: [google, hyperos, xiaomi, lsposed]
+authors:
+  - name: Leekin
+    url: https://github.com/Leekin2
+compatibility:
+  androidMinApi: 35
+  architectures: [arm64-v8a]
+release:
+  assetPattern: "XGoogle-Ek-Modul-*.zip"

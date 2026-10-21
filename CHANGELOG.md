@@ -1,5 +1,12 @@
 # Değişiklikler / Changelog
 
+## XGoogle 1.3.4
+
+- Ek modül KernelSU modül deposuna (SukiSU, KernelSU) eklenmek üzere hazırlandı; uygulamada değişiklik yok.
+  The companion module is prepared for the KernelSU module repository (SukiSU, KernelSU); no app changes.
+- Ek modül 1.3.4.
+  Companion 1.3.4.
+
 ## XGoogle 1.3.3
 
 - Her şey artık XGoogle adını taşıyor. Ek modülün kimliği `xgoogle_companion` oldu: yeni ek modül kurulunca eski `coogle_companion` bir sonraki açılışta kendiliğinden kaldırılır, ayarlarınız korunur.
