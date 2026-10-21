@@ -126,7 +126,8 @@ internal object ContextualSearchHooks {
             val service = api.asInterface.invoke(null, binder)
                 ?: return@runCatching false
             // A null ContextualSearchConfig selects the framework's DEFAULT_CONFIG.
-            api.start.invoke(service, 1, null)
+            // Android 16 (HyperOS 3) has no config class, only startContextualSearch(int).
+            if (api.withConfig) api.start.invoke(service, 1, null) else api.start.invoke(service, 1)
             true
         }.onFailure {
             log("Failed to trigger Circle to Search through the ColorOS 17 API", it)
@@ -138,9 +139,12 @@ internal object ContextualSearchHooks {
         val getService = Class.forName("android.os.ServiceManager").getMethod("getService", String::class.java)
         val asInterface = Class.forName("android.app.contextualsearch.IContextualSearchManager\$Stub")
             .getMethod("asInterface", IBinder::class.java)
-        val start = Class.forName("android.app.contextualsearch.IContextualSearchManager")
-            .getMethod("startContextualSearch", Int::class.javaPrimitiveType,
+        private val manager = Class.forName("android.app.contextualsearch.IContextualSearchManager")
+        val start = runCatching {
+            manager.getMethod("startContextualSearch", Int::class.javaPrimitiveType,
                 Class.forName("android.app.contextualsearch.ContextualSearchConfig"))
+        }.getOrElse { manager.getMethod("startContextualSearch", Int::class.javaPrimitiveType) }
+        val withConfig = start.parameterCount == 2
     }
     // A failed lazy initialization remains retryable when framework classes become available.
     private val contextualSearchApi by lazy { ContextualSearchApi() }

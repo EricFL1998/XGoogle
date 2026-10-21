@@ -2,9 +2,9 @@
 PACKAGE=com.google.android.googlequicksearchbox
 APP_DIR=$MODPATH/system/priv-app/GoogleQuickSearchBox
 
-# The bundled enrollment APKs are built for Android 16 (API 36).
-if [ "$API" -lt 36 ]; then
-    abort "! Android 16 or newer is required (this device: API $API)"
+# The bundled enrollment APKs target API 36 but declare no minSdk; Android 15 is the floor (contextual search).
+if [ "$API" -lt 35 ]; then
+    abort "! Android 15 or newer is required (this device: API $API)"
 fi
 
 mkdir -p "$APP_DIR"
