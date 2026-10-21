@@ -5,7 +5,7 @@
 M=$1
 AA=com.google.android.projection.gearhead
 DIR=$M/system/product/priv-app/AndroidAuto
-XML=$M/system/product/etc/permissions/privapp-permissions-coogle-androidauto.xml
+XML=$M/system/product/etc/permissions/privapp-permissions-xgoogle-androidauto.xml
 
 pm path "$AA" > /dev/null 2>&1 || { echo missing; exit 0; }
 

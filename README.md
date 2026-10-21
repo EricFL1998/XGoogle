@@ -1,7 +1,6 @@
 # XGoogle
 
 **An LSPosed module bringing Google features to the Xiaomi HyperOS 4 China ROM.**
-Based on [zopulus/Coogle](https://github.com/zopulus/coogle), ported from ColorOS to Xiaomi HyperOS 4.
 
 📥 **Download:** [Latest release](https://github.com/Leekin2/XGoogle/releases/latest) · 💬 **Feedback and complaints:** Telegram [@emcleek](https://t.me/emcleek) · 👥 **Support group:** [Xgoogle for HyperOS](https://t.me/Xgooogle)
 
@@ -103,7 +102,6 @@ GPL-3.0. See [LICENSE](LICENSE), [NOTICE.txt](NOTICE.txt) and the [CHANGELOG](CH
 Xiaomi HyperOS port: **Leekinn**.
 
 Thanks — this project is built on their work:
-- [@zopulus](https://github.com/zopulus) — [Coogle](https://github.com/zopulus/coogle) for ColorOS, the base of XGoogle
 - [@MiToverG422](https://github.com/MiToverG422) — [ONextBox](https://github.com/MiToverG422/ONextBox), origin of the assistant hooks
 - [@luckyzyx](https://github.com/luckyzyx) — [LuckyTool](https://github.com/luckyzyx/LuckyTool), code reference
 - [@tiann](https://github.com/tiann) — [KernelSU](https://github.com/tiann/KernelSU), UI design
@@ -117,7 +115,6 @@ This project is not affiliated with Google or Xiaomi; trademarks belong to their
 ## Türkçe
 
 **Xiaomi HyperOS 4 Çin ROM'una Google özellikleri getiren LSPosed modülü.**
-[zopulus/Coogle](https://github.com/zopulus/coogle) tabanlıdır; ColorOS yerine Xiaomi HyperOS 4 için uyarlanmıştır.
 
 📥 **İndir:** [Son sürüm](https://github.com/Leekin2/XGoogle/releases/latest) · 💬 **Geri bildirim ve şikayet:** Telegram [@emcleek](https://t.me/emcleek) · 👥 **Destek grubu:** [Xgoogle for HyperOS](https://t.me/Xgooogle)
 
@@ -217,7 +214,6 @@ GPL-3.0. Ayrıntılar için [LICENSE](LICENSE), [NOTICE.txt](NOTICE.txt) ve [CHA
 Xiaomi HyperOS uyarlaması: **Leekinn**.
 
 Teşekkürler — bu proje onların emeği üzerine kurulu:
-- [@zopulus](https://github.com/zopulus) — ColorOS için [Coogle](https://github.com/zopulus/coogle), XGoogle'ın temeli
 - [@MiToverG422](https://github.com/MiToverG422) — [ONextBox](https://github.com/MiToverG422/ONextBox), asistan hook'larının kaynağı
 - [@luckyzyx](https://github.com/luckyzyx) — [LuckyTool](https://github.com/luckyzyx/LuckyTool), kod referansı
 - [@tiann](https://github.com/tiann) — [KernelSU](https://github.com/tiann/KernelSU), arayüz tasarımı

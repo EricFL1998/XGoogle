@@ -1,4 +1,4 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 public final class FeaturePolicyTest {
     public static void main(String[] args) {
         if (FeaturePolicy.effective(FeaturePolicy.HEY_GOOGLE,true,false)) throw new AssertionError("Missing companion accepted");

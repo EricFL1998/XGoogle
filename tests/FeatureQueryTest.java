@@ -1,9 +1,9 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 import android.content.SharedPreferences;
 import java.lang.reflect.*;
 import java.util.*;
 import io.github.libxposed.api.XposedInterface;
-import io.github.zopulus.coogle.migration.compat.ModernHookRuntime;
+import io.github.leekin2.xgoogle.migration.compat.ModernHookRuntime;
 import android.app.ApplicationPackageManager;
 public class FeatureQueryTest {
  public static void main(String[] args)throws Throwable {
@@ -13,7 +13,7 @@ public class FeatureQueryTest {
   check(reads.equals(List.of("navigation")),"Unrelated feature read companion state: "+reads);
   reads.clear();check(FeatureConfig.enabled(FeaturePolicy.HEY_GOOGLE),"Hotword disabled");
   check(reads.equals(List.of("hey_google","companion_ready")),"Companion requirement removed");
-  Class<?> owner=Class.forName("io.github.zopulus.coogle.migration.AssistantFeatureHooks");
+  Class<?> owner=Class.forName("io.github.leekin2.xgoogle.migration.AssistantFeatureHooks");
   owner.getMethod("hookContextualSearchSystemFeature",String.class,ClassLoader.class).invoke(owner.getField("INSTANCE").get(null),"com.android.launcher",FeatureQueryTest.class.getClassLoader());
   Method method=ApplicationPackageManager.class.getMethod("hasSystemFeature",String.class,int.class);
   var hook=ModernHookRuntime.INSTANCE.module.callbacks.get(method);check(hook!=null,"Feature query hook absent");

@@ -1,4 +1,4 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 
 public final class WalletPowerPolicyTest {
     public static void main(String[] args) {

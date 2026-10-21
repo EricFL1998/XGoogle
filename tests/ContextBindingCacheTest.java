@@ -1,6 +1,6 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 import android.content.Context;
-import io.github.zopulus.coogle.migration.AssistantRuntime;
+import io.github.leekin2.xgoogle.migration.AssistantRuntime;
 import java.lang.reflect.*;
 import java.util.Map;
 public class ContextBindingCacheTest {

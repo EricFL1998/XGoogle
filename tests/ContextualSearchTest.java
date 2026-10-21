@@ -1,4 +1,4 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 
 import android.app.contextualsearch.ContextualSearchConfig;
 import android.app.contextualsearch.IContextualSearchManager;
@@ -19,7 +19,7 @@ public final class ContextualSearchTest {
         }
     }
     public static void main(String[] args) throws Exception {
-        Class<?> type = Class.forName("io.github.zopulus.coogle.migration.ContextualSearchHooks");
+        Class<?> type = Class.forName("io.github.leekin2.xgoogle.migration.ContextualSearchHooks");
         Object hook = type.getField("INSTANCE").get(null);
         Method dispatch = type.getDeclaredMethod("triggerCircleToSearchC17");
         check(!(boolean) dispatch.invoke(hook), "Missing service accepted");

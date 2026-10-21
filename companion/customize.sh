@@ -7,6 +7,19 @@ if [ "$API" -lt 35 ]; then
     abort "! Android 15 or newer is required (this device: API $API)"
 fi
 
+# The module was called coogle_companion before 1.3.3: move its saved choices to the new names.
+for name in keys_backup nav_off double_click_power_key; do
+    [ -e "/data/adb/coogle_$name" ] && [ ! -e "/data/adb/xgoogle_$name" ] && mv "/data/adb/coogle_$name" "/data/adb/xgoogle_$name"
+done
+# Retire the old module: without its uninstall script it leaves the saved key choices in place,
+# and the root manager removes it on the next boot.
+for old in /data/adb/modules/coogle_companion /data/adb/modules_update/coogle_companion; do
+    [ -d "$old" ] || continue
+    rm -f "$old/uninstall.sh"
+    touch "$old/remove"
+    ui_print "- Old coogle_companion module will be removed on reboot"
+done
+
 mkdir -p "$APP_DIR"
 find "$APP_DIR" -maxdepth 1 -type f -name '*.apk' -delete 2>/dev/null
 

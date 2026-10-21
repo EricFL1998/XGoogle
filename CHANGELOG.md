@@ -1,5 +1,14 @@
 # Değişiklikler / Changelog
 
+## XGoogle 1.3.3
+
+- Her şey artık XGoogle adını taşıyor. Ek modülün kimliği `xgoogle_companion` oldu: yeni ek modül kurulunca eski `coogle_companion` bir sonraki açılışta kendiliğinden kaldırılır, ayarlarınız korunur.
+  Everything is named XGoogle now. The companion module's id is `xgoogle_companion`: installing it removes the old `coogle_companion` on the next boot, and your settings are kept.
+- Güncellemeden sonra kontrol merkezindeki Lens ve Circle to Search kutucuklarını yeniden ekleyin; ana ekran simgesinin yeri değişebilir.
+  After updating, add the Lens and Circle to Search tiles to the control center again; the home screen icon may move.
+- Ek modül 1.3.3.
+  Companion 1.3.3.
+
 ## XGoogle 1.3.2
 
 - Hareketler artık tercihe bağlı: alt çubuğa basılı tutma, kenardan kaydırıp tutma ve çift dokunma için ayrı ayrı Circle to Search ya da XiaoAi seçilir (Circle to Search seçenekleri). Kapalı olan hareket XiaoAi'nin kendi işlevini açar (ekran tanıma, XiaoAi topu). Varsayılanlar 1.3.1 ile aynı.
@@ -14,8 +23,8 @@
   Quick Share "View downloads" now opens a chooser instead of HyperOS's download manager, so File Manager can be picked. It works by itself with the GMS restriction removed; needs a reboot.
 - Android 16 (HyperOS 3): alt çubuktan Circle to Search ContextualSearchConfig olmadan da açılır.
   Android 16 (HyperOS 3): Circle to Search opens from the navigation handle without ContextualSearchConfig too.
-- Google 17.68: Lens'te Konuş ve Oluştur yeniden görünür ([Coogle](https://github.com/zopulus/coogle) 1.3.5'ten).
-  Google 17.68: Lens Talk and Create are back (from [Coogle](https://github.com/zopulus/coogle) 1.3.5).
+- Google 17.68: Lens'te Konuş ve Oluştur yeniden görünür.
+  Google 17.68: Lens Talk and Create are back.
 - Yeni isteğe bağlı özelliklerin uygulamaları (Haritalar, Google Play Hizmetleri, GSF, Güvenlik, Tarayıcı) LSPosed'de herkese otomatik işaretlenmez; özellik açılınca istenir, durum kartı eksikleri gösterir.
   The new optional features' apps (Maps, Google Play services, GSF, Security, Scanner) are no longer ticked for everyone in LSPosed; they are asked for when the feature is switched on, and the status card lists what is missing.
 - Ek modül 1.3.2: Android 15'te de kurulabilir (önceden Android 16 gerekiyordu).
@@ -110,8 +119,6 @@
 - HyperOS'ta LSPosed kaydında ColorOS'a ait uyarılar artık çıkmıyor.
   No more ColorOS-only warnings in the LSPosed log on HyperOS.
 
-Lens Konuş/Oluştur, Cüzdan önizlemesi ve NoMount düzeltmesi fikirlerini sağlayan [Coogle](https://github.com/zopulus/coogle) projesine teşekkürler.
-Thanks to the [Coogle](https://github.com/zopulus/coogle) project for the Lens Talk/Create lookup, the Wallet preview and the NoMount fix.
 
 ## XGoogle 1.2.3
 
@@ -148,8 +155,8 @@ Thanks to the [Coogle](https://github.com/zopulus/coogle) project for the Lens T
 
 ## XGoogle 1.2
 
-Coogle 1.2'den (zopulus) çatallandı ve Xiaomi HyperOS 4 Çin ROM'una uyarlandı.
-Forked from Coogle 1.2 (zopulus) and ported to the Xiaomi HyperOS 4 China ROM.
+İlk sürüm: Xiaomi HyperOS 4 Çin ROM'u için.
+First release, for the Xiaomi HyperOS 4 China ROM.
 
 - HyperOS 4 desteği; ColorOS'a özel hook'lar HyperOS'ta kendiliğinden atlanır.
   HyperOS 4 support; ColorOS-only hooks are skipped on HyperOS.

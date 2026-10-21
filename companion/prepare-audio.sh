@@ -5,7 +5,9 @@ for BB in /data/adb/ksu/bin/busybox /data/adb/magisk/busybox /data/adb/ap/bin/bu
     [ -x "$BB" ] && break
 done
 SOURCE=/odm/etc/resourcemanager.xml
-OLD=/data/adb/modules/coogle_companion
+OLD=/data/adb/modules/xgoogle_companion
+# Before 1.3.3 the installed module was coogle_companion.
+[ -r "$OLD/audio-original.xml" ] || OLD=/data/adb/modules/coogle_companion
 TARGET="$MODDIR/system/odm/etc/resourcemanager.xml"
 skip_audio() {
     rm -f "$TARGET.tmp" "$TARGET"

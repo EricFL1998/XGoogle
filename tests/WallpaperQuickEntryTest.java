@@ -1,7 +1,7 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 import android.content.Context;
-import io.github.zopulus.coogle.migration.compat.ModernHookRegistry;
-import io.github.zopulus.coogle.migration.compat.ModernMethodHook.MethodHookParam;
+import io.github.leekin2.xgoogle.migration.compat.ModernHookRegistry;
+import io.github.leekin2.xgoogle.migration.compat.ModernMethodHook.MethodHookParam;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 /** Exercises compiled production binding and callbacks with an injected install failure. */
 public class WallpaperQuickEntryTest {
     public static void main(String[] args) throws Exception {
-        Class<?> type=Class.forName("io.github.zopulus.coogle.migration.WallpaperQuickEntryHooks");
+        Class<?> type=Class.forName("io.github.leekin2.xgoogle.migration.WallpaperQuickEntryHooks");
         Object hook=type.getField("INSTANCE").get(null);
         Method bind=type.getDeclaredMethod("bind",ClassLoader.class); bind.setAccessible(true);
         ClassLoader loader=WallpaperQuickEntryTest.class.getClassLoader();

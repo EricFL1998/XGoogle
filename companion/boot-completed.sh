@@ -1,10 +1,14 @@
 #!/system/bin/sh
 MODDIR=${0%/*}
+# The module was called coogle_companion before 1.3.3: move its saved choices to the new names.
+for name in keys_backup nav_off double_click_power_key; do
+    [ -e "/data/adb/coogle_$name" ] && [ ! -e "/data/adb/xgoogle_$name" ] && mv "/data/adb/coogle_$name" "/data/adb/xgoogle_$name"
+done
 # HyperOS: route the power key and nav handle to Google (the CN ROM resets the
 # nav-handle key during boot, so reapply both every time).
 if [ -n "$(getprop ro.mi.os.version.name)" ]; then
     # Keep the user's own choices once, outside the module, for uninstall.sh.
-    backup=/data/adb/coogle_keys_backup
+    backup=/data/adb/xgoogle_keys_backup
     if [ ! -f "$backup" ]; then
         power=$(settings get system long_press_power_key)
         home=$(settings get system long_press_home_key)
@@ -16,7 +20,7 @@ if [ -n "$(getprop ro.mi.os.version.name)" ]; then
     settings put system long_press_power_key launch_google_search
     # The nav handle belongs to XGoogle's Circle to Search switch; the app leaves this
     # marker while it is off (and has put the user's choice back).
-    [ -f /data/adb/coogle_nav_off ] || settings put system long_press_home_key launch_google_search
+    [ -f /data/adb/xgoogle_nav_off ] || settings put system long_press_home_key launch_google_search
     # HyperOS uses Google's software detection, so the DSP enrollment apps are unused. Root
     # managers hide module files from them, and they crash when started at boot.
     for package in com.android.hotwordenrollment.xgoogle com.android.hotwordenrollment.okgoogle; do

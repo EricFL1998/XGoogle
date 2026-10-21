@@ -1,4 +1,4 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 import android.content.SharedPreferences;
 import io.github.libxposed.api.XposedInterface;
 import java.lang.reflect.*;

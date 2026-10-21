@@ -1,4 +1,4 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /** Exercises the compiled production hook, including its early-boot context transition. */
 public final class HotwordUidTest {
     public static void main(String[] args) throws Exception {
-        Class<?> hook = Class.forName("io.github.zopulus.coogle.migration.OkGoogleHotwordCompatibilityHooker");
+        Class<?> hook = Class.forName("io.github.leekin2.xgoogle.migration.OkGoogleHotwordCompatibilityHooker");
         Object instance = hook.getField("INSTANCE").get(null);
         Field context = hook.getDeclaredField("systemContext");
         Field cache = hook.getDeclaredField("googleUidCache");

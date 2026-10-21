@@ -1,4 +1,4 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;

@@ -1,8 +1,8 @@
-# Packs companion/ into the module ZIP the app installs (app/src/main/assets/coogle-companion.zip).
+# Packs companion/ into the module ZIP the app installs (app/src/main/assets/xgoogle-companion.zip).
 # Shell scripts are written with LF endings and executable mode bits.
 $ErrorActionPreference = 'Stop'
 $source = Join-Path $PSScriptRoot 'companion'
-$target = Join-Path $PSScriptRoot 'app/src/main/assets/coogle-companion.zip'
+$target = Join-Path $PSScriptRoot 'app/src/main/assets/xgoogle-companion.zip'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 $utf8 = New-Object System.Text.UTF8Encoding $false

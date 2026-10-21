@@ -1,11 +1,11 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 import android.content.Context;
 import android.os.Handler;
 import java.lang.reflect.Method;
 import java.util.*;
 public class RoleReconciliationTest {
     public static void main(String[] args) throws Exception {
-        Class<?> type=Class.forName("io.github.zopulus.coogle.migration.AssistantVoiceHooks");
+        Class<?> type=Class.forName("io.github.leekin2.xgoogle.migration.AssistantVoiceHooks");
         Object owner=type.getField("INSTANCE").get(null);
         Method schedule=type.getDeclaredMethod("scheduleAssistantRoleReconciliation",Context.class,int.class);
         schedule.setAccessible(true);

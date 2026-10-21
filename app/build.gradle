@@ -3,16 +3,16 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose'
 }
 android {
-    namespace 'io.github.zopulus.coogle'
+    namespace 'io.github.leekin2.xgoogle'
     compileSdk { version = release(37) }
     buildToolsVersion '36.0.0'
     defaultConfig {
-        // Distinct from upstream Coogle so LSPosed's repository never offers its ColorOS-only builds as updates.
+        // XGoogle's own application id in LSPosed's repository.
         applicationId 'io.github.leekin2.xgoogle'
         minSdk 35
         targetSdk 36
-        versionCode 132
-        versionName '1.3.2'
+        versionCode 133
+        versionName '1.3.3'
         ndk { abiFilters 'arm64-v8a' }
     }
     buildTypes {
@@ -43,7 +43,7 @@ dependencies {
 // Exercise the native gesture listener against a JVM controller boundary.
 def circleTestClasses = layout.buildDirectory.dir('circle-gesture-tests')
 tasks.register('compileCircleGestureTest', JavaCompile) {
-    source files('src/main/java/io/github/zopulus/coogle/NativeCircleGestureListener.java',
+    source files('src/main/java/io/github/leekin2/xgoogle/NativeCircleGestureListener.java',
         '../tests/NativeCircleGestureListenerTest.java')
     classpath = files()
     destinationDirectory = circleTestClasses
@@ -54,7 +54,7 @@ tasks.register('compileCircleGestureTest', JavaCompile) {
 tasks.register('testCircleGesture', JavaExec) {
     dependsOn 'compileCircleGestureTest'
     classpath = files(circleTestClasses)
-    mainClass = 'io.github.zopulus.coogle.NativeCircleGestureListenerTest'
+    mainClass = 'io.github.leekin2.xgoogle.NativeCircleGestureListenerTest'
 }
 
 def contextualTestClasses = layout.buildDirectory.dir('contextual-tests')
@@ -73,7 +73,7 @@ tasks.register('testContextualSearch', JavaExec) {
         files({ configurations.releaseRuntimeClasspath.findAll { it.name.startsWith('kotlin-stdlib-') && it.name.endsWith('.jar') } }) +
         files({ zipTree(configurations.releaseCompileClasspath.find { it.name == 'api-102.0.0.aar' })
             .matching { include 'classes.jar' }.singleFile })
-    mainClass = 'io.github.zopulus.coogle.ContextualSearchTest'
+    mainClass = 'io.github.leekin2.xgoogle.ContextualSearchTest'
 }
 
 def hotwordTestClasses = layout.buildDirectory.dir('hotword-tests')
@@ -99,7 +99,7 @@ tasks.register('compileHookLifecycleTests', JavaCompile) {
     tasks.register("test${testName}", JavaExec) {
         dependsOn 'compileHookLifecycleTests'
         classpath = files(lifecycleTestClasses) + tasks.named('compileHookLifecycleTests').get().classpath
-        mainClass = "io.github.zopulus.coogle.${testName}"
+        mainClass = "io.github.leekin2.xgoogle.${testName}"
     }
 }
 tasks.register('testHookLifecycle') {
@@ -119,7 +119,7 @@ tasks.register('testHotwordUid', JavaExec) {
         files({ configurations.releaseRuntimeClasspath.findAll { it.name.startsWith('kotlin-stdlib-') && it.name.endsWith('.jar') } }) +
         files({ zipTree(configurations.releaseCompileClasspath.find { it.name == 'api-102.0.0.aar' })
             .matching { include 'classes.jar' }.singleFile })
-    mainClass = 'io.github.zopulus.coogle.HotwordUidTest'
+    mainClass = 'io.github.leekin2.xgoogle.HotwordUidTest'
 }
 
 // Exercise production wallpaper callbacks without an Android device or Xposed runtime.
@@ -141,5 +141,5 @@ tasks.register('testWallpaper', JavaExec) {
         files({ configurations.releaseRuntimeClasspath.findAll { it.name.startsWith('kotlin-stdlib-') && it.name.endsWith('.jar') } }) +
         files({ zipTree(configurations.releaseCompileClasspath.find { it.name == 'api-102.0.0.aar' })
             .matching { include 'classes.jar' }.singleFile })
-    mainClass = 'io.github.zopulus.coogle.WallpaperQuickEntryTest'
+    mainClass = 'io.github.leekin2.xgoogle.WallpaperQuickEntryTest'
 }

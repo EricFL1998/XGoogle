@@ -11,7 +11,7 @@
         android:action="android.intent.action.VIEW"
         android:data="xgoogle://keyguard/assistant"
         android:targetPackage="io.github.leekin2.xgoogle"
-        android:targetClass="io.github.zopulus.coogle.KeyguardLaunchActivity" />
+        android:targetClass="io.github.leekin2.xgoogle.KeyguardLaunchActivity" />
     <intent
         android:name="@string/shortcut_lens"
         android:icon="@drawable/ic_shortcut_lens"
@@ -19,7 +19,7 @@
         android:action="android.intent.action.VIEW"
         android:data="xgoogle://keyguard/lens"
         android:targetPackage="io.github.leekin2.xgoogle"
-        android:targetClass="io.github.zopulus.coogle.KeyguardLaunchActivity" />
+        android:targetClass="io.github.leekin2.xgoogle.KeyguardLaunchActivity" />
     <intent
         android:name="@string/shortcut_wallet"
         android:icon="@drawable/ic_shortcut_wallet"
@@ -27,7 +27,7 @@
         android:action="android.intent.action.VIEW"
         android:data="xgoogle://keyguard/wallet"
         android:targetPackage="io.github.leekin2.xgoogle"
-        android:targetClass="io.github.zopulus.coogle.KeyguardLaunchActivity" />
+        android:targetClass="io.github.leekin2.xgoogle.KeyguardLaunchActivity" />
     <intent
         android:name="@string/shortcut_home"
         android:icon="@drawable/ic_shortcut_home"
@@ -35,5 +35,5 @@
         android:action="android.intent.action.VIEW"
         android:data="xgoogle://keyguard/home"
         android:targetPackage="io.github.leekin2.xgoogle"
-        android:targetClass="io.github.zopulus.coogle.KeyguardLaunchActivity" />
+        android:targetClass="io.github.leekin2.xgoogle.KeyguardLaunchActivity" />
 </shortcuts>

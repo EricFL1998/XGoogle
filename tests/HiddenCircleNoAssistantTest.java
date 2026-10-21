@@ -1,4 +1,4 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,8 +7,8 @@ import android.provider.Settings;
 import android.app.contextualsearch.*;
 import com.android.systemui.assist.AssistManager;
 import io.github.libxposed.api.XposedInterface;
-import io.github.zopulus.coogle.migration.AssistantRuntime;
-import io.github.zopulus.coogle.migration.compat.ModernHookRuntime;
+import io.github.leekin2.xgoogle.migration.AssistantRuntime;
+import io.github.leekin2.xgoogle.migration.compat.ModernHookRuntime;
 import java.lang.reflect.*;
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class HiddenCircleNoAssistantTest {
         FeatureConfig.attach((SharedPreferences)Proxy.newProxyInstance(SharedPreferences.class.getClassLoader(),new Class<?>[]{SharedPreferences.class},
             (p,m,a)->m.getName().equals("getBoolean") ? navigation[0] : null));
         AssistantRuntime.INSTANCE.setSystemContext(new Context());
-        Class<?> owner=Class.forName("io.github.zopulus.coogle.migration.AssistantSystemUiHooks");
+        Class<?> owner=Class.forName("io.github.leekin2.xgoogle.migration.AssistantSystemUiHooks");
         Method install=owner.getDeclaredMethod("hookNativeAssistantSystemUiGate",ClassLoader.class);
         install.setAccessible(true);
         install.invoke(owner.getField("INSTANCE").get(null),HiddenCircleNoAssistantTest.class.getClassLoader());

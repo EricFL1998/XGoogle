@@ -4,7 +4,7 @@ for package in com.android.hotwordenrollment.xgoogle com.android.hotwordenrollme
 done
 # HyperOS: restore the key choices saved by boot-completed.sh. The root manager may run
 # this before the settings service is up, so wait for boot in the background.
-backup=/data/adb/coogle_keys_backup
+backup=/data/adb/xgoogle_keys_backup
 if [ -f "$backup" ]; then
     (
         until [ "$(getprop sys.boot_completed)" = 1 ]; do sleep 2; done
@@ -17,7 +17,7 @@ if [ -f "$backup" ]; then
                 settings put system "${entry#*:}" "$value"
             fi
         done
-        rm -f "$backup" /data/adb/coogle_nav_off
+        rm -f "$backup" /data/adb/xgoogle_nav_off
     ) > /dev/null 2>&1 &
 fi
 # User enrollment/model databases are intentionally not erased during uninstall.

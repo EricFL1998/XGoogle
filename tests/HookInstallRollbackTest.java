@@ -1,6 +1,6 @@
-package io.github.zopulus.coogle;
+package io.github.leekin2.xgoogle;
 import io.github.libxposed.api.XposedInterface;
-import io.github.zopulus.coogle.migration.compat.*;
+import io.github.leekin2.xgoogle.migration.compat.*;
 import java.lang.reflect.*;
 import kotlin.jvm.functions.Function0;
 public class HookInstallRollbackTest {
