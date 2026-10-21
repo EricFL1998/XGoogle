@@ -12,6 +12,8 @@
   Passkeys and password manager (optional): Google passkeys and autofill work on the China ROM. Ported from HyperPasskey; do not use both. Tick the system framework, Settings, Security and Scanner in LSPosed.
 - Google Play Hizmetleri her zaman internete bağlanabilir (isteğe bağlı): Pil ve performans ve sistem GMS'in arka planda ağını kesmez, bildirimler gecikmez. HyperOS_FCM_Live'dan uyarlandı. LSPosed'de sistem çerçevesi ve Pil ve performans işaretlenmeli.
   Google Play services can always reach the network (optional): Battery and performance and the system no longer cut GMS off in the background, so notifications are not delayed. Ported from HyperOS_FCM_Live. Tick the system framework and Battery and performance in LSPosed.
+- Quick Share'de "İndirilenleri görüntüle" düzeltmesi (isteğe bağlı): HyperOS'un indirme yöneticisi yerine seçim ekranı açılır, Dosya Yöneticisi seçilebilir. Yeniden başlatma gerekir.
+  Quick Share "View downloads" fix (optional): a chooser opens instead of HyperOS's download manager, so File Manager can be picked. Needs a reboot.
 
 ## XGoogle 1.3.1
 

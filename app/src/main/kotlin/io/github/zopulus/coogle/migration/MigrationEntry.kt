@@ -69,5 +69,6 @@ object MigrationEntry {
         OkGoogleHotwordCompatibilityHooker.hookSystemServer(loader)
         HomeControlsHooks.hookSystem(loader)
         XiaoAiNavRedirectHooks.hookSystem(loader)
+        if (FeatureConfig.enabled(FeaturePolicy.QUICK_SHARE_DOWNLOADS)) QuickShareTileHooks.hookSystem(loader)
     }
 }

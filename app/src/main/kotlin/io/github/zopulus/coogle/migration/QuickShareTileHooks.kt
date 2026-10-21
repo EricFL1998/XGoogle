@@ -1,5 +1,6 @@
 package io.github.zopulus.coogle.migration
 
+import android.content.Intent
 import io.github.zopulus.coogle.FeatureConfig
 import io.github.zopulus.coogle.FeaturePolicy
 import io.github.zopulus.coogle.migration.compat.ModernHookBridge as XposedBridge
@@ -68,4 +69,30 @@ internal object QuickShareTileHooks {
             log("Quick Share tile offered in the control center edit list")
         }.onFailure { installedHooks.remove("quick-share-tile-plugin"); log("Quick Share tile not offered in the control center edit list", it) }
     }
+
+    /**
+     * system_server: Quick Share's "View downloads" (VIEW_DOWNLOADS) is pinned by HyperOS to its
+     * download manager screen, which does not show the received files. Unpin it and offer a chooser,
+     * so the File Manager (or any app the user picks) opens the Downloads folder. After HyperCeiler's
+     * BypassForceDownloadui, written anew; limited to this action, as other start hooks share the path.
+     */
+    fun hookSystem(loader: ClassLoader) {
+        if (!installedHooks.add("quick-share-downloads")) return
+        runCatching {
+            val controller = XposedHelpers.findClass("com.android.server.wm.ActivityStartController", loader)
+            val hooks = XposedBridge.hookAllMethods(controller, "startActivityInPackage", object : XC_MethodHook() {
+                override fun beforeHookedMethod(param: MethodHookParam) {
+                    val index = param.args.indexOfFirst { it is Intent }
+                    val intent = param.args.getOrNull(index) as? Intent ?: return
+                    if (intent.action != VIEW_DOWNLOADS || !FeatureConfig.enabled(FeaturePolicy.QUICK_SHARE_DOWNLOADS)) return
+                    intent.setPackage(null)
+                    param.args[index] = Intent.createChooser(intent, null)
+                }
+            })
+            check(hooks.isNotEmpty()) { "ActivityStartController.startActivityInPackage was not found" }
+            log("Quick Share \"View downloads\" opens a chooser instead of the download manager")
+        }.onFailure { installedHooks.remove("quick-share-downloads"); log("Quick Share downloads redirect not fixed", it) }
+    }
+
+    private const val VIEW_DOWNLOADS = "android.intent.action.VIEW_DOWNLOADS"
 }

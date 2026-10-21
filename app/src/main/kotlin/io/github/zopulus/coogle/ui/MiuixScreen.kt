@@ -42,6 +42,7 @@ import androidx.compose.material.icons.rounded.Swipe
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.CloudDone
+import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Forum
@@ -248,6 +249,8 @@ fun MiuixScreen(
                             state.features[FeaturePolicy.GMS] == true, available) { onSetting(FeaturePolicy.GMS, it) }
                         Toggle(Icons.Rounded.CloudDone, t.gmsNetwork, t.gmsNetworkSummary,
                             state.features[FeaturePolicy.GMS_NETWORK] == true, available) { onSetting(FeaturePolicy.GMS_NETWORK, it) }
+                        Toggle(Icons.Rounded.Download, t.quickShareDownloads, t.quickShareDownloadsSummary,
+                            state.features[FeaturePolicy.QUICK_SHARE_DOWNLOADS] == true, available) { onSetting(FeaturePolicy.QUICK_SHARE_DOWNLOADS, it) }
                         Toggle(Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
                             state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available) { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) }
                         Toggle(Icons.Rounded.Timeline, t.timeline, t.timelineSummary,

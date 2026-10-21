@@ -14,6 +14,8 @@ PasskeyHooks and FinalFields are ported from Howard20181/HyperPasskey (GPL-3.0,
 https://github.com/Howard20181/HyperPasskey).
 GmsNetworkHooks is ported from Howard20181/HyperOS_FCM_Live (GPL-3.0,
 https://github.com/Howard20181/HyperOS_FCM_Live).
+The Quick Share "View downloads" fix follows HyperCeiler's BypassForceDownloadui idea
+(https://github.com/ReChronoRain/HyperCeiler, AGPL-3.0); no HyperCeiler code is included.
 The app icon uses the Xiaomi "mi" logo, a trademark of Xiaomi; XGoogle is not affiliated with Xiaomi or Google.
 
 Notices for the original Coogle follow.
