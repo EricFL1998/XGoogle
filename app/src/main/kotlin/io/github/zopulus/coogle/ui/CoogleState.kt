@@ -58,6 +58,6 @@ data class CoogleState(
             FeaturePolicy.WALLET, FeaturePolicy.QUICK_ENTRIES, FeaturePolicy.LIVE_TRANSLATE,
             FeaturePolicy.CIRCLE_VIBRATE, FeaturePolicy.CAMERA_LENS,
             FeaturePolicy.CIRCLE_LONG_PRESS, FeaturePolicy.CIRCLE_SIDE_HOLD, FeaturePolicy.CIRCLE_DOUBLE_TAP, FeaturePolicy.TIMELINE, FeaturePolicy.PASSKEY, FeaturePolicy.GMS_NETWORK,
-            FeaturePolicy.QUICK_SHARE_DOWNLOADS)
+            FeaturePolicy.QUICK_SHARE_DOWNLOADS, FeaturePolicy.NOTIFY_SELECTED_ONLY)
     }
 }

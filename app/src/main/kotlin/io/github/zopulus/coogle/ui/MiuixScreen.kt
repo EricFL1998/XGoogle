@@ -30,6 +30,7 @@ import top.yukonga.miuix.kmp.blur.LayerBackdrop
 import androidx.compose.runtime.key
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -43,6 +44,8 @@ import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.CloudDone
 import androidx.compose.material.icons.rounded.Download
+import androidx.compose.material.icons.rounded.Apps
+import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Forum
@@ -249,6 +252,16 @@ fun MiuixScreen(
                             state.features[FeaturePolicy.GMS] == true, available) { onSetting(FeaturePolicy.GMS, it) }
                         Toggle(Icons.Rounded.CloudDone, t.gmsNetwork, t.gmsNetworkSummary,
                             state.features[FeaturePolicy.GMS_NETWORK] == true, available) { onSetting(FeaturePolicy.GMS_NETWORK, it) }
+                        // The notification fix's own options; usable while it is on.
+                        val notifyOn = state.features[FeaturePolicy.GMS_NETWORK] == true
+                        val context = LocalContext.current
+                        Toggle(Icons.Rounded.FilterList, t.notifySelectedOnly, t.notifySelectedOnlySummary,
+                            state.features[FeaturePolicy.NOTIFY_SELECTED_ONLY] == true, available && notifyOn
+                        ) { onSetting(FeaturePolicy.NOTIFY_SELECTED_ONLY, it) }
+                        ArrowPreference(title = t.notifyApps, summary = t.notifyAppsSummary,
+                            startAction = { RowIcon(Icons.Rounded.Apps) },
+                            onClick = { context.startActivity(android.content.Intent(context, io.github.zopulus.coogle.AppPickerActivity::class.java)) },
+                            enabled = state.connected && notifyOn)
                         Toggle(Icons.Rounded.Download, t.quickShareDownloads, t.quickShareDownloadsSummary,
                             state.features[FeaturePolicy.QUICK_SHARE_DOWNLOADS] == true, available) { onSetting(FeaturePolicy.QUICK_SHARE_DOWNLOADS, it) }
                         Toggle(Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,

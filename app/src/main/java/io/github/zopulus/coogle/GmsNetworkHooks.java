@@ -16,7 +16,8 @@ import java.util.Set;
  * without delay. The China ROM cuts GMS off in the background in two places: Battery and
  * performance (PowerKeeper) firewalls it and drops it from the doze allow list, and the
  * system's Greeze freezer defers or blocks its broadcasts. Ported from
- * Howard20181/HyperOS_FCM_Live (GPL-3.0) for XGoogle.
+ * Howard20181/HyperOS_FCM_Live (GPL-3.0) for XGoogle. Per-app waking, the full-screen call screen,
+ * the wake path and the Aurogon freeze filter follow biplobsd/fcm_notification_fix (MIT), as hooks.
  */
 final class GmsNetworkHooks {
     static final String POWER_KEEPER = "com.miui.powerkeeper";
@@ -27,6 +28,24 @@ final class GmsNetworkHooks {
     private static Object exemptions;
 
     private static boolean on() { return FeatureConfig.enabled(FeaturePolicy.GMS_NETWORK); }
+
+    /** "com.app:push" -> "com.app". */
+    private static String base(String name) {
+        if (name == null) return null;
+        int colon = name.indexOf(':');
+        return colon < 0 ? name : name.substring(0, colon);
+    }
+
+    /** One of the apps the user picked for notifications. */
+    static boolean picked(String name) {
+        String pkg = base(name);
+        return pkg != null && FeatureConfig.packages(FeaturePolicy.NOTIFY_APPS).contains(pkg);
+    }
+
+    /** May a push wake this app: every app, or only the picked ones when the user chose so. */
+    static boolean wakes(String name) {
+        return !FeatureConfig.enabled(FeaturePolicy.NOTIFY_SELECTED_ONLY) || picked(name);
+    }
 
     /** PowerKeeper: no GMS firewall chain, no GMS limits, GMS on the doze allow list. */
     static void installPowerKeeper(HookInstaller hooks, ClassLoader loader) {
@@ -73,7 +92,7 @@ final class GmsNetworkHooks {
 
     /** System: Greeze lets GMS broadcasts through and keeps GMS off its black lists; pushes wake their app. */
     static void installSystem(HookInstaller hooks, ClassLoader loader) {
-        String[] parts = {"greeze", "domestic", "lists", "autostart", "process", "network", "push"};
+        String[] parts = {"greeze", "domestic", "lists", "autostart", "process", "network", "push", "freeze", "fullscreen", "wakepath"};
         int done = 0;
         for (String part : parts) {
             try {
@@ -102,6 +121,37 @@ final class GmsNetworkHooks {
                     case "network" -> removeAfterConstruction(hooks, Class.forName("com.miui.server.greeze.power.AwareResourceControl", false, loader),
                             "mNoNetworkBlackUids");
                     case "push" -> push(hooks, loader);
+                    case "freeze" -> {
+                        // filter(uid, packageName, flags): false with reason 64 (no restriction) means "do not freeze".
+                        Class<?> aurogon = Class.forName("com.miui.server.greeze.AurogonFilterManager", false, loader);
+                        Field reason = aurogon.getDeclaredField("mContinueReason");
+                        reason.setAccessible(true);
+                        Method filter = aurogon.getDeclaredMethod("filter", int.class, String.class, int.class);
+                        hooks.install(filter, c -> {
+                            if (!on() || !GMS.equals(c.getArg(1))) return c.proceed();
+                            reason.setInt(c.getThisObject(), 64);
+                            return false;
+                        });
+                        hooks.deoptimize(filter);
+                    }
+                    case "fullscreen" -> {
+                        // The China ROM drops a notification's full-screen intent (incoming call screens)
+                        // unless MIUI op 10021 allows it; the picked apps keep theirs, as on the global ROM.
+                        Method check = Class.forName("com.android.server.notification.NotificationManagerServiceImpl", false, loader)
+                                .getDeclaredMethod("checkFullScreenIntent", android.app.Notification.class,
+                                        android.app.AppOpsManager.class, int.class, String.class);
+                        hooks.install(check, c -> on() && picked((String) c.getArg(3)) ? null : c.proceed());
+                    }
+                    case "wakepath" -> {
+                        // checkRunningCompatibility(component, ...): the China ROM's wake-path check; the
+                        // global ROM skips it. Only the picked apps may be started past it.
+                        Method wake = Class.forName("com.android.server.am.ActivityManagerServiceImpl", false, loader)
+                                .getDeclaredMethod("checkRunningCompatibility", android.content.ComponentName.class,
+                                        int.class, int.class, int.class);
+                        hooks.install(wake, c -> on() && c.getArg(0) instanceof android.content.ComponentName target
+                                && picked(target.getPackageName()) ? Boolean.TRUE : c.proceed());
+                        hooks.deoptimize(wake);
+                    }
                     default -> { }
                 }
                 done++;
@@ -120,15 +170,15 @@ final class GmsNetworkHooks {
         packageOf.setAccessible(true);
         hooks.install(allow, c -> {
             if (!on() || !(c.getArg(4) instanceof String action)) return c.proceed();
-            if (GMS.equals(c.getArg(1)) && PUSH.equals(action)) return true;
-            if (DEFERRED.contains(action)) {
-                Object callee = c.getArg(3);
-                try {
-                    Object resolved = packageOf.invoke(c.getThisObject(), c.getArg(2));
-                    if (resolved instanceof String) callee = resolved;
-                } catch (ReflectiveOperationException ignored) { }
-                if (GMS.equals(callee) || GMS_PERSISTENT.equals(callee)) return true;
-            }
+            boolean push = GMS.equals(c.getArg(1)) && PUSH.equals(action);
+            if (!push && !DEFERRED.contains(action)) return c.proceed();
+            Object callee = c.getArg(3);
+            try {
+                Object resolved = packageOf.invoke(c.getThisObject(), c.getArg(2));
+                if (resolved instanceof String) callee = resolved;
+            } catch (ReflectiveOperationException ignored) { }
+            if (push && callee instanceof String app && wakes(app)) return true;
+            if (!push && (GMS.equals(callee) || GMS_PERSISTENT.equals(callee))) return true;
             return c.proceed();
         });
         hooks.deoptimize(allow);
@@ -173,7 +223,9 @@ final class GmsNetworkHooks {
                 android.content.pm.ResolveInfo.class);
         hooks.install(check, c -> {
             Object broadcast = c.getArg(1);
-            if (on() && GMS.equals(caller.get(broadcast)) && intent.get(broadcast) instanceof Intent sent && PUSH.equals(sent.getAction()))
+            if (on() && GMS.equals(caller.get(broadcast)) && intent.get(broadcast) instanceof Intent sent && PUSH.equals(sent.getAction())
+                    && c.getArg(2) instanceof android.content.pm.ResolveInfo receiver && receiver.activityInfo != null
+                    && wakes(receiver.activityInfo.packageName))
                 return true;
             return c.proceed();
         });
@@ -198,7 +250,8 @@ final class GmsNetworkHooks {
             hooks.install(broadcast, c -> {
                 if (on() && c.getArg(2) instanceof Intent sent && PUSH.equals(sent.getAction())) {
                     Object app = recordOf.invoke(c.getThisObject(), c.getArg(0));
-                    if (app != null && info.get(app) instanceof ApplicationInfo sender && GMS.equals(sender.packageName)) {
+                    if (app != null && info.get(app) instanceof ApplicationInfo sender && GMS.equals(sender.packageName)
+                            && (sent.getPackage() != null ? wakes(sent.getPackage()) : !FeatureConfig.enabled(FeaturePolicy.NOTIFY_SELECTED_ONLY))) {
                         if (sent.getPackage() != null) allowBriefly((Context) context.get(c.getThisObject()), sent.getPackage());
                         sent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
                     }

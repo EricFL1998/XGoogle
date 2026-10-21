@@ -23,6 +23,7 @@ final class FeatureScopes {
             case FeaturePolicy.PASSKEY -> List.of(SYSTEM, PasskeyHooks.SETTINGS, PasskeyHooks.SECURITY, PasskeyHooks.SCANNER);
             case FeaturePolicy.GMS_NETWORK -> List.of(SYSTEM, GmsNetworkHooks.POWER_KEEPER);
             case FeaturePolicy.QUICK_SHARE_DOWNLOADS -> List.of(SYSTEM);
+            case FeaturePolicy.NOTIFY_SELECTED_ONLY -> List.of();
             case FeaturePolicy.GOOGLE_ENTRY -> List.of("com.android.settings");
             case FeaturePolicy.GMS -> List.of(SYSTEM, SYSTEM_UI);
             case FeaturePolicy.LENS, FeaturePolicy.LIVE_TRANSLATE -> List.of(GOOGLE);
