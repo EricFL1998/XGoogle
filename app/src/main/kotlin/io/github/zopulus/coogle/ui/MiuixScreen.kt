@@ -40,6 +40,7 @@ import androidx.compose.material.icons.rounded.Gesture
 import androidx.compose.material.icons.rounded.PanTool
 import androidx.compose.material.icons.rounded.Swipe
 import androidx.compose.material.icons.rounded.Timeline
+import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Forum
@@ -248,6 +249,8 @@ fun MiuixScreen(
                             state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available) { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) }
                         Toggle(Icons.Rounded.Timeline, t.timeline, t.timelineSummary,
                             state.features[FeaturePolicy.TIMELINE] == true, available) { onSetting(FeaturePolicy.TIMELINE, it) }
+                        Toggle(Icons.Rounded.Key, t.passkey, t.passkeySummary,
+                            state.features[FeaturePolicy.PASSKEY] == true, available) { onSetting(FeaturePolicy.PASSKEY, it) }
                         ArrowPreference(title = t.restartApps, summary = t.restartAppsSummary,
                             startAction = { RowIcon(Icons.Rounded.RestartAlt) }, onClick = onRestartApps,
                             enabled = state.connected && !state.restarting)

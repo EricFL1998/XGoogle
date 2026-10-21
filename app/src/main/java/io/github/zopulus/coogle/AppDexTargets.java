@@ -135,7 +135,7 @@ final class AppDexTargets implements AutoCloseable {
         return result;
     }
 
-    private static void loadNative() {
+    static void loadNative() {
         if (nativeLoaded) return;
         synchronized (AppDexTargets.class) {
             if (!nativeLoaded) { System.loadLibrary("dexkit"); nativeLoaded = true; }

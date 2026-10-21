@@ -8,6 +8,8 @@
   Live translate stops screen recording: this is an Android limit (one screen capture at a time), now listed under Limitations in the README.
 - Google Haritalar Zaman Çizelgesi (isteğe bağlı, Sistem bölümünde): Google Play Hizmetleri ve Haritalar'a ABD operatörü bildirilir, konum geçmişi açılabilir. LSPosed'de Google Play Hizmetleri, Google Services Framework ve Haritalar işaretlenmeli.
   Google Maps Timeline (optional, in the System section): Google Play services and Maps see a US carrier so location history can be turned on. Tick Google Play services, Google Services Framework and Maps in LSPosed.
+- Geçiş anahtarları ve şifre yöneticisi (isteğe bağlı): Çin ROM'unda Google geçiş anahtarları ve otomatik doldurma çalışır. HyperPasskey'den uyarlandı; ikisini birlikte açmayın. LSPosed'de sistem çerçevesi, Ayarlar, Güvenlik ve Tarayıcı işaretlenmeli.
+  Passkeys and password manager (optional): Google passkeys and autofill work on the China ROM. Ported from HyperPasskey; do not use both. Tick the system framework, Settings, Security and Scanner in LSPosed.
 
 ## XGoogle 1.3.1
 
