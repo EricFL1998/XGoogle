@@ -8,10 +8,8 @@ public final class FeaturePolicy {
             CIRCLE_VIBRATE="circle_vibrate", CAMERA_LENS="camera_lens",
             // Per gesture: on opens Circle to Search, off leaves the gesture to XiaoAi.
             CIRCLE_LONG_PRESS="circle_long_press", CIRCLE_SIDE_HOLD="circle_side_hold", CIRCLE_DOUBLE_TAP="circle_double_tap",
-            TIMELINE="timeline", PASSKEY="passkey", GMS_NETWORK="gms_network",
-            QUICK_SHARE_DOWNLOADS="quick_share_downloads",
-            // Notification fix: wake only the picked apps (NOTIFY_APPS, a string set) instead of every app.
-            NOTIFY_SELECTED_ONLY="notify_selected_only", NOTIFY_APPS="notify_apps";
+            TIMELINE="timeline", PASSKEY="passkey",
+            QUICK_SHARE_DOWNLOADS="quick_share_downloads";
     public static boolean defaultValue(String key) {
         return NAVIGATION.equals(key) || CIRCLE_LONG_PRESS.equals(key) || CIRCLE_SIDE_HOLD.equals(key) || LENS.equals(key) || LIVE_TRANSLATE.equals(key) || GOOGLE_ENTRY.equals(key);
     }

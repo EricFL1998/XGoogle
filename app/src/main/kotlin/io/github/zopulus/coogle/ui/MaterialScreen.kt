@@ -30,7 +30,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.foundation.border
 import androidx.compose.material.icons.rounded.BlurOn
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
 import top.yukonga.miuix.kmp.blur.BlendColorEntry
 import top.yukonga.miuix.kmp.blur.BlurColors
@@ -46,10 +45,7 @@ import androidx.compose.material.icons.rounded.PanTool
 import androidx.compose.material.icons.rounded.Swipe
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.material.icons.rounded.Key
-import androidx.compose.material.icons.rounded.CloudDone
 import androidx.compose.material.icons.rounded.Download
-import androidx.compose.material.icons.rounded.Apps
-import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Forum
@@ -299,13 +295,13 @@ private fun HomeTab(state: CoogleState, t: Texts, onSetting: (String, Boolean) -
                     state.features[FeaturePolicy.CIRCLE_VIBRATE] == true, available,
                     { onSetting(FeaturePolicy.CIRCLE_VIBRATE, it) })
                 // Each gesture picks Circle to Search (on) or the XiaoAi function set in the system (off).
-                ToggleRow(t, 3, count, Icons.Rounded.PanTool, t.circleLongPress, t.circleGestureSummary,
+                ToggleRow(t, 3, count, Icons.Rounded.PanTool, t.circleLongPress, if (state.features[FeaturePolicy.CIRCLE_LONG_PRESS] == true) t.circleGestureOn else t.circleGestureOff,
                     state.features[FeaturePolicy.CIRCLE_LONG_PRESS] == true, available && circleOn,
                     { onSetting(FeaturePolicy.CIRCLE_LONG_PRESS, it) })
-                ToggleRow(t, 4, count, Icons.Rounded.Swipe, t.circleSideHold, t.circleGestureSummary,
+                ToggleRow(t, 4, count, Icons.Rounded.Swipe, t.circleSideHold, if (state.features[FeaturePolicy.CIRCLE_SIDE_HOLD] == true) t.circleGestureOn else t.circleGestureOff,
                     state.features[FeaturePolicy.CIRCLE_SIDE_HOLD] == true, available && circleOn,
                     { onSetting(FeaturePolicy.CIRCLE_SIDE_HOLD, it) })
-                ToggleRow(t, 5, count, Icons.Rounded.Gesture, t.circleDoubleTap, t.circleGestureSummary,
+                ToggleRow(t, 5, count, Icons.Rounded.Gesture, t.circleDoubleTap, if (state.features[FeaturePolicy.CIRCLE_DOUBLE_TAP] == true) t.circleGestureOn else t.circleGestureOff,
                     state.features[FeaturePolicy.CIRCLE_DOUBLE_TAP] == true, available && circleOn,
                     { onSetting(FeaturePolicy.CIRCLE_DOUBLE_TAP, it) })
             }
@@ -322,28 +318,17 @@ private fun HomeTab(state: CoogleState, t: Texts, onSetting: (String, Boolean) -
             state.features[FeaturePolicy.WALLET] == true, available, { onSetting(FeaturePolicy.WALLET, it) })
     }
     Group(t.groupSystem) {
-        ToggleRow(t, 0, 9, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
+        ToggleRow(t, 0, 6, Icons.Rounded.LockOpen, t.gms, t.gmsSummary,
             state.features[FeaturePolicy.GMS] == true, available, { onSetting(FeaturePolicy.GMS, it) })
-        ToggleRow(t, 1, 9, Icons.Rounded.CloudDone, t.gmsNetwork, t.gmsNetworkSummary,
-            state.features[FeaturePolicy.GMS_NETWORK] == true, available, { onSetting(FeaturePolicy.GMS_NETWORK, it) })
-        // The notification fix's own options; usable while it is on.
-        val notifyOn = state.features[FeaturePolicy.GMS_NETWORK] == true
-        val context = LocalContext.current
-        ToggleRow(t, 2, 9, Icons.Rounded.FilterList, t.notifySelectedOnly, t.notifySelectedOnlySummary,
-            state.features[FeaturePolicy.NOTIFY_SELECTED_ONLY] == true, available && notifyOn,
-            { onSetting(FeaturePolicy.NOTIFY_SELECTED_ONLY, it) })
-        SettingRow(3, 9, Icons.Rounded.Apps, t.notifyApps, t.notifyAppsSummary,
-            onClick = { context.startActivity(android.content.Intent(context, io.github.zopulus.coogle.AppPickerActivity::class.java)) },
-            enabled = state.connected && notifyOn)
-        ToggleRow(t, 4, 9, Icons.Rounded.Download, t.quickShareDownloads, t.quickShareDownloadsSummary,
+        ToggleRow(t, 1, 6, Icons.Rounded.Download, t.quickShareDownloads, t.quickShareDownloadsSummary,
             state.features[FeaturePolicy.QUICK_SHARE_DOWNLOADS] == true, available, { onSetting(FeaturePolicy.QUICK_SHARE_DOWNLOADS, it) })
-        ToggleRow(t, 5, 9, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
+        ToggleRow(t, 2, 6, Icons.Rounded.Settings, t.googleEntry, t.googleEntrySummary,
             state.features[FeaturePolicy.GOOGLE_ENTRY] == true, available, { onSetting(FeaturePolicy.GOOGLE_ENTRY, it) })
-        ToggleRow(t, 6, 9, Icons.Rounded.Timeline, t.timeline, t.timelineSummary,
+        ToggleRow(t, 3, 6, Icons.Rounded.Timeline, t.timeline, t.timelineSummary,
             state.features[FeaturePolicy.TIMELINE] == true, available, { onSetting(FeaturePolicy.TIMELINE, it) })
-        ToggleRow(t, 7, 9, Icons.Rounded.Key, t.passkey, t.passkeySummary,
+        ToggleRow(t, 4, 6, Icons.Rounded.Key, t.passkey, t.passkeySummary,
             state.features[FeaturePolicy.PASSKEY] == true, available, { onSetting(FeaturePolicy.PASSKEY, it) })
-        SettingRow(8, 9, Icons.Rounded.RestartAlt, t.restartApps, t.restartAppsSummary,
+        SettingRow(5, 6, Icons.Rounded.RestartAlt, t.restartApps, t.restartAppsSummary,
             onClick = onRestartApps, enabled = state.connected && !state.restarting)
     }
 }

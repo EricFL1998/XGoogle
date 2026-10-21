@@ -22,7 +22,6 @@ public final class CoogleModule extends XposedModule {
         MigrationEntry.hookSystem(param.getClassLoader());
         SignalModelHooks.install(hooks, param.getClassLoader());
         if (FeatureConfig.enabled(FeaturePolicy.PASSKEY)) PasskeyHooks.hookSystem(hooks, param.getClassLoader());
-        if (FeatureConfig.enabled(FeaturePolicy.GMS_NETWORK)) GmsNetworkHooks.installSystem(hooks, param.getClassLoader());
         hooks.info("SYSTEM native assistant and hotword initialization complete");
     }
 
@@ -38,8 +37,6 @@ public final class CoogleModule extends XposedModule {
             TimelineHooks.install(hooks, param.getClassLoader(), packageName);
         if (PasskeyHooks.handles(packageName) && FeatureConfig.enabled(FeaturePolicy.PASSKEY))
             PasskeyHooks.install(hooks, param.getClassLoader(), packageName, param.getApplicationInfo().sourceDir);
-        if (GmsNetworkHooks.POWER_KEEPER.equals(packageName) && FeatureConfig.enabled(FeaturePolicy.GMS_NETWORK))
-            GmsNetworkHooks.installPowerKeeper(hooks, param.getClassLoader());
         if ("com.android.camera".equals(packageName) && FeatureConfig.enabled(FeaturePolicy.CAMERA_LENS)) CameraLensHooks.install(hooks, param.getClassLoader());
         // The Settings entry hooks target ColorOS classes; HyperOS has none of them.
         boolean colorOs = SystemCompatibility.isColorOs17();

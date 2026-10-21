@@ -108,11 +108,6 @@ final class SettingsConnection {
         }
     }
 
-    /** XGoogle's LSPosed settings, for screens other than MainActivity (the app picker). */
-    static synchronized android.content.SharedPreferences preferences() {
-        return service == null ? null : service.getRemotePreferences(FeatureConfig.GROUP);
-    }
-
     static synchronized List<String> currentScope() {
         return service == null ? null : service.getScope();
     }

@@ -27,9 +27,6 @@
         <package android:name="com.google.android.apps.maps" />
         <package android:name="com.miui.securitycenter" />
         <package android:name="com.xiaomi.scanner" />
-        <package android:name="com.miui.powerkeeper" />
-        <!-- The notification fix's app picker lists launchable apps. -->
-        <intent><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent>
         <intent><action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" /></intent>
     </queries>
     <application android:name=".XGoogleApp" android:label="XGoogle" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@style/AppTheme" android:description="@string/module_description" android:allowBackup="false" android:supportsRtl="true">
@@ -47,7 +44,6 @@
         </activity-alias>
         <provider android:name="io.github.libxposed.service.XposedProvider" android:authorities="io.github.leekin2.xgoogle.XposedService" android:exported="true" />
         <!-- Lock screen shortcuts: shows over the lock screen, asks for the lock, opens Google. -->
-        <activity android:name=".AppPickerActivity" android:exported="false" />
         <activity android:name=".KeyguardLaunchActivity" android:exported="true"
             android:showWhenLocked="true" android:excludeFromRecents="true" android:noHistory="true"
             android:taskAffinity="" android:theme="@android:style/Theme.Translucent.NoTitleBar">

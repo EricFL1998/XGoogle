@@ -34,8 +34,7 @@ import java.util.concurrent.Executors
 class MainActivity : ComponentActivity() {
     private val worker = Executors.newSingleThreadExecutor()
     private val liveKeys = setOf(FeaturePolicy.CIRCLE_VIBRATE, FeaturePolicy.HEY_GOOGLE,
-        FeaturePolicy.CIRCLE_LONG_PRESS, FeaturePolicy.CIRCLE_SIDE_HOLD, FeaturePolicy.CIRCLE_DOUBLE_TAP,
-        FeaturePolicy.NOTIFY_SELECTED_ONLY)
+        FeaturePolicy.CIRCLE_LONG_PRESS, FeaturePolicy.CIRCLE_SIDE_HOLD, FeaturePolicy.CIRCLE_DOUBLE_TAP)
     private val savingKeys = mutableSetOf<String>()
     private var preferences: SharedPreferences? = null
     private var companionCheckedThisResume = false
