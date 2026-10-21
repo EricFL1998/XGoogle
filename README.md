@@ -93,6 +93,7 @@ Every feature can be turned on or off on its own; turning one off brings back th
 
 - Google search bar / Discover on the home screen: the HyperOS 4 launcher is native (Rust) code and cannot be hooked.
 - "Hey Google" uses software detection (not DSP).
+- Live translate and screen recording cannot run together: both capture the screen, and Android allows one screen capture at a time, so starting one ends the other. This is how Android works, not something XGoogle adds.
 
 ## License and credits
 
@@ -204,6 +205,7 @@ Her özellik uygulamadan ayrı ayrı açılıp kapatılabilir; kapatınca sistem
 
 - Ana ekranda Google arama çubuğu / Discover: HyperOS 4 başlatıcısı yerel (Rust) koddur, hook edilemez.
 - "Hey Google" yazılım algılamasıyla çalışır (DSP değil).
+- Canlı çeviri ve ekran kaydı birlikte çalışmaz: ikisi de ekranı yakalar, Android aynı anda yalnızca bir ekran yakalamaya izin verir; biri başlayınca diğeri biter. Bu XGoogle'dan değil, Android'in kendisinden gelir.
 
 ### Lisans ve teşekkür
 
